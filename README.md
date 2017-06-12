@@ -1,3 +1,4 @@
+## 项目插件
 ## Install
 
 ### Install vue-webpack project in the first place
@@ -30,6 +31,7 @@ Use css
 ```js
 import hxqh from 'hx-v'
 import 'hx-v/dist/styles/common.css'
+
 // 存储项目url
 let baseUrl = {
   identitySiteRoot: localStorage.getItem('identitySiteRootSite'),
