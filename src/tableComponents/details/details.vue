@@ -16,7 +16,7 @@
                                   :model="eidtData"
                                   :label-width="120">
                                 <template v-for="(item, key, index) in options.arr" v-if="item.edit_hide!==1">
-                                    <div style="width:50%; float: left;height: 57px;">
+                                    <div class="xtable-left">
                                         <Form-item
                                                 :prop="item.key"
                                                 :label="item.title + '：'"
@@ -63,8 +63,11 @@
 
                     if (val === true) {
                         this.eidtData = Object.assign({}, this.getOptions.details_Window_Data)
+                      try {
                         delete this.eidtData['_index']  // 莫名多出了个——index 删了
                         delete this.eidtData['cellClassName']
+                      } catch (e) {
+                      }
                     } else {
                         this.eidtData = {}
                     }

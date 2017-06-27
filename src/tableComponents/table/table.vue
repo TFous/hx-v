@@ -8,11 +8,12 @@
         :data="tableData"
         @on-row-dblclick="showDetails"
         @on-selection-change="selectionFn"
+        @on-sort-change="sortFn"
       ></Table>
     </div>
     <div style="padding:80px;margin:80px;position: relative;" v-show="!ready">
       <Spin fix>
-        <Icon type="load-c" size=40      class="icon-load"></Icon>
+        <Icon type="load-c" size=40           class="icon-load"></Icon>
         <div>Loading</div>
       </Spin>
     </div>
@@ -38,6 +39,20 @@
       options: Object
     },
     watch: {
+      'getOptions.tableData': {
+        handler: function (val, oldVal) {
+          if (oldVal !== undefined) {
+            let newArr = []
+            val.forEach(function (e) {
+              let o = Object.assign({}, e)
+              newArr.push(o)
+            })
+            let datas = this.formatDate(newArr)
+            this.tableData = datas
+          }
+        },
+        deep: true
+      },
       'states.refresh': {
         handler: function (val, oldVal) {
           oldVal !== undefined ? this.refreshFn() : null
@@ -47,7 +62,7 @@
       },
       'states.searchBtn': {
         handler: function (val, oldVal) {
-          oldVal !== undefined ? this.getList() : null
+          oldVal !== undefined ? this.searchUrl(this.states.searchVal) : null
           this.$store.dispatch(this.options.gridKey + '_set_state_data', {pager_CurrentPage: 1})
         },
         deep: true
@@ -56,6 +71,20 @@
         handler: function (val, oldVal) {
           this.$store.dispatch(this.options.gridKey + '_set_state_data', {pager_CurrentPage: 1})
           oldVal !== undefined ? this.getList(val) : null
+        },
+        deep: true
+      },
+      'states.arr': {
+        handler: function (val, oldVal) {
+          this.setColumns()
+        },
+        deep: true
+      },
+      'states.url': {   //todo   搜索也会执行,待优化
+        handler: function (val, oldVal) {
+          if (val !== undefined && val !== null && val !== '') {
+            this.getList()
+          }
         },
         deep: true
       },
@@ -78,8 +107,11 @@
       this.refreshFn()  // 初始页面获取总页数
 
       // 来自父组建的事件集合
-      let arrFn = this.tableFn()
-      fn.tableFn(this, arrFn)
+      try {
+        let arrFn = this.tableFn()
+        fn.bindFn(this, arrFn)
+      } catch (e) {
+      }
     },
     updated () {
       // 设置宽度
@@ -90,6 +122,22 @@
 //      }
     },
     methods: {
+      /**
+       *   column：当前列数据
+       key：排序依据的指标
+       order：排序的顺序，值为 asc 或 desc
+       *
+       */
+      sortFn (column) {
+        let key = column.key
+        let order = column.order
+        let orderUrl = `${key}%20${order}`
+        if (order === 'normal') {
+          this.searchUrl(null, '')
+        } else {
+          this.searchUrl(null, orderUrl)
+        }
+      },
       /**
        *
        * @param val   搜索值
@@ -167,13 +215,21 @@
         }
         if (lastUrl !== '') {
           searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}`)
-          searchUrlString += `${order}`
           // if (startTime && endTime) {
           //     searchUrlString += `&$orderby=${timeSelectKey} desc`
           // }
-          _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: encodeURI(searchUrlString)})
+
+          if (order !== '') {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${encodeURI(searchUrlString)}&$orderby=${order}`})
+          } else {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: encodeURI(searchUrlString)})
+          }
         } else {
-          _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: sUrl})
+          if (order !== '') {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${sUrl}?$orderby=${order}`})
+          } else {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: sUrl})
+          }
         }
       },
 //      重置 刷新
@@ -186,13 +242,19 @@
       //        获取表格数据
       getList (size, _this = this) {
         let _self = _this
+        if (!_self.states.url) {
+          _self.ready = true
+          return
+        }
         _self.ready = false
-        _self.searchUrl(_self.states.searchVal)
         o(urlAppend(_self.states.url, {r: Math.random()})).get(function (data) {
           let lengths = data.length
           if (lengths === 0) {
             _self.ready = true
             _self.$store.dispatch(_self.options.gridKey + '_set_table_data', [])
+            _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {pager_Total: 0})
+            _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {pager_CurrentPage: 1})
+//            _self.tableData = []
             _self.$Message.warning('无符合要求数据')
             return
           }
@@ -202,22 +264,49 @@
             pageSize = size
             pageSkip = 0
           } else {
+            let pager_CurrentPage = _self.states.pager_CurrentPage
             pageSize = _self.states.pager_Size
-            pageSkip = _self.states.pager_Size * (_self.states.pager_CurrentPage - 1)
+            pageSkip = _self.states.pager_Size * (pager_CurrentPage - 1)
           }
+
           o(urlAppend(_self.states.url, {r: Math.random()})).take(pageSize).skip(pageSkip).get(function (data) {
-            let datas = _self.formatDate(data)
-            _self.tableData = datas
+//            let datas = _self.formatDate(data)
+//            _self.tableData = datas
+            _self.$store.dispatch(_self.options.gridKey + '_set_table_data', data)
             _self.ready = true
           })
         })
       },
-      formatDate (data) {
+      formatDate (data) {  // 数据处理
+        let arr = this.options.arr
+        let _this = this
+        if (data) {
+          data.forEach(function (dataItem) {
+            arr.forEach(function (arrItem) {
+              if (arrItem.type === 'date') {
+                var d = new Date(dataItem[arrItem.key])
+                let time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + 'T' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+                dataItem[arrItem.key] = time.split('T')[0]
+              } else if (arrItem.type === 'select') {
+                let selectData = _this.$store.state[_this.options.gridKey][arrItem.key]
+                if (selectData) {
+                  selectData.forEach(function (selectItem) {
+//                    console.log(selectItem, selectItem.values + '--------' + dataItem[arrItem.key] + '---------' + arrItem.key)
+                    if (selectItem.values === dataItem[arrItem.key]) {
+                      dataItem[arrItem.key] = selectItem['label']
+                    }
+                  })
+                }
+              }
+            })
+          })
+        }
         return data
       },
       refreshFn () {
         this.reset()
-        this.getList()  // 初始页面取前 10条
+        this.searchUrl()
+        this.getList()
       },
       showDetails (val) { // 详情页
         this.$store.dispatch(this.options.gridKey + '_details_Window_Visible', val)
@@ -240,7 +329,7 @@
         }
       },
       setColumns () {  // 设置列表属性
-        this.columns = this.options.arr.filter(function (item) {
+        this.columns = this.getOptions.arr.filter(function (item) {
           if (item.table_hide !== 1) {
             return item
           }
@@ -259,6 +348,14 @@
               let msg = row.Name ? row.Name + '删除成功' : '删除成功'
               _self.$Message.info(msg)
               _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
+              //            删除最后一页 bug
+              let states = _self.$store.state[_self.options.gridKey]
+              let pager_CurrentPage = states.pager_CurrentPage
+              let pager_Total = states.pager_Total
+              let pageSize = states.pager_Size
+              if (pager_CurrentPage > 1 && pager_Total % pageSize === 1) {
+                _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {pager_CurrentPage: pager_CurrentPage - 1})
+              }
             })
           }
         })

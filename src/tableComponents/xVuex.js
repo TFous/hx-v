@@ -76,6 +76,9 @@ export function registerModule(_this, state, gridKey) {
           _this.$store.commit(gridKey + '_DETAILS_WINDOW_DATA', data)
         }
       },
+      [gridKey + '_set_details_data'] ({dispatch, commit}, data) {
+          _this.$store.commit(gridKey + '_DETAILS_WINDOW_DATA', data)
+      },
       [gridKey + '_set_table_data'] ({dispatch, commit}, val) {
         _this.$store.commit(gridKey + '_TABLE_DATA', val)
       },
@@ -112,6 +115,7 @@ export const options = {
   searchKeys: ['searchAll'], // 存储search对象
   searchVal: null, // 存储search对象
   searchBtn: false, // 存储search对象
+  arrCopy: [], // 存储arr原始对象
   startTime: '', // 存储搜索开始时间
   endTime: '', // 存储搜索结束时间
   timeSelectKey: '', // 存储搜索key

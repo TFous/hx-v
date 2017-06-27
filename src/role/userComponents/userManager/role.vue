@@ -106,7 +106,7 @@
         rightTitle: '权限',
         actionType: 'replace',
         roleArr: '',  // 存储 默认role
-        roleTemplate: ''  // 模版信息
+        roleTemplate: []  // 模版信息
       }
     },
     props: ['options'],
@@ -121,6 +121,7 @@
       'getOptions.edit_Window_Visible': {
         handler: function (val, oldVal) {
           this.getRoleClass()
+          this.roleTemplate = []
           this.UserId = this.getOptions.edit_Window_Data.Id
         },
         deep: false
@@ -139,7 +140,7 @@
               UserId: null
             }).save().then(function (result1) {
               const apiUrl1 = Vue.$baseUrl.roleUrl + '/RoleTemplate/WUCC.GetTemplateRoles'
-              if (selectId < 0) {
+              if (selectId < 0 || selectId === '') {
                 return
               }
               o(apiUrl1).post({

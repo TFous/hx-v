@@ -5,7 +5,7 @@ export const validate = {
         .length !== 0 && !reg.test(value)) {
             callback();
         } else {
-            callback(new Error(rule.message || '必填且不超过100字节,不能含有^%&\',;=?$"等特殊字符'));
+            callback(new Error(rule.message || '必填且不超过100字节,不能含有特殊字符'));
         }
     },
     maxLeng: function (rule, value, callback) {
@@ -19,7 +19,7 @@ export const validate = {
     },
     regEmail: function (rule, value, callback) {
         const reg = new RegExp('^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$');
-        if (reg.test(value)) {
+      if (reg.test(value) || value === null || value === '') {
             callback();
         } else {
             callback(new Error('Email地址格式不正确'));
@@ -27,7 +27,7 @@ export const validate = {
     },
     regPhone: function (rule, value, callback) {
         const reg = new RegExp('^1[3|4|5|7|8][0-9]{9}$');
-        if (reg.test(value)) {
+        if (reg.test(value) || value === null || value === '') {
             callback();
         } else {
             callback(new Error('手机号码格式不正确'));

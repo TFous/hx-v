@@ -1,6 +1,6 @@
 // deepCopy
 export function deepCopy(data) {
-  const t = typeOf(data);
+  const t = typeof(data);
   let obj;
   if (t === 'array') {
     obj = [];
@@ -25,11 +25,18 @@ export function deepCopy(data) {
 export function filterData(val) {
   let items = val;
   let obj = {};
-  for (var item of items) {
+  items.forEach(function (item) {
     if (item.add_hide !== 1) {
-      obj[item.key] = (item.type === 'number' ? null : '')
+      // 測試
+      // obj[item.key] = (item.type === 'date' ? 1 : '123')
+      obj[item.key] = null
+      // obj[item.key] = (item.type === 'date' ? '2017-06-06' : null)
+      // obj[item.key] = (item.type === 'number' ? null : '')
+      if (item.add_hide === 'relyOn') {
+        obj[item.key] = item.value
+      }
     }
-  }
+  })
   return obj
 }
 
@@ -54,7 +61,7 @@ export function bind(fn, ctx) {
  * @param _this   vue
  * @param fn   包含事件集合的 boj
  */
-export function tableFn(_this, fn) {
+export function bindFn(_this, fn) {
   let vue = _this
   let arrFn = fn
   for (let key in arrFn) {
@@ -123,4 +130,62 @@ export function tableFilter($this, filterKey, filterVal) {
   }
   let searchBtn = _this.$store.state[_this.options.gridKey].searchBtn
   _this.$store.dispatch(_this.options.gridKey + '_set_state_data', {searchBtn: !searchBtn})
+}
+
+export function delData(_this, row, o) {
+  let _self = _this
+  _self.$Modal.confirm({
+    title: '批量删除确认',
+    content: '此操作将删除该文件, 是否继续?',
+    onOk: function () {
+      o(_self.options.api).find(row['Id']).remove().save().then(function (data) {
+        let msg = row.Name ? row.Name + '删除成功' : '删除成功'
+        _self.$Message.info(msg)
+        _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
+        //            删除最后一页 bug
+        let states = _self.$store.state[_self.options.gridKey]
+        let pager_CurrentPage = states.pager_CurrentPage
+        let pager_Total = states.pager_Total
+        let pageSize = states.pager_Size
+        // console.log(pager_CurrentPage + '---------' + pager_Total % pageSize)
+        if (pager_CurrentPage > 1 && pager_Total % pageSize === 1) {
+          _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {pager_CurrentPage: pager_CurrentPage - 1})
+        }
+      })
+    }
+  })
+}
+
+export function dataAndFilters($url, keyWrod, fn, fn1, fn2, $this) {
+  let _this = $this
+  let clone = fn
+  let url = _this.$baseUrl.rbs + $url
+  fn2(fn1(url, {r: Math.random()})).get().then(function (data) {
+    let datas = data.data
+    let arr = []
+    let filters = []
+    datas.forEach(function (item) {
+      let o = {}
+      o['label'] = item.Value
+      o['values'] = item.Id
+      arr.push(o)
+
+      let filtersObj = {}
+      filtersObj['label'] = item.Value
+      filtersObj['value'] = `(${keyWrod} eq ${item.Id})`
+      filters.push(filtersObj)
+    })
+    let obj = _this.$store.state[_this.options.gridKey]
+    let deep = clone(obj)
+    let newArr = deep.arr
+    newArr.forEach(function (item) {
+      if (item.key === keyWrod) {
+        item.filters = filters
+      }
+    })
+    _this.$store.dispatch(_this.options.gridKey + '_set_state_data', {arr: newArr})
+    let storeObj = {}
+    storeObj[keyWrod] = arr  // {BusinessType: arr}
+    _this.$store.dispatch(_this.options.gridKey + '_set_state_data', storeObj)
+  })
 }

@@ -37,7 +37,6 @@
   import Vue from 'vue'
   //  import zTree from 'ztree'
   //  let roleUrl = 'http://wucc.wdqh.com:6789/api/odata'
-  //  console.log('zTree' + zTree)
   export default {
     data () {
       sessionStorage.removeItem('RoleObj')

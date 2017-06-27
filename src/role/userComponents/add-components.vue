@@ -181,10 +181,12 @@
 //        PasswordConfrim: '',
         ruleCustom: {
           UserName: [
-            {required: true, validator: Vue.$validate.required, trigger: 'blur'}
+            {required: true, message: '必填'},
+            {validator: Vue.$validate.required, trigger: 'blur'}
           ],
           FullName: [
-            {required: true, validator: Vue.$validate.required, trigger: 'blur'}
+            {required: true, message: '必填'},
+            {validator: Vue.$validate.required, trigger: 'blur'}
           ],
           Password: [
             {validator: validatePass, trigger: 'blur'}
@@ -193,13 +195,16 @@
             {validator: validatePassCheck, trigger: 'blur'}
           ],
           SalesDepartment: [
-            {required: true, validator: Vue.$validate.required, trigger: 'blur'}
+            {required: false},
+            {validator: Vue.$validate.required, trigger: 'blur'}
           ],
           Email: [
-            {required: false, validator: Vue.$validate.regEmail, trigger: 'blur'}
+            {required: false},
+            {validator: Vue.$validate.regEmail, trigger: 'blur'}
           ],
           PhoneNumber: [
-            {required: false, validator: Vue.$validate.regPhone, trigger: 'blur'}
+            {required: false},
+            {validator: Vue.$validate.regPhone, trigger: 'blur'}
           ]
         },
         senior: false,
@@ -231,7 +236,7 @@
     methods: {
       handleSubmit (formName) {
         let _self = this
-        let UserViewModel = Object.assign({}, _self.formCustom)
+        let UserViewModel = Object.assign({}, _self.formCustom, {LockoutEndDateUtc: null})
         delete UserViewModel.PasswordConfrim
         this.$refs[formName].validate((valid) => {
           if (valid) {

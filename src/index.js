@@ -27,7 +27,7 @@ const hxqh = {
     xroleTemplate
 };
 
-const install = function (Vue, baseUrl = {}) {
+const install = function (Vue, baseUrl = {}, role ={}) {
     Object.keys(hxqh).forEach((key) => {
         Vue.component(key, hxqh[key]['default']);
     });
@@ -36,10 +36,12 @@ const install = function (Vue, baseUrl = {}) {
     // });
     Vue.$validate = validate.validate;
     Vue.$baseUrl = baseUrl;
+    Vue.$role = role;
     Vue.$xvuex = xvuex;
     Vue.$f = fn;
     Vue.prototype.$f = fn;     //  this
     Vue.prototype.$baseUrl = baseUrl;
+    Vue.prototype.$role = role;
     Vue.prototype.$xvuex = xvuex;
     Vue.prototype.$validate = validate.validate;
 };

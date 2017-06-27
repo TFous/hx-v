@@ -143,19 +143,24 @@
         },
         ruleCustom: {
           UserName: [
-            {required: true, validator: Vue.$validate.required, trigger: 'blur'}
+            {required: true, message: '必填'},
+            {validator: Vue.$validate.required, trigger: 'blur'}
           ],
           FullName: [
-            {required: true, validator: Vue.$validate.required, trigger: 'blur'}
+            {required: true, message: '必填'},
+            {validator: Vue.$validate.required, trigger: 'blur'}
           ],
           SalesDepartment: [
-            {required: true, validator: Vue.$validate.required, trigger: 'blur'}
+            {required: false},
+            {validator: Vue.$validate.required, trigger: 'blur'}
           ],
           Email: [
-            {required: false, validator: Vue.$validate.regEmail, trigger: 'blur'}
+            {required: false},
+            {validator: Vue.$validate.regEmail}
           ],
           PhoneNumber: [
-            {required: false, validator: Vue.$validate.regPhone, trigger: 'blur'}
+            {required: false},
+            {validator: Vue.$validate.regPhone}
           ]
         },
         senior: false,
@@ -199,10 +204,13 @@
       },
       handleSubmit (formName) {
         let _self = this
+        if (_self.formCustom.LockoutEndDateUtc === ''){
+          _self.formCustom.LockoutEndDateUtc = null
+        }
         let UserViewModel = Object.assign({}, _self.formCustom)
-        delete UserViewModel['Roles']
-        delete UserViewModel['Logins']
-        delete UserViewModel['@odata.context']
+//        delete UserViewModel['Roles']
+//        delete UserViewModel['Logins']
+//        delete UserViewModel['@odata.context']
         this.$refs[formName].validate((valid) => {
           if (valid) {
             const apiUrl = Vue.$baseUrl.roleUrl + `/User('${this.getOptions.edit_Window_Data.Id}')`
