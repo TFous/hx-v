@@ -45,7 +45,7 @@
                             v-model="eidtData[item.key]" placeholder="请选择...">
                             <Option
                               :key="key"
-                              v-for="a in options[item.key]"
+                              v-for="a in getOptions[item.key]"
                               :label="a.label"
                               :value="a.values">
                             </Option>
@@ -64,6 +64,20 @@
                             class="myNumberInput"
                             placeholder="请输入内容"
                           ></Input-number>
+                        </Form-item>
+                      </template>
+                      <template v-else-if="item.type ==='textarea'">
+                        <Form-item
+                          :prop="item.key"
+                          :label="item.title"
+                          :rules="item.rules"
+                        >
+                          <Input v-model="eidtData[item.key]"
+                                 :disabled="item.disabled"
+                                 type="textarea"
+                                 :autosize="{minRows: 2,maxRows: 5}"
+                                 placeholder="请输入...">
+                          </Input>
                         </Form-item>
                       </template>
                       <template v-else>
@@ -98,6 +112,7 @@
 <script>
   import o from 'o.js'
   import * as common from '../common.js'
+  import * as xVuex from '../xVuex.js'
   export default {
     data () {
       return {
@@ -111,12 +126,18 @@
       editFn: Function,
       options: Object
     },
+    beforeMount () {
+      this.$forceUpdate()
+//            防止组建先执行报错，放入子组建执行生成 vuex
+      xVuex.registerModule(this, this.options, this.options.gridKey)
+    },
     mounted: function () {
       try {
         let arrFn = this.editFn()
         common.bindFn(this, arrFn)
       } catch (e) {
       }
+      xVuex.registerModule(this, this.options, this.options.gridKey)
       this.title = this.getOptions.edit_Window_Data.Name || this.options.title
     },
     computed: {
@@ -167,7 +188,8 @@
         let _self = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            o(_self.options.api).find(_self.eidtData.Id).patch(_self.eidtData).save().then(function (data) {
+            let url = _self.options.api.split('?$filter')[0]
+            o(url).find(_self.eidtData.Id).patch(_self.eidtData).save().then(function (data) {
               _self.$Message.success('修改成功')
               _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
               _self.setVisible() // 关闭弹窗

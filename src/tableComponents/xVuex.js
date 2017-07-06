@@ -108,7 +108,10 @@ export function registerModule(_this, state, gridKey) {
 }
 
 export const options = {
+  orderBox: {}, // 存储排序信息
   filterBox: {}, // 存储筛选信息
+  advancedSearchBox: {}, // 存储高级搜索信息
+  adSearchBoolean: false, // 高级搜索是否开启
   timeSearch: true,  // 是否显示时间搜索
   refresh: false,  // 提供一个变量watch 是否需要刷新页面
   delData: [],  // 存储批量删除的对象
@@ -121,7 +124,7 @@ export const options = {
   timeSelectKey: '', // 存储搜索key
   defaultSearch: '',  // 默认 搜索选项
   disabledSearch: false, // 是否禁用搜索下拉 true：禁用
-  pager_Opts: [5, 15, 20],  // 每页展示数量
+  pager_Opts: [5, 50, 100],  // 每页展示数量
   pager_Size: 5,   //  默认显示每页数量，和opts第一个一样
   pager_CurrentPage: 1, // 当前第几页
   pager_Total: 0,   // 总页数

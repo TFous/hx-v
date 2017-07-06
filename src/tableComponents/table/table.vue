@@ -2,6 +2,7 @@
   <div>
     <div class="tabletemplate" v-show="ready">
       <Table
+        :height="tableHeight"
         stripe
         border
         :columns="columns"
@@ -13,7 +14,7 @@
     </div>
     <div style="padding:80px;margin:80px;position: relative;" v-show="!ready">
       <Spin fix>
-        <Icon type="load-c" size=40           class="icon-load"></Icon>
+        <Icon type="load-c" size=40 class="icon-load"></Icon>
         <div>Loading</div>
       </Spin>
     </div>
@@ -35,6 +36,10 @@
     },
     props: {
       // api接口
+      tableHeight: {
+          type: String,
+          default: 'auto',
+      },
       tableFn: Function,
       options: Object
     },
@@ -47,8 +52,8 @@
               let o = Object.assign({}, e)
               newArr.push(o)
             })
-            let datas = this.formatDate(newArr)
-            this.tableData = datas
+//            let datas = this.formatDate(newArr)
+            this.tableData = newArr
           }
         },
         deep: true
@@ -62,7 +67,15 @@
       },
       'states.searchBtn': {
         handler: function (val, oldVal) {
-          oldVal !== undefined ? this.searchUrl(this.states.searchVal) : null
+          if (oldVal !== undefined) {
+            let adSearchBoolean = this.$store.state[this.options.gridKey].adSearchBoolean
+            if (adSearchBoolean) { // 高级搜索
+              this.advancedSearchUrl()
+            } else {  // 普通搜索
+              this.searchUrl(this.states.searchVal)
+            }
+          }
+//          oldVal !== undefined ? this.searchUrl(this.states.searchVal) : null
           this.$store.dispatch(this.options.gridKey + '_set_state_data', {pager_CurrentPage: 1})
         },
         deep: true
@@ -84,6 +97,8 @@
         handler: function (val, oldVal) {
           if (val !== undefined && val !== null && val !== '') {
             this.getList()
+          } else {
+            this.ready = true // 空的时候释放ready
           }
         },
         deep: true
@@ -102,10 +117,9 @@
       }
     },
     mounted () {
-      this.setColumns()
       this.states = this.$store.state[this.options.gridKey]
-      this.refreshFn()  // 初始页面获取总页数
-
+//      this.refreshFn()  // 初始页面获取总页数
+//      this.setColumns()
       // 来自父组建的事件集合
       try {
         let arrFn = this.tableFn()
@@ -132,10 +146,19 @@
         let key = column.key
         let order = column.order
         let orderUrl = `${key}%20${order}`
-        if (order === 'normal') {
-          this.searchUrl(null, '')
-        } else {
-          this.searchUrl(null, orderUrl)
+        let adSearchBoolean = this.$store.state[this.options.gridKey].adSearchBoolean
+        if (adSearchBoolean) { // 高级搜索
+          if (order === 'normal') {
+            this.advancedSearchUrl('')
+          } else {
+            this.advancedSearchUrl(orderUrl)
+          }
+        } else {  // 普通搜索
+          if (order === 'normal') {
+            this.searchUrl(null, '')
+          } else {
+            this.searchUrl(null, orderUrl)
+          }
         }
       },
       /**
@@ -161,8 +184,8 @@
         let endTime
         let timeSelectKey
         if (_self.states.startTime && _self.states.endTime) {
-          startTime = fn.toLocaleString(_self.states.startTime)
-          endTime = fn.toLocaleString(_self.states.endTime)
+          startTime = _self.$f.toLocaleString(_self.states.startTime)
+          endTime = _self.$f.endTime(_self.states.endTime)
           timeSelectKey = _self.states.timeSelectKey
           if (startTime && endTime) {
             let timeUrl = `${timeSelectKey} ge ${startTime}Z and ${timeSelectKey} le ${endTime}Z`
@@ -183,7 +206,6 @@
         if (filterUrl !== '') {
           urlObj['filterUrl'] = `(${filterUrl.slice(0, -3)})`
         }
-
         /**
          *  关键词搜索
          */
@@ -214,11 +236,116 @@
           lastUrl += `${urlObj[key]}and`
         }
         if (lastUrl !== '') {
-          searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}`)
+          if (sUrl.indexOf('?$filter=') > -1) {
+            searchUrlString = (sUrl + ` and ` + `${lastUrl.slice(0, -3)}`)
+          } else {
+            searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}`)
+          }
           // if (startTime && endTime) {
           //     searchUrlString += `&$orderby=${timeSelectKey} desc`
           // }
 
+          if (order !== '') {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${encodeURI(searchUrlString)}&$orderby=${order}`})
+          } else {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: encodeURI(searchUrlString)})
+          }
+        } else {
+          if (order !== '') {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${sUrl}?$orderby=${order}`})
+          } else {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: sUrl})
+          }
+        }
+      },
+      // 高级搜索
+      advancedSearchUrl (order = '', _this = this) {
+        let _self = _this
+        let advancedSearchObj = _self.states.advancedSearchBox  // 高级搜索
+        let opts = _self.states.arr  // 匹配类型
+        let sUrl = _self.states.api  // url
+        let urlObj = {}
+        let isEmptyObject = this.$f.isEmptyObject(advancedSearchObj)
+        /**
+         *  时间搜索
+         *
+         */
+        if (isEmptyObject !== true) {
+          let valUrl = ``
+          for (let key in advancedSearchObj) {
+            for (let item of opts) {
+              if (key === item['key']) {
+                if (item.type === 'date') {
+                  if (advancedSearchObj[key][0] !== '') {
+//                      console.log(advancedSearchObj[key][1])
+//                    let eTime = fn.toLocaleString(advancedSearchObj[key][1]).split('T')[0].split('-')
+//                    let startTime = _self.$f.toLocaleString(advancedSearchObj[key][0])
+//                    let endTime = `${eTime[0]}-${eTime[1]}-${eTime[2]}T08:00:00`
+                    let startTime = fn.toLocaleString(advancedSearchObj[key][0])
+                    let endTime = fn.endTime(advancedSearchObj[key][1])
+                    valUrl += `(${key} ge ${startTime}Z and ${key} le ${endTime}Z)and`
+                  }
+                }
+              }
+            }
+          }
+          if (valUrl !== '') {
+            urlObj['timeUrl'] = `(${valUrl.slice(0, -3)})`
+          }
+        }
+        /**
+         *  条件筛选
+         */
+        let filterUrl = ``
+        for (let filters in _self.states.filterBox) {
+          let filtersHtmls = ``
+          _self.states.filterBox[filters].forEach(function (key) {
+            filtersHtmls += `${key}or`
+          })
+          filterUrl += `(${filtersHtmls.slice(0, -2)})and`
+        }
+        if (filterUrl !== '') {
+          urlObj['filterUrl'] = `(${filterUrl.slice(0, -3)})`
+        }
+        /**
+         *  高级搜索
+         */
+        let advancedSearchUrl = ``
+        if (isEmptyObject !== true) {
+          let valUrl = ``
+          for (let key in advancedSearchObj) {
+            for (let item of opts) {
+              if (key === item['key']) {
+                if (item.type === 'number') {
+                  if (Number(val)) {
+                    valUrl += `(${key} eq ${advancedSearchObj[key]})and`
+                  }
+                }
+                if (item.type === '') {
+                  valUrl += `(contains(${key},'${advancedSearchObj[key]}'))and`
+                }
+              }
+            }
+          }
+          if (valUrl !== '') {
+            urlObj['advancedSearchUrl'] = `(${valUrl.slice(0, -3)})`
+          }
+        }
+        /**
+         *  url 拼接
+         */
+        let searchUrlString = ``
+        let lastUrl = ``
+        for (let key in urlObj) {
+          lastUrl += `${urlObj[key]}and`
+        }
+
+        if (lastUrl !== '') {
+          if (sUrl.indexOf('?$filter=') > -1) {
+            searchUrlString = (sUrl + ` and ` + `${lastUrl.slice(0, -3)}`)
+          } else {
+            searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}`)
+          }
           if (order !== '') {
             _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${encodeURI(searchUrlString)}&$orderby=${order}`})
           } else {
@@ -264,14 +391,12 @@
             pageSize = size
             pageSkip = 0
           } else {
-            let pager_CurrentPage = _self.states.pager_CurrentPage
+            let pagerCurrentPage = _self.states.pager_CurrentPage
             pageSize = _self.states.pager_Size
-            pageSkip = _self.states.pager_Size * (pager_CurrentPage - 1)
+            pageSkip = _self.states.pager_Size * (pagerCurrentPage - 1)
           }
 
           o(urlAppend(_self.states.url, {r: Math.random()})).take(pageSize).skip(pageSkip).get(function (data) {
-//            let datas = _self.formatDate(data)
-//            _self.tableData = datas
             _self.$store.dispatch(_self.options.gridKey + '_set_table_data', data)
             _self.ready = true
           })
@@ -283,11 +408,11 @@
         if (data) {
           data.forEach(function (dataItem) {
             arr.forEach(function (arrItem) {
-              if (arrItem.type === 'date') {
-                var d = new Date(dataItem[arrItem.key])
-                let time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + 'T' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
-                dataItem[arrItem.key] = time.split('T')[0]
-              } else if (arrItem.type === 'select') {
+//              if (arrItem.type === 'date') {
+//                let time = fn.Ttime(dataItem[arrItem.key])
+//                dataItem[arrItem.key] = time.split('T')[0]
+//              } else
+              if (arrItem.type === 'select2') {
                 let selectData = _this.$store.state[_this.options.gridKey][arrItem.key]
                 if (selectData) {
                   selectData.forEach(function (selectItem) {

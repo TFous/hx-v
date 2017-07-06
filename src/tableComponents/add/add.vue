@@ -43,7 +43,7 @@
                             <Select v-model="dataMsg[item.key]" placeholder="请选择...">
                               <Option
                                 :key="key"
-                                v-for="a in options[item.key]"
+                                v-for="a in getOptions[item.key]"
                                 :label="a.label"
                                 :value="a.values">
                               </Option>
@@ -61,6 +61,19 @@
                               placeholder="请输入内容"
                               class="myNumberInput"
                             ></Input-number>
+                          </Form-item>
+                        </template>
+                        <template v-else-if="item.type ==='textarea'">
+                          <Form-item
+                            :prop="item.key"
+                            :label="item.title"
+                            :rules="item.rules"
+                          >
+                            <Input v-model="dataMsg[item.key]"
+                                   type="textarea"
+                                   :autosize="{minRows: 2,maxRows: 5}"
+                                   placeholder="请输入...">
+                            </Input>
                           </Form-item>
                         </template>
                         <template v-else>
@@ -85,11 +98,11 @@
           </Col>
         </Row>
       </div>
-      <div slot="footer">
-        <Button @click="setAddVisible">取消</Button>
-        <!--<Button type="info" @click="handleReset('addForm')">重置</Button>-->
-        <Button type="primary" @click="handleSubmit('addForm')">提交</Button>
-      </div>
+        <div slot="footer">
+          <Button @click="setAddVisible">取消</Button>
+          <!--<Button type="info" @click="handleReset('addForm')">重置</Button>-->
+          <Button type="primary" @click="handleSubmit('addForm')">提交</Button>
+        </div>
     </Modal>
   </div>
 </template>
@@ -161,13 +174,14 @@
                 newData[item] = null
               }
             }
-            o(_self.options.api).post(newData).save().then(function (data) {
+            let url = _self.options.api.split('?$filter')[0]
+            o(url).post(newData).save().then(function (data) {
               _self.$Message.success('新增成功')
               _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
               _self.setAddVisible() // 关闭弹窗
             })
           } else {
-            console.log('error submit!!1123')
+            console.log('error submit!!')
             return false
           }
         })

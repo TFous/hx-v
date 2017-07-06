@@ -1,27 +1,3 @@
-// deepCopy
-export function deepCopy(data) {
-  const t = typeof(data);
-  let obj;
-  if (t === 'array') {
-    obj = [];
-  } else if (t === 'object') {
-    obj = {};
-  } else {
-    return data;
-  }
-
-  if (t === 'array') {
-    for (let i = 0; i < data.length; i++) {
-      obj.push(deepCopy(data[i]));
-    }
-  } else if (t === 'object') {
-    for (let i in data) {
-      obj[i] = deepCopy(data[i]);
-    }
-  }
-  return obj;
-}
-
 export function filterData(val) {
   let items = val;
   let obj = {};
@@ -32,7 +8,7 @@ export function filterData(val) {
       obj[item.key] = null
       // obj[item.key] = (item.type === 'date' ? '2017-06-06' : null)
       // obj[item.key] = (item.type === 'number' ? null : '')
-      if (item.add_hide === 'relyOn') {
+      if (item.add_hide === 'relyOn' || item.add_hide === 'relyOn|show') {
         obj[item.key] = item.value
       }
     }
@@ -112,6 +88,14 @@ export function toLocaleString(t) {
   return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
 }
 
+export function endTime(t) {
+  let d = new Date(t).getTime()
+  let times = new Date(d)
+  let year = times.getFullYear()
+  let month = (times.getMonth() + 1).toString().length === 2 ? (times.getMonth() + 1) : `0${(times.getMonth() + 1)}`
+  let day = (times.getDate()).toString().length === 2 ? (times.getDate()) : `0${(times.getDate())}`
+  return `${year}-${month}-${day}T08:00:00`
+}
 /**
  *
  * @param $this
@@ -156,6 +140,34 @@ export function delData(_this, row, o) {
   })
 }
 
+export function changeDel(_this, row, o) {
+  let _self = _this
+  _self.$Modal.confirm({
+    title: '批量删除确认',
+    content: '此操作将删除该文件, 是否继续?',
+    onOk: function () {
+      try {
+        delete row._index
+      } catch (e) {
+      }
+      Object.assign(row, {IsDelete: true})
+      o(_self.options.api).find(row['Id']).patch(row).save().then(function (data) {
+        let msg = row.Name ? row.Name + '删除成功' : '删除成功'
+        _self.$Message.info(msg)
+        _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
+        //            删除最后一页 bug
+        let states = _self.$store.state[_self.options.gridKey]
+        let pager_CurrentPage = states.pager_CurrentPage
+        let pager_Total = states.pager_Total
+        let pageSize = states.pager_Size
+        // console.log(pager_CurrentPage + '---------' + pager_Total % pageSize)
+        if (pager_CurrentPage > 1 && pager_Total % pageSize === 1) {
+          _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {pager_CurrentPage: pager_CurrentPage - 1})
+        }
+      })
+    }
+  })
+}
 export function dataAndFilters($url, keyWrod, fn, fn1, fn2, $this) {
   let _this = $this
   let clone = fn
@@ -188,4 +200,152 @@ export function dataAndFilters($url, keyWrod, fn, fn1, fn2, $this) {
     storeObj[keyWrod] = arr  // {BusinessType: arr}
     _this.$store.dispatch(_this.options.gridKey + '_set_state_data', storeObj)
   })
+}
+
+// 时间转换
+export function Ttime(time) {
+  let d = new Date(time)
+  // let newTime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + 'T' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+  return d
+}
+
+
+// 时间和select转换
+export function tableRender($this,Vuxoptions,clone) {
+  let _this = $this
+  let optArr = clone(Vuxoptions.arr)
+  optArr.forEach(function (arrItem) {
+    if (arrItem.type === 'select') {
+      arrItem['render'] = (h, params) => {
+        return h('div',
+          {
+            class: 'tableBtn'
+          }, [
+            (function () {
+              let val = params.row[arrItem.key]
+              let arr = Vuxoptions[arrItem.key]
+              let name
+              try {
+                arr.forEach(function (item) {
+                  // if (item.values !== val) {
+                  //   name = val + '--- 数据字典无'
+                  // }
+                  if (item.values === val) {
+                    name = item.label
+                  }
+                })
+              } catch (e) {
+              }
+              return name
+            })()
+          ])
+      }
+    } else if (arrItem.type === 'date') {
+      arrItem['render'] = (h, params) => {
+        return h('div',
+          {
+            class: 'tableBtn'
+          }, [
+            (function () {
+              try {
+                let time = params.row[arrItem.key]
+                return time !== '' ? time.split('T')[0] : ''
+              } catch (e) {
+              }
+            })()
+          ])
+      }
+    }
+  })
+  _this.$store.dispatch(Vuxoptions.gridKey + '_set_state_data', {arr: optArr})  // 还原去除 columns 的 filter
+}
+
+// 页面配置
+export function fnReset($this,o) {
+  let _this = $this
+  _this.$Message.config({
+    top: 10,
+    duration: 1.5
+  })
+  o().config({
+    error: function (e, response) {
+      _this.$Notice.error({
+        title: '错误信息',
+        desc: response
+      })
+    }      // a function which is executed on error
+  })
+}
+// 页面从vuex转换数据字典
+export function dicData(data, keyWrod, fn, $this) {
+  let _this = $this
+  let clone = fn
+  let datas = data
+  let arr = []
+  let filters = []
+  datas.forEach(function (item) {
+    let o = {}
+    o['label'] = item.Value
+    o['values'] = item.Id
+    arr.push(o)
+
+    let filtersObj = {}
+    filtersObj['label'] = item.Value
+    filtersObj['value'] = `(${keyWrod} eq ${item.Id})`
+    filters.push(filtersObj)
+  })
+  let obj = _this.$store.state[_this.options.gridKey]
+  let deep = clone(obj)
+  let newArr = deep.arr
+  newArr.forEach(function (item) {
+    if (item.key === keyWrod) {
+      item.filters = filters
+    }
+  })
+  _this.$store.dispatch(_this.options.gridKey + '_set_state_data', {arr: newArr})
+  let storeObj = {}
+  storeObj[keyWrod] = arr  // {BusinessType: arr}
+  _this.$store.dispatch(_this.options.gridKey + '_set_state_data', storeObj)
+}
+
+
+// 判断object/json 是否为空
+export function isEmptyObject(e) {
+  var t;
+  for (t in e)
+    return !1;
+  return !0
+}
+
+// 设置table 表头，去除filter，筛选 及勾选，action
+export function setColumn(arr) {
+  let arrs = arr
+  let newArr = []
+  arrs.forEach(function (item) {
+    if (item.type !== 'selection' && item.key !== 'action') {
+      if (item.filters) {
+        delete item.filterRemote
+        delete item.filters
+        newArr.push(item)
+      } else if (item.sortable) {
+        delete item.sortable
+        newArr.push(item)
+      } else {
+        newArr.push(item)
+      }
+    }
+  })
+  return newArr
+}
+
+// 设置table 表头，action
+export function setColumnNoActon(arr) {
+  let arrs = arr
+  let newArr = []
+  arrs.forEach(function (item) {
+    if (item.type !== 'selection' && item.key !== 'action') {
+      newArr.push(item)
+    }
+  })
+  return newArr
 }
