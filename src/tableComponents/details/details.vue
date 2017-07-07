@@ -60,7 +60,6 @@
       'getOptions.details_Window_Visible': {
         handler: function (val, oldVal) {
           this.show = val
-
           let _this = this
           if (val === true) {
             this.eidtData = Object.assign({}, this.getOptions.details_Window_Data)
@@ -74,7 +73,10 @@
                   }
                 })
               } else if (arrItem.type === 'date') {
-                _this.eidtData[arrItem.key] = _this.eidtData[arrItem.key].split('T')[0]
+                try {
+                  _this.eidtData[arrItem.key] = _this.eidtData[arrItem.key].split('T')[0]
+                } catch (e) {
+                }
               }
             })
             try {

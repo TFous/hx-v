@@ -3,6 +3,7 @@
     <div class="tabletemplate" v-show="ready">
       <Table
         :height="tableHeight"
+        :width="tableWidth"
         stripe
         border
         :columns="columns"
@@ -37,6 +38,10 @@
     props: {
       // api接口
       tableHeight: {
+          type: String,
+          default: 'auto',
+      },
+      tableWidth: {
           type: String,
           default: 'auto',
       },
@@ -175,6 +180,7 @@
         let Keys = _self.states.searchKeys  // 搜索 键
         let opts = _self.states.arr  // 匹配类型
         let sUrl = _self.states.api  // url
+        let oldUrl = _self.states.url
         let urlObj = {}
         /**
          *  时间搜索
@@ -231,30 +237,37 @@
          *  url 拼接
          */
         let searchUrlString = ``
-        let lastUrl = ``
+        let lastUrl = ``  // 是否有搜索筛选
         for (let key in urlObj) {
           lastUrl += `${urlObj[key]}and`
         }
         if (lastUrl !== '') {
+          // 判断是不是条件url
           if (sUrl.indexOf('?$filter=') > -1) {
-            searchUrlString = (sUrl + ` and ` + `${lastUrl.slice(0, -3)}`)
+            searchUrlString = (sUrl + ` and ` + `${lastUrl.slice(0, -3)}&`)
           } else {
-            searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}`)
+            searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}&`)
           }
-          // if (startTime && endTime) {
-          //     searchUrlString += `&$orderby=${timeSelectKey} desc`
-          // }
-
           if (order !== '') {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${encodeURI(searchUrlString)}&$orderby=${order}`})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${searchUrlString}&$orderby=${order}`})
           } else {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: encodeURI(searchUrlString)})
+            if (oldUrl.indexOf('$orderby') > -1) {
+              let oldOrder = oldUrl.split('$orderby')[1]
+              searchUrlString += `$orderby${oldOrder}`
+            } // 判断原先url是否带有order
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: searchUrlString})
           }
         } else {
-          if (order !== '') {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${sUrl}?$orderby=${order}`})
+          // 判断是不是条件url
+          if (sUrl.indexOf('?$filter=') > -1) {  // 有filter 无 筛选
+            searchUrlString = (sUrl + `&`)
           } else {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: sUrl})
+            searchUrlString = (sUrl + `?`)
+          }
+          if (order !== '') {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${searchUrlString}$orderby=${order}`})
+          } else {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: searchUrlString})
           }
         }
       },
@@ -265,6 +278,7 @@
         let opts = _self.states.arr  // 匹配类型
         let sUrl = _self.states.api  // url
         let urlObj = {}
+        let oldUrl = _self.states.url
         let isEmptyObject = this.$f.isEmptyObject(advancedSearchObj)
         /**
          *  时间搜索
@@ -339,23 +353,33 @@
         for (let key in urlObj) {
           lastUrl += `${urlObj[key]}and`
         }
-
         if (lastUrl !== '') {
+          // 判断是不是条件url
           if (sUrl.indexOf('?$filter=') > -1) {
-            searchUrlString = (sUrl + ` and ` + `${lastUrl.slice(0, -3)}`)
+            searchUrlString = (sUrl + ` and ` + `${lastUrl.slice(0, -3)}&`)
           } else {
-            searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}`)
+            searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}&`)
           }
           if (order !== '') {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${encodeURI(searchUrlString)}&$orderby=${order}`})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${searchUrlString}&$orderby=${order}`})
           } else {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: encodeURI(searchUrlString)})
+            if (oldUrl.indexOf('$orderby') > -1) {
+              let oldOrder = oldUrl.split('$orderby')[1]
+              searchUrlString += `$orderby${oldOrder}`
+            } // 判断原先url是否带有order
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: searchUrlString})
           }
         } else {
-          if (order !== '') {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${sUrl}?$orderby=${order}`})
+          // 判断是不是条件url
+          if (sUrl.indexOf('?$filter=') > -1) {  // 有filter 无 筛选
+            searchUrlString = (sUrl + `&`)
           } else {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: sUrl})
+            searchUrlString = (sUrl + `?`)
+          }
+          if (order !== '') {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${searchUrlString}$orderby=${order}`})
+          } else {
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: searchUrlString})
           }
         }
       },

@@ -216,6 +216,10 @@ export function tableRender($this,Vuxoptions,clone) {
   let optArr = clone(Vuxoptions.arr)
   optArr.forEach(function (arrItem) {
     if (arrItem.type === 'select') {
+      // arrItem['filters'] = []
+      // arrItem['filterRemote'] = (value) => {
+      //   $this.$f.tableFilter($this, arrItem.key, value)
+      // }
       arrItem['render'] = (h, params) => {
         return h('div',
           {

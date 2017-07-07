@@ -36,7 +36,7 @@ function createMutations(state, gridKey) {
       state.refresh = !state.refresh
     },
     [gridKey + '_STATE_DATA'] (state, data) {
-      Object.assign(state, data)
+        Object.assign( state, data)
     },
     [gridKey + '_PAGER_DATA'] (state, data) {
       Object.assign(state.pager, data)
@@ -124,8 +124,8 @@ export const options = {
   timeSelectKey: '', // 存储搜索key
   defaultSearch: '',  // 默认 搜索选项
   disabledSearch: false, // 是否禁用搜索下拉 true：禁用
-  pager_Opts: [5, 50, 100],  // 每页展示数量
-  pager_Size: 5,   //  默认显示每页数量，和opts第一个一样
+  pager_Opts: [20, 50, 100],  // 每页展示数量
+  pager_Size: 20,   //  默认显示每页数量，和opts第一个一样
   pager_CurrentPage: 1, // 当前第几页
   pager_Total: 0,   // 总页数
   tableData: [],  // 所有的增删改拆后的数据覆盖存储

@@ -11,6 +11,7 @@
             </Button>
           </slot>
         </template>
+        <slot name="refreshAfter"></slot>
         <template v-if="addShow">
           <slot name="addBtn">
             <Button type="primary" @click="setAddVisible" title="新增">
@@ -18,6 +19,7 @@
             </Button>
           </slot>
         </template>
+        <slot name="addAfter"></slot>
         <template v-if="delShow">
           <slot name="batchBtn">
             <Button type="error" @click="batchDel" title="批量删除">
@@ -25,9 +27,11 @@
             </Button>
           </slot>
         </template>
+        <slot name="delAfter"></slot>
         </Col>
-        <Col span="2" style="float: right;">
+        <Col span="2" style="float: right;" v-show="adSearchShow">
         <Tooltip content="是否显示高级搜索" placement="top-start">
+          <span style="font-size: 13px;">高级搜索：</span>
           <i-switch v-model="advancedSearch" @on-change="switchChange">
             <span slot="open">开</span>
             <span slot="close">关</span>
@@ -53,6 +57,7 @@
               </Input>
             </Col>
             <Col span="10">
+            <slot name="searchAfter"></slot>
             <template v-if="options.timeSearch && timeSearchShow">
               <Row>
                 <Col span="5">
@@ -147,6 +152,10 @@
         default: 'width:80px'
       },
       addShow: {
+        type: [Boolean, String],
+        default: true
+      },
+      adSearchShow: {
         type: [Boolean, String],
         default: true
       },
