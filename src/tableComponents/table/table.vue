@@ -3,9 +3,9 @@
     <div class="tabletemplate" v-show="ready">
       <Table
         :height="tableHeight"
-        :width="tableWidth"
         stripe
         border
+        size="small"
         :columns="columns"
         :data="tableData"
         @on-row-dblclick="showDetails"
@@ -22,7 +22,9 @@
   </div>
 </template>
 <script>
+  let isFirst = true
   import o from 'o.js'
+//  import clone from 'clone'
   import * as fn from '../common'
   import urlAppend from 'url-append'
   export default {
@@ -38,18 +40,19 @@
     props: {
       // api接口
       tableHeight: {
-          type: String,
-          default: 'auto',
-      },
-      tableWidth: {
-          type: String,
-          default: 'auto',
+        type: String,
+        default: 'auto',
       },
       tableFn: Function,
       options: Object
     },
+    destroyed () {
+//      this.$store.unregisterModule(this.options.gridKey)
+//      console.log(this.$store.state)
+      isFirst = true
+    },
     watch: {
-      'getOptions.tableData': {
+      'states.tableData': {
         handler: function (val, oldVal) {
           if (oldVal !== undefined) {
             let newArr = []
@@ -57,7 +60,6 @@
               let o = Object.assign({}, e)
               newArr.push(o)
             })
-//            let datas = this.formatDate(newArr)
             this.tableData = newArr
           }
         },
@@ -65,7 +67,9 @@
       },
       'states.refresh': {
         handler: function (val, oldVal) {
-          oldVal !== undefined ? this.refreshFn() : null
+          if (oldVal !== undefined) {
+              this.refreshFn()
+          }
 //          this.$store.dispatch(this.options.gridKey + '_set_state_data', {pager_CurrentPage: 1})
         },
         deep: true
@@ -87,8 +91,10 @@
       },
       'states.pager_Size': {
         handler: function (val, oldVal) {
-          this.$store.dispatch(this.options.gridKey + '_set_state_data', {pager_CurrentPage: 1})
-          oldVal !== undefined ? this.getList(val) : null
+          if (oldVal !== undefined) {
+            this.$store.dispatch(this.options.gridKey + '_set_state_data', {pager_CurrentPage: 1})
+            this.getList(val)
+          }
         },
         deep: true
       },
@@ -100,7 +106,7 @@
       },
       'states.url': {   //todo   搜索也会执行,待优化
         handler: function (val, oldVal) {
-          if (val !== undefined && val !== null && val !== '') {
+          if (oldVal !== undefined && (val !== null || val !== '')) {
             this.getList()
           } else {
             this.ready = true // 空的时候释放ready
@@ -111,7 +117,9 @@
       'states.pager_CurrentPage': {
         handler: function (val, oldVal) {
           this.$store.dispatch(this.options.gridKey + '_set_state_data', {pager_CurrentPage: val})
-          oldVal !== undefined ? this.getList() : null
+          if (oldVal !== undefined ) {
+            this.getList()
+          }
         },
         deep: true
       }
@@ -123,13 +131,15 @@
     },
     mounted () {
       this.states = this.$store.state[this.options.gridKey]
-//      this.refreshFn()  // 初始页面获取总页数
-//      this.setColumns()
       // 来自父组建的事件集合
       try {
         let arrFn = this.tableFn()
         fn.bindFn(this, arrFn)
       } catch (e) {
+      }
+      if (isFirst) {
+        this.getList()
+        isFirst = false
       }
     },
     updated () {
@@ -160,9 +170,9 @@
           }
         } else {  // 普通搜索
           if (order === 'normal') {
-            this.searchUrl(null, '')
+            this.searchUrl(this.states.searchVal, '')
           } else {
-            this.searchUrl(null, orderUrl)
+            this.searchUrl(this.states.searchVal, orderUrl)
           }
         }
       },
@@ -190,8 +200,8 @@
         let endTime
         let timeSelectKey
         if (_self.states.startTime && _self.states.endTime) {
-          startTime = _self.$f.toLocaleString(_self.states.startTime)
-          endTime = _self.$f.endTime(_self.states.endTime)
+          startTime = fn.toLocaleString(_self.states.startTime)
+          endTime = fn.endTime(_self.states.endTime)
           timeSelectKey = _self.states.timeSelectKey
           if (startTime && endTime) {
             let timeUrl = `${timeSelectKey} ge ${startTime}Z and ${timeSelectKey} le ${endTime}Z`
@@ -221,17 +231,24 @@
             for (let item of opts) {
               if (key === item['key']) {
                 if (item.type === 'number') {
-                  if (Number(val)) {
+                  if (isNaN(Number(val))) {
+//                    _this.$Notice.error({
+//                      title: '搜索信息',
+//                      desc: `${item.title} -- 输入值不能为字符串，自动略过该条件！`
+//                    })
+                  } else {
                     valUrl += `(${key} eq ${val})or`
                   }
                 }
-                if (item.type === '') {
+                if (item.type === '' || item.type === 'textarea') {
                   valUrl += `(contains(${key},'${val}'))or`
                 }
               }
             }
           }
-          urlObj['keyWorkUrl'] = `(${valUrl.slice(0, -2)})`
+          if (valUrl !== '') {
+            urlObj['keyWorkUrl'] = `(${valUrl.slice(0, -2)})`
+          }
         }
         /**
          *  url 拼接
@@ -249,13 +266,13 @@
             searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}&`)
           }
           if (order !== '') {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${searchUrlString}&$orderby=${order}`})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: urlAppend(`${searchUrlString}&$orderby=${order}`, {r: Math.random()})})
           } else {
             if (oldUrl.indexOf('$orderby') > -1) {
               let oldOrder = oldUrl.split('$orderby')[1]
               searchUrlString += `$orderby${oldOrder}`
             } // 判断原先url是否带有order
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: searchUrlString})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: urlAppend(searchUrlString, {r: Math.random()})})
           }
         } else {
           // 判断是不是条件url
@@ -265,9 +282,9 @@
             searchUrlString = (sUrl + `?`)
           }
           if (order !== '') {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${searchUrlString}$orderby=${order}`})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: urlAppend(`${searchUrlString}$orderby=${order}`, {r: Math.random()})})
           } else {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: searchUrlString})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: urlAppend(searchUrlString, {r: Math.random()})})
           }
         }
       },
@@ -290,7 +307,7 @@
             for (let item of opts) {
               if (key === item['key']) {
                 if (item.type === 'date') {
-                  if (advancedSearchObj[key][0] !== '') {
+                  if (advancedSearchObj[key][0] !== '' && advancedSearchObj[key][0] !== null) {
 //                      console.log(advancedSearchObj[key][1])
 //                    let eTime = fn.toLocaleString(advancedSearchObj[key][1]).split('T')[0].split('-')
 //                    let startTime = _self.$f.toLocaleString(advancedSearchObj[key][0])
@@ -331,12 +348,21 @@
             for (let item of opts) {
               if (key === item['key']) {
                 if (item.type === 'number') {
-                  if (Number(val)) {
-                    valUrl += `(${key} eq ${advancedSearchObj[key]})and`
+                  if (isNaN(Number(advancedSearchObj[key]))) {
+//                    _this.$Notice.error({
+//                      title: '搜索信息',
+//                      desc: `${item.title} -- 输入值不能为字符串，自动略过该条件！`
+//                    })
+                  } else {
+                    if (advancedSearchObj[key] !== '') {
+                      valUrl += `(${key} eq ${Number(advancedSearchObj[key])})and`
+                    }
                   }
                 }
-                if (item.type === '') {
-                  valUrl += `(contains(${key},'${advancedSearchObj[key]}'))and`
+                if (item.type === '' || item.type === 'textarea') {
+                  if (advancedSearchObj[key] !== '') {
+                    valUrl += `(contains(${key},'${advancedSearchObj[key]}'))and`
+                  }
                 }
               }
             }
@@ -361,13 +387,13 @@
             searchUrlString = (sUrl + `?$filter=` + `${lastUrl.slice(0, -3)}&`)
           }
           if (order !== '') {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${searchUrlString}&$orderby=${order}`})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: urlAppend(`${searchUrlString}&$orderby=${order}`, {r: Math.random()})})
           } else {
             if (oldUrl.indexOf('$orderby') > -1) {
               let oldOrder = oldUrl.split('$orderby')[1]
               searchUrlString += `$orderby${oldOrder}`
             } // 判断原先url是否带有order
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: searchUrlString})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: urlAppend(searchUrlString, {r: Math.random()})})
           }
         } else {
           // 判断是不是条件url
@@ -377,18 +403,19 @@
             searchUrlString = (sUrl + `?`)
           }
           if (order !== '') {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: `${searchUrlString}$orderby=${order}`})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: urlAppend(`${searchUrlString}$orderby=${order}`, {r: Math.random()})})
           } else {
-            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: searchUrlString})
+            _self.$store.dispatch(_self.states.gridKey + '_set_state_data', {url: urlAppend(searchUrlString, {r: Math.random()})})
           }
         }
       },
 //      重置 刷新
       reset () {
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {endTime: null})
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {startTime: null})
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchVal: null})
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {filterBox: null})
+        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {delData: []})
+        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {endTime: ''})
+        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {startTime: ''})
+        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchVal: ''})
+        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {filterBox: {}})
       },
       //        获取表格数据
       getList (size, _this = this) {
@@ -398,8 +425,15 @@
           return
         }
         _self.ready = false
-        o(urlAppend(_self.states.url, {r: Math.random()})).get(function (data) {
-          let lengths = data.length
+        let sUrl = _self.states.url  // url
+        let splitUrl = sUrl.split('?$filter=')
+        if (sUrl.indexOf('?$filter=') > -1) {
+          sUrl = splitUrl[0] + '/$count?$filter=' + splitUrl[1]
+        } else { // 上面加了个？
+          sUrl = splitUrl[0].split('?')[0] + '/$count'
+        }
+        o(sUrl).get(function (data) {
+          let lengths = data
           if (lengths === 0) {
             _self.ready = true
             _self.$store.dispatch(_self.options.gridKey + '_set_table_data', [])
@@ -420,42 +454,17 @@
             pageSkip = _self.states.pager_Size * (pagerCurrentPage - 1)
           }
 
-          o(urlAppend(_self.states.url, {r: Math.random()})).take(pageSize).skip(pageSkip).get(function (data) {
+          o(_self.states.url).take(pageSize).skip(pageSkip).get(function (data) {
+              console.log('-------date---------')
             _self.$store.dispatch(_self.options.gridKey + '_set_table_data', data)
             _self.ready = true
           })
         })
       },
-      formatDate (data) {  // 数据处理
-        let arr = this.options.arr
-        let _this = this
-        if (data) {
-          data.forEach(function (dataItem) {
-            arr.forEach(function (arrItem) {
-//              if (arrItem.type === 'date') {
-//                let time = fn.Ttime(dataItem[arrItem.key])
-//                dataItem[arrItem.key] = time.split('T')[0]
-//              } else
-              if (arrItem.type === 'select2') {
-                let selectData = _this.$store.state[_this.options.gridKey][arrItem.key]
-                if (selectData) {
-                  selectData.forEach(function (selectItem) {
-//                    console.log(selectItem, selectItem.values + '--------' + dataItem[arrItem.key] + '---------' + arrItem.key)
-                    if (selectItem.values === dataItem[arrItem.key]) {
-                      dataItem[arrItem.key] = selectItem['label']
-                    }
-                  })
-                }
-              }
-            })
-          })
-        }
-        return data
-      },
       refreshFn () {
         this.reset()
         this.searchUrl()
-        this.getList()
+//        this.getList()
       },
       showDetails (val) { // 详情页
         this.$store.dispatch(this.options.gridKey + '_details_Window_Visible', val)
@@ -518,6 +527,7 @@
     padding: 12px 0px;
     overflow: hidden;
     width: 100%;
+    padding-bottom: 168px;
     .ivu-page {
       float: right;
       margin-right: 20px;

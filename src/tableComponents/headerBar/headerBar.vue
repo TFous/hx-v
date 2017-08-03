@@ -6,25 +6,31 @@
         <slot></slot>
         <template v-if="refreshShow">
           <slot name="refreshBtn">
-            <Button @click="refreshFn" title="刷新">
-              <Icon type="refresh"></Icon>
-            </Button>
+            <Tooltip content="刷新页面，显示全部结果" placement="top-end">
+              <Button @click="refreshFn">
+                <Icon type="refresh"></Icon>
+              </Button>
+            </Tooltip>
           </slot>
         </template>
         <slot name="refreshAfter"></slot>
         <template v-if="addShow">
           <slot name="addBtn">
-            <Button type="primary" @click="setAddVisible" title="新增">
-              <Icon type="plus"></Icon>
-            </Button>
+            <Tooltip content="新增" placement="top-end">
+              <Button type="primary" @click="setAddVisible">
+                <Icon type="plus"></Icon>
+              </Button>
+            </Tooltip>
           </slot>
         </template>
         <slot name="addAfter"></slot>
         <template v-if="delShow">
           <slot name="batchBtn">
-            <Button type="error" @click="batchDel" title="批量删除">
-              <Icon type="trash-a"></Icon>
-            </Button>
+            <Tooltip content="批量删除" placement="top-end">
+              <Button type="error" @click="batchDel">
+                <Icon type="trash-a"></Icon>
+              </Button>
+            </Tooltip>
           </slot>
         </template>
         <slot name="delAfter"></slot>
@@ -38,23 +44,25 @@
           </i-switch>
         </Tooltip>
         </Col>
-        <Col span="10" v-show="advancedSearch"><h3 class="pagerHead3">高级搜索</h3></Col>
+        <Col span="10" v-show="advancedSearch">
+        <h3 class="pagerHead3">高级搜索</h3></Col>
         <Col span="15" style="min-height: 10px;" v-show="!advancedSearch">
-          <template v-if="searchShow">
+        <template v-if="searchShow">
           <Row>
             <Col span="10" style="margin-right: 12px;">
-              <Input
-                v-model="paramsValue"
-                placeholder="请输入..."
-              >
-              <Select :disabled="options.disabledSearch"
-                      v-model="paramsSelect" slot="prepend" :style="dorpStyle">
-                <template v-for="(item, key, val) in paramsOption">
-                  <Option :value="key">{{item}}</Option>
-                </template>
-              </Select>
-              <Button slot="append" icon="ios-search" @click="searchFn"></Button>
-              </Input>
+            <Input
+              @keyup.enter.native="searchFn"
+              v-model="paramsValue"
+              placeholder="请输入..."
+            >
+            <Select :disabled="options.disabledSearch"
+                    v-model="paramsSelect" slot="prepend" :style="dorpStyle">
+              <template v-for="(item, key, val) in paramsOption">
+                <Option :value="key" :key="key">{{item}}</Option>
+              </template>
+            </Select>
+            <Button slot="append" icon="ios-search" @click="searchFn"></Button>
+            </Input>
             </Col>
             <Col span="10">
             <slot name="searchAfter"></slot>
@@ -63,16 +71,15 @@
                 <Col span="5">
                 <div style="margin-right: 4px;">
                   <Select v-model="timeSelectKey">
-                    <Option v-for="item in SelectOpints" :value="item.value" :key="item">{{ item.label }}
-
-                    </Option>
+                    <Option v-for="item in SelectOpints" :value="item.value" :key="item.value">{{ item.label }}</Option>
                   </Select>
                 </div>
                 </Col>
                 <Col span="12">
-                <Date-picker class="dataSelect" :value="searchTime" format="yyyy/MM/dd" type="daterange" placement="bottom-end"
+                <Date-picker class="dataSelect" v-model="searchTime" format="yyyy/MM/dd" type="daterange"
+                             placement="bottom"
                              @on-change="searchTimeChange"
-                             placeholder="选择日期" style="width: 200px"></Date-picker>
+                             placeholder="选择日期"></Date-picker>
                 </Col>
                 <Col span="3">
                 <Button icon="search" @click="searchFn" style="margin-left: 4px;"></Button>
@@ -92,17 +99,18 @@
                 <template v-if="item.type==='date'">
                   <div class="cellCol">
                     <Form-item :label="item1">
-                      <Date-picker class="dataSelect" v-model="formItem[key1]" format="yyyy/MM/dd" type="daterange" placement="bottom-end"
-                                   placeholder="选择日期" style="width: 274px"></Date-picker>
+                      <Date-picker class="dataSelect" v-model="formItem[key1]" format="yyyy/MM/dd" type="daterange"
+                                   placement="bottom"
+                                   placeholder="选择日期"></Date-picker>
                     </Form-item>
                   </div>
                 </template>
                 <template v-else>
-                <div class="cellCol">
-                  <Form-item :label="item1">
-                    <Input v-model="formItem[key1]" placeholder="请输入"></Input>
-                  </Form-item>
-                </div>
+                  <div class="cellCol">
+                    <Form-item :label="item1">
+                      <Input v-model="formItem[key1]" placeholder="请输入"></Input>
+                    </Form-item>
+                  </div>
                 </template>
               </template>
             </template>
@@ -149,7 +157,7 @@
       },
       dorpStyle: {
         type: [Boolean, String],
-        default: 'width:80px'
+        default: 'width:120px'
       },
       addShow: {
         type: [Boolean, String],
@@ -210,6 +218,9 @@
     },
     methods: {
       advancedSearchBtn () {
+        for (let item in this.formItem) {
+          this.formItem[item] = common.trim(this.formItem[item])
+        }  // 去除空格
         this.$store.dispatch(this.options.gridKey + '_set_state_data', {advancedSearchBox: this.formItem})
         this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchBtn: !this.getOptions.searchBtn})
       },
@@ -217,6 +228,8 @@
         this.$store.dispatch(this.options.gridKey + '_set_state_data', {adSearchBoolean: val})
       },
       refreshFn () {
+        this.searchTime = null
+        this.paramsValue = null
         this.$store.dispatch(this.options.gridKey + '_set_refresh')
       },
       setAddVisible () {
@@ -227,18 +240,22 @@
         let delObjs = _self.getOptions.delData
         let $length = delObjs.length
         if ($length === 0) {
-          this.$Message.warning('必须要选中产品项目')
+          this.$Message.warning('请先选中需要删除的项目。')
           return
         }
+        let nowNumber = 0
         _self.$Modal.confirm({
           title: '批量删除确认',
-          content: '此操作将永久删除该文件, 是否继续?',
+          content: '此操作将删除选中项, 是否继续?',
           onOk: function () {
             let url = _self.options.api.split('?$filter')[0]
             delObjs.forEach(function (Item) {
               o(urlAppend(url, {r: Math.random()})).find(Item.Id).remove().save().then(function (data) {
-                _self.$Message.info(Item.Name ? Item.Name : '' + '删除成功')
-                _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
+                nowNumber += 1
+                if (nowNumber === $length) {
+                  _self.$Message.info('删除成功')
+                  _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
+                }
               })
             })
             //            删除最后一页 bug
@@ -250,6 +267,7 @@
             if (pagerCurrentPage > 1 && pagerTotal % pageSize === $length) {
               _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {pager_CurrentPage: pagerCurrentPage - 1})
             }
+            _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {delData: []})
           }
         })
       },
@@ -275,6 +293,7 @@
       endTimeFn (val) {
       },
       searchFn () {
+        this.paramsValue = common.trim(this.paramsValue)
         this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {timeSelectKey: this.timeSelectKey})
         this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchBtn: !this.getOptions.searchBtn})
         this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchVal: this.paramsValue})
@@ -303,24 +322,28 @@
   }
 </script>
 <style scoped>
-  .advancedSearchFoot{
-    padding:0px 63px 15px 63px;
+  .advancedSearchFoot {
+    padding: 0px 63px 15px 63px;
     margin-bottom: 12px;
     border-bottom: 1px solid #dddee1;
   }
-  .pagerHead3{
+
+  .pagerHead3 {
     border-left: 6px solid red;
     padding-left: 12px;
     font-size: 18px;
   }
+
   .pagerHead {
     padding: 12px 0px;
   }
-  .advancedSearch{
-    margin-top:20px;
+
+  .advancedSearch {
+    margin-top: 20px;
   }
-  .cellCol{
+
+  .cellCol {
     display: inline-block;
-    width:24%;
+    width: 24%;
   }
 </style>

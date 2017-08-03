@@ -1,11 +1,13 @@
 <template>
   <div>
     <Modal
+      :class="addClass"
       v-model="show"
       :title="'新增 - '+options.title"
       @on-cancel="setAddVisible"
       :mask-closable="false"
       width="980"
+      :style="addStyle"
     >
       <div class="add">
         <Row>
@@ -99,9 +101,9 @@
         </Row>
       </div>
         <div slot="footer">
-          <Button @click="setAddVisible">取消</Button>
+          <Button @click="setAddVisible" v-show="bntShow">取消</Button>
           <!--<Button type="info" @click="handleReset('addForm')">重置</Button>-->
-          <Button type="primary" @click="handleSubmit('addForm')">提交</Button>
+          <Button type="primary" @click="handleSubmit('addForm')" v-show="bntShow">提交</Button>
         </div>
     </Modal>
   </div>
@@ -115,13 +117,19 @@
     data () {
       return {
         show: false,
+        bntShow: true,
         dataMsg: Object
       }
     },
     props: {
       // api接口
       addFn: Function,
-      options: Object
+      options: Object,
+      addStyle: String,
+      addClass: {
+        type: String,
+        default: 'hxLayer',
+      }
     },
     updated () {
     },
@@ -164,6 +172,7 @@
         this.handleReset('addForm')
       },
       handleSubmit (formName) {
+        this.bntShow = false
         let _self = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -173,12 +182,15 @@
               if (newData[item] === '') {
                 newData[item] = null
               }
+              newData[item] = common.trim(newData[item])  // 去除空格
             }
             let url = _self.options.api.split('?$filter')[0]
             o(url).post(newData).save().then(function (data) {
               _self.$Message.success('新增成功')
               _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
+              _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {addSucess: data.data})
               _self.setAddVisible() // 关闭弹窗
+              _self.bntShow = true
             })
           } else {
             console.log('error submit!!')

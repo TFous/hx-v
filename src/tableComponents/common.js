@@ -44,6 +44,13 @@ export function bindFn(_this, fn) {
     vue[key] = bind(arrFn[key], vue)
   }
 }
+export function trim(text) {
+  if (typeof text === 'string') {
+    return text.replace(/(^\s*)|(\s*$)/g, '');
+  } else {
+    return text
+  }
+}
 /**
  *  处理搜索下拉菜单，返回所有key
  * @param data
@@ -76,8 +83,14 @@ export function setCellClassName(attrs, val) {
   return o
 }
 
-export function toLocaleString(t) {
-  let d = new Date(t).getTime() - 57600000  // 16小时
+export function toLocaleString(t, splitType=' ') {
+  let timeArr = t.toString().split(splitType)
+  timeArr[4] = '00:00:00'
+  let timeSting = ''
+  timeArr.forEach(function (item) {
+    timeSting += `${item} `
+  })
+  let d = new Date(timeSting).getTime() - 28800000  // 8小时
   let times = new Date(d)
   let year = times.getFullYear()
   let month = (times.getMonth() + 1).toString().length === 2 ? (times.getMonth() + 1) : `0${(times.getMonth() + 1)}`
@@ -88,13 +101,28 @@ export function toLocaleString(t) {
   return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds
 }
 
-export function endTime(t) {
+export function endTime(t, splitType=' ') {
+  let timeArr = t.toString().split(splitType)
+  timeArr[4] = '00:00:00'
+  let timeSting = ''
+  timeArr.forEach(function (item) {
+    timeSting += `${item} `
+  })
+  let d = new Date(timeSting).getTime()
+  let times = new Date(d)
+  let year = times.getFullYear()
+  let month = (times.getMonth() + 1).toString().length === 2 ? (times.getMonth() + 1) : `0${(times.getMonth() + 1)}`
+  let day = (times.getDate()).toString().length === 2 ? (times.getDate()) : `0${(times.getDate())}`
+  return `${year}-${month}-${day}T15:59:59`
+}
+
+export function timeType(t) {
   let d = new Date(t).getTime()
   let times = new Date(d)
   let year = times.getFullYear()
   let month = (times.getMonth() + 1).toString().length === 2 ? (times.getMonth() + 1) : `0${(times.getMonth() + 1)}`
   let day = (times.getDate()).toString().length === 2 ? (times.getDate()) : `0${(times.getDate())}`
-  return `${year}-${month}-${day}T08:00:00`
+  return `${year}-${month}-${day}`
 }
 /**
  *
@@ -102,18 +130,19 @@ export function endTime(t) {
  * @param filterKey
  * @param filterVal
  */
-export function tableFilter($this, filterKey, filterVal) {
+
+export function tableFilter($this, filterKey, filterVal, opt = 'options') {
   let _this = $this
   let obj = {}
   if (filterVal.length !== 0) {
     obj[filterKey] = filterVal
-    _this.$store.dispatch(_this.options.gridKey + '_set_filterbox', obj)
+    _this.$store.dispatch(_this[opt].gridKey + '_set_filterbox', obj)
   } else {  // 不删除 全部 会出错
     obj[filterKey] = []
-    _this.$store.dispatch(_this.options.gridKey + '_set_filterbox', obj)
+    _this.$store.dispatch(_this[opt].gridKey + '_set_filterbox', obj)
   }
-  let searchBtn = _this.$store.state[_this.options.gridKey].searchBtn
-  _this.$store.dispatch(_this.options.gridKey + '_set_state_data', {searchBtn: !searchBtn})
+  let searchBtn = _this.$store.state[_this[opt].gridKey].searchBtn
+  _this.$store.dispatch(_this[opt].gridKey + '_set_state_data', {searchBtn: !searchBtn})
 }
 
 export function delData(_this, row, o) {
@@ -140,17 +169,21 @@ export function delData(_this, row, o) {
   })
 }
 
-export function changeDel(_this, row, o) {
+export function changeDel(_this, row, o, content='此操作将删除该文件, 是否继续?') {
   let _self = _this
   _self.$Modal.confirm({
-    title: '批量删除确认',
-    content: '此操作将删除该文件, 是否继续?',
+    title: '删除确认',
+    content: content,
     onOk: function () {
       try {
         delete row._index
       } catch (e) {
       }
       Object.assign(row, {IsDelete: true})
+      try {
+        delete row._rowKey
+      } catch (e) {
+      }
       o(_self.options.api).find(row['Id']).patch(row).save().then(function (data) {
         let msg = row.Name ? row.Name + '删除成功' : '删除成功'
         _self.$Message.info(msg)
@@ -208,7 +241,6 @@ export function Ttime(time) {
   // let newTime = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + 'T' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
   return d
 }
-
 
 // 时间和select转换
 export function tableRender($this,Vuxoptions,clone) {
@@ -274,31 +306,60 @@ export function fnReset($this,o) {
   o().config({
     error: function (e, response) {
       _this.$Notice.error({
+        duration: 20,
         title: '错误信息',
         desc: response
       })
     }      // a function which is executed on error
   })
 }
+
 // 页面从vuex转换数据字典
-export function dicData(data, keyWrod, fn, $this) {
+export function dicData(dicName, keyWrod, fn, $this, opt = 'options', isFilter = true) {
   let _this = $this
   let clone = fn
-  let datas = data
+  // let datas = dicName
+  let datas = _this.$store.state.dicBook.dic[dicName]
+  if (datas.length === 0) {
+    _this.$store.dispatch('initFn', dicName)
+    return
+  }
   let arr = []
   let filters = []
   datas.forEach(function (item) {
-    let o = {}
-    o['label'] = item.Value
-    o['values'] = item.Id
-    arr.push(o)
+    if (keyWrod === 'WarehousingCompany' || keyWrod === 'WarehoseingCompanyId') {  // 仓储公司（数据字典后期改了）
+      let o = {}
+      o['label'] = item.WarehousingCompany
+      o['values'] = item.Id
+      arr.push(o)
 
-    let filtersObj = {}
-    filtersObj['label'] = item.Value
-    filtersObj['value'] = `(${keyWrod} eq ${item.Id})`
-    filters.push(filtersObj)
+      let filtersObj = {}
+      filtersObj['label'] = item.WarehousingCompany
+      filtersObj['value'] = `(${keyWrod} eq ${item.Id})`
+      filters.push(filtersObj)
+    } else if(keyWrod === 'Warehouse' || keyWrod === 'WarehouseId') {  // 实际存放库（数据字典后期改了）
+      let o = {}
+      o['label'] = item.WarehouseName
+      o['values'] = item.Id
+      arr.push(o)
+
+      let filtersObj = {}
+      filtersObj['label'] = item.WarehouseName
+      filtersObj['value'] = `(${keyWrod} eq ${item.Id})`
+      filters.push(filtersObj)
+    }else {
+      let o = {}
+      o['label'] = item.Value
+      o['values'] = item.Id
+      arr.push(o)
+
+      let filtersObj = {}
+      filtersObj['label'] = item.Value
+      filtersObj['value'] = `(${keyWrod} eq ${item.Id})`
+      filters.push(filtersObj)
+    }
   })
-  let obj = _this.$store.state[_this.options.gridKey]
+  let obj = _this.$store.state[_this[opt].gridKey]
   let deep = clone(obj)
   let newArr = deep.arr
   newArr.forEach(function (item) {
@@ -306,10 +367,73 @@ export function dicData(data, keyWrod, fn, $this) {
       item.filters = filters
     }
   })
-  _this.$store.dispatch(_this.options.gridKey + '_set_state_data', {arr: newArr})
+  if (isFilter) {
+    _this.$store.dispatch(_this[opt].gridKey + '_set_state_data', {arr: newArr})
+  }
   let storeObj = {}
   storeObj[keyWrod] = arr  // {BusinessType: arr}
-  _this.$store.dispatch(_this.options.gridKey + '_set_state_data', storeObj)
+  _this.$store.dispatch(_this[opt].gridKey + '_set_state_data', storeObj)
+}
+
+
+// 页面从vuex转换数据字典
+export function codeDicData(dicName, keyWrod, fn, $this, opt = 'options', isFilter = true) {
+  let _this = $this
+  let clone = fn
+  // let datas = dicName
+  let datas = _this.$store.state.dicBook.dic[dicName]
+  if (datas.length === 0) {
+    _this.$store.dispatch('initFn', dicName)
+    return
+  }
+  let arr = []
+  let filters = []
+  datas.forEach(function (item) {
+    if (keyWrod === 'WarehousingCompany' || keyWrod === 'WarehoseingCompanyId') {  // 仓储公司（数据字典后期改了）
+      let o = {}
+      o['label'] = item.WarehousingCompany
+      o['values'] = item.Code
+      arr.push(o)
+
+      let filtersObj = {}
+      filtersObj['label'] = item.WarehousingCompany
+      filtersObj['value'] = `(${keyWrod} eq '${item.Code}')`
+      filters.push(filtersObj)
+    } else if(keyWrod === 'Warehouse' || keyWrod === 'WarehouseId') {  // 实际存放库（数据字典后期改了）
+      let o = {}
+      o['label'] = item.WarehouseName
+      o['values'] = item.Code
+      arr.push(o)
+
+      let filtersObj = {}
+      filtersObj['label'] = item.WarehouseName
+      filtersObj['value'] = `(${keyWrod} eq '${item.Code}')`
+      filters.push(filtersObj)
+    }else {
+      let o = {}
+      o['label'] = item.Value
+      o['values'] = item.Code
+      arr.push(o)
+      let filtersObj = {}
+      filtersObj['label'] = item.Value
+      filtersObj['value'] = `(${keyWrod} eq '${item.Code}')`
+      filters.push(filtersObj)
+    }
+  })
+  let obj = _this.$store.state[_this[opt].gridKey]
+  let deep = clone(obj)
+  let newArr = deep.arr
+  newArr.forEach(function (item) {
+    if (item.key === keyWrod) {
+      item.filters = filters
+    }
+  })
+  if (isFilter) {
+    _this.$store.dispatch(_this[opt].gridKey + '_set_state_data', {arr: newArr})
+  }
+  let storeObj = {}
+  storeObj[keyWrod] = arr  // {BusinessType: arr}
+  _this.$store.dispatch(_this[opt].gridKey + '_set_state_data', storeObj)
 }
 
 
@@ -352,4 +476,30 @@ export function setColumnNoActon(arr) {
     }
   })
   return newArr
+}
+
+
+export function uniqueArr (arr) {
+  if (arr.length === 0) {
+    return arr
+  }
+  arr.sort();
+  var newArr = [arr[0]];
+  for(var i=1, len=arr.length; i<len; i++){
+    if(arr[i] !== newArr[newArr.length-1]){
+      newArr.push(arr[i]);
+    }
+  }
+  return newArr;
+}
+
+export function setClassName (attrs, val) {
+  let arr = attrs
+  let obj = {}
+  for (let item of arr) {
+    if (item.table_hide !== 1) {
+      obj[item.key] = val
+    }
+  }
+  return obj
 }

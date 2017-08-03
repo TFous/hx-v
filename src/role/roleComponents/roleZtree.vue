@@ -144,10 +144,6 @@
       }
 
       function initVal(treeNode) {
-//          Vue.set(vm, {
-//            'selectedRoleTypeId': -1
-//          })
-//        console.log(vm)
         let str = JSON.stringify(treeNode)
         sessionStorage.setItem('RoleObj', str)
         let t2, t4

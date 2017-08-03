@@ -142,24 +142,35 @@
               type: '',
               rules: [{required: true}]
             },
-//            {
-//              key: 'IsManager',
-//              title: '管理员',
-//              width: 100,
-//              search_hide: 1,
-//              render (row, column) {
-//                return `<i-switch v-model="row.IsManager" @on-change="managerChange(row)"></i-switch>`
-//              }
-//            },
             {
-              key: 'IsSuperAdmin',
-              title: '超级管理员',
+              key: 'IsManager',
+              title: '管理员',
               width: 100,
               search_hide: 1,
               render: (h, params) => {
                 return h('i-switch', {
                   props: {
-                    value: params.row.IsSuperAdmin
+                    value: params.row.IsManager
+                  },
+                  on: {
+                    input: () => {
+                      this.managerChange(params.row)
+                    }
+                  }
+                })
+              }
+            },
+            {
+              key: 'IsSuperAdmin',
+              title: '超级管理员',
+              width: 100,
+              search_hide: 1,
+              table_hide:1,
+              render: (h, params) => {
+                return h('i-switch', {
+                  props: {
+                    value: params.row.IsSuperAdmin,
+                    disabled: true
                   },
                   on: {
                     input: () => {
@@ -191,7 +202,7 @@
             {
 //                            key: 'action',
               title: '操作',
-              width: 160,
+              width: 120,
               add_hide: 1,  // 新增页面 是否显示：不显示写，显示可不写或其他值
               edit_hide: 1, // 编辑页面 是否显示：不显示写，显示可不写或其他值
               search_hide: 1, // 搜索下拉 是否显示：不显示写，显示可不写或其他值
@@ -236,25 +247,25 @@
                           type: 'locked'
                         }
                       })
-                    ]),
-                    h('i-button', {
-                      title: '删除',
-                      props: {
-                        type: 'error',
-                        size: 'small'
-                      },
-                      on: {
-                        click: () => {
-                          this.delData(params.row)
-                        }
-                      }
-                    }, [
-                      h('Icon', {
-                        props: {
-                          type: 'trash-a'
-                        }
-                      })
                     ])
+//                    h('i-button', {
+//                      title: '删除',
+//                      props: {
+//                        type: 'error',
+//                        size: 'small'
+//                      },
+//                      on: {
+//                        click: () => {
+//                          this.delData(params.row)
+//                        }
+//                      }
+//                    }, [
+//                      h('Icon', {
+//                        props: {
+//                          type: 'trash-a'
+//                        }
+//                      })
+//                    ])
                   ])
               }
             }
@@ -292,10 +303,10 @@
         delete newROw['_index']  // 莫名多出了个——index 删了
         let _self = this
         _self.$Modal.confirm({
-          title: '批量删除确认',
-          content: '此操作将删除该文件, 是否继续?',
+          title: '删除确认',
+          content: '此操作将删除该用户, 是否继续?',
           onOk: function () {
-            o(_self.options.api).find(row['Id']).remove().save().then(function (data) {
+            o(_self.options.api).find(`'${row['Id']}'`).remove().save().then(function (data) {
               let msg = row.Name ? row.Name + '删除成功' : '删除成功'
               _self.$Message.info(msg)
               _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
@@ -351,10 +362,11 @@
         // 管理员
       managerChange (row) {
         let _self = this
-        let UserViewModel = Object.assign({}, row, {IsManager: row.IsManager})
+        let UserViewModel = Object.assign({}, row, {IsManager: !row.IsManager})
         delete UserViewModel['Roles']
         delete UserViewModel['Logins']
         delete UserViewModel['_index']
+        delete UserViewModel['_rowKey']
         const apiUrl = Vue.$baseUrl.roleUrl + `/User('${row.Id}')`
         o(apiUrl).patch(UserViewModel).save().then(function (data) {
           _self.$Message.success('修改成功')
@@ -368,6 +380,7 @@
         delete UserViewModel['Roles']
         delete UserViewModel['Logins']
         delete UserViewModel['_index']
+        delete UserViewModel['_rowKey']
         const apiUrl = Vue.$baseUrl.roleUrl + `/User('${row.Id}')`
         o(apiUrl).patch(UserViewModel).save().then(function (data) {
           _self.$Message.success('修改成功')
@@ -381,6 +394,7 @@
         delete UserViewModel['Roles']
         delete UserViewModel['Logins']
         delete UserViewModel['_index']
+        delete UserViewModel['_rowKey']
         const apiUrl = Vue.$baseUrl.roleUrl + `/User('${row.Id}')`
         o(apiUrl).patch(UserViewModel).save().then(function (data) {
           _self.$Message.success('修改成功')

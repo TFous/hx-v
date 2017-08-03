@@ -1,6 +1,7 @@
 <template>
   <div>
     <Modal
+      :class="editClass"
       v-model="show"
       :title="'编辑 - '+ title"
       @on-cancel="setVisible"
@@ -103,8 +104,8 @@
         </Row>
       </div>
       <div slot="footer">
-        <Button @click="setVisible">取消</Button>
-        <Button type="primary" @click="handleSubmit('editForm')">提交修改</Button>
+        <Button @click="setVisible" v-show="bntShow">取消</Button>
+        <Button type="primary" @click="handleSubmit('editForm')" v-show="bntShow">提交修改</Button>
       </div>
     </Modal>
   </div>
@@ -118,10 +119,15 @@
       return {
         show: false,
         eidtData: {},
+        bntShow: true,
         title: ''
       }
     },
     props: {
+      editClass: {
+        type: String,
+        default: 'hxLayer',
+      },
       // api接口
       editFn: Function,
       options: Object
@@ -185,14 +191,19 @@
         this.handleReset('editForm')
       },
       handleSubmit (formName) {
+        this.bntShow = false
         let _self = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            for(let item in _self.eidtData) {
+              _self.eidtData[item] = common.trim(_self.eidtData[item])
+            }  // 去除空格
             let url = _self.options.api.split('?$filter')[0]
             o(url).find(_self.eidtData.Id).patch(_self.eidtData).save().then(function (data) {
               _self.$Message.success('修改成功')
               _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
               _self.setVisible() // 关闭弹窗
+              _self.bntShow = true
             })
           } else {
             console.log('error submit!!')

@@ -1,6 +1,7 @@
 <template>
   <div>
     <Modal
+      class="hxLayer"
       v-model="show"
       :title="'详情 - '+ title"
       @on-cancel="setVisible"
@@ -67,11 +68,14 @@
             optArr.forEach(function (arrItem) {
               if (arrItem.type === 'select') {
                 let arr = _this.getOptions[arrItem.key]
-                arr.forEach(function (item) {
-                  if (item.values === _this.eidtData[arrItem.key]) {
-                    _this.eidtData[arrItem.key] = item.label
-                  }
-                })
+                try {
+                  arr.forEach(function (item) {
+                    if (item.values === _this.eidtData[arrItem.key]) {
+                      _this.eidtData[arrItem.key] = item.label
+                    }
+                  })
+                } catch (e) {
+                }
               } else if (arrItem.type === 'date') {
                 try {
                   _this.eidtData[arrItem.key] = _this.eidtData[arrItem.key].split('T')[0]

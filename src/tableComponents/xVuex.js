@@ -41,6 +41,10 @@ function createMutations(state, gridKey) {
     [gridKey + '_PAGER_DATA'] (state, data) {
       Object.assign(state.pager, data)
     },
+    ['ADD_NUM'] (state, data) {
+      console.log(state.num)
+      state.num = state.num + data
+    },
     [gridKey + '_EDIT_WINDOW_VISIBLE'] (state, val) {
       state.edit_Window_Visible = !state.edit_Window_Visible
     }
@@ -67,6 +71,9 @@ export function registerModule(_this, state, gridKey) {
     state: state,
     mutations,
     actions: {
+      addNum ({dispatch, commit}, val) {
+        _this.$store.commit('ADD_NUM', val)
+      },
       [gridKey + '_add_Window_Visible'] ({dispatch, commit}, val) {
         _this.$store.commit(gridKey + '_ADD_WINDOW_VISIBLE', val)
       },
@@ -108,6 +115,7 @@ export function registerModule(_this, state, gridKey) {
 }
 
 export const options = {
+  num: 1,
   orderBox: {}, // 存储排序信息
   filterBox: {}, // 存储筛选信息
   advancedSearchBox: {}, // 存储高级搜索信息
@@ -116,7 +124,7 @@ export const options = {
   refresh: false,  // 提供一个变量watch 是否需要刷新页面
   delData: [],  // 存储批量删除的对象
   searchKeys: ['searchAll'], // 存储search对象
-  searchVal: null, // 存储search对象
+  searchVal: '', // 存储search对象
   searchBtn: false, // 存储search对象
   arrCopy: [], // 存储arr原始对象
   startTime: '', // 存储搜索开始时间
@@ -124,12 +132,13 @@ export const options = {
   timeSelectKey: '', // 存储搜索key
   defaultSearch: '',  // 默认 搜索选项
   disabledSearch: false, // 是否禁用搜索下拉 true：禁用
-  pager_Opts: [20, 50, 100],  // 每页展示数量
-  pager_Size: 20,   //  默认显示每页数量，和opts第一个一样
+  pager_Opts: [15, 50, 100],  // 每页展示数量
+  pager_Size: 15,   //  默认显示每页数量，和opts第一个一样
   pager_CurrentPage: 1, // 当前第几页
   pager_Total: 0,   // 总页数
   tableData: [],  // 所有的增删改拆后的数据覆盖存储
   add_Window_Visible: false,   // 新增弹窗显示状态
+  addSucess: null,   // 新增成功后返回的对象
   edit_Window_Visible: false,  // 修改弹窗显示状态
   details_Window_Visible: false,  // 详情页弹窗显示状态
   edit_Window_Data: '',  // 弹窗显示信息

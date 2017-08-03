@@ -26,20 +26,20 @@
                   <Input v-model="formCustom.SalesDepartment" placeholder="请输入姓名"></Input>
                 </Form-item>
                 </Col>
+                <!--<Col span="11">-->
+                <!--<Form-item label="超级管理员" prop="IsSuperAdmin">-->
+                  <!--<Tooltip content="超级管理员拥有全部权限，可以进行任何操作">-->
+                    <!--<i-switch v-model="formCustom.IsSuperAdmin"></i-switch>-->
+                  <!--</Tooltip>-->
+                <!--</Form-item>-->
+                <!--</Col>-->
                 <Col span="11">
-                <Form-item label="超级管理员" prop="IsSuperAdmin">
-                  <Tooltip content="超级管理员拥有全部权限，可以进行任何操作">
-                    <i-switch v-model="formCustom.IsSuperAdmin"></i-switch>
+                <Form-item label="管理员" prop="IsManager">
+                  <Tooltip content="管理员可以管理自己创建的用户,并将自己的权限赋予该账户">
+                    <i-switch v-model="formCustom.IsManager"></i-switch>
                   </Tooltip>
                 </Form-item>
                 </Col>
-                <!--<Col span="11">-->
-                <!--<Form-item label="管理员" prop="IsManager">-->
-                <!--<Tooltip content="管理员可以管理自己创建的用户,并将自己的权限赋予该账户">-->
-                <!--<i-switch v-model="formCustom.IsManager"></i-switch>-->
-                <!--</Tooltip>-->
-                <!--</Form-item>-->
-                <!--</Col>-->
                 <Col span="11">
                 <Form-item label="启用" prop="Enabled">
                   <Tooltip content="禁用的账号无法登录">
@@ -54,9 +54,7 @@
                 </template>
                 <Col span="24">
                 <Form-item label="显示高级选项" prop="senior">
-                  <Tooltip content="禁用的账号无法登录">
                     <i-switch v-model="senior"></i-switch>
-                  </Tooltip>
                 </Form-item>
                 </Col>
                 <template v-if="senior">
@@ -235,7 +233,9 @@
   .edit .ivu-tooltip-popper {
     position: absolute !important;
   }
-
+  .item_input_row .ivu-col-span-11{
+    height:56px;
+  }
   .item {
     color: #999;
     margin-left: 12px;
