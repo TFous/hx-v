@@ -2,7 +2,6 @@
   <div>
     <div class="tabletemplate" v-show="ready">
       <Table
-        :height="tableHeight"
         stripe
         border
         size="small"
@@ -43,11 +42,20 @@
         type: String,
         default: 'auto',
       },
+      isUnregisterModule: {
+        type: Boolean,
+        default: true,
+      },
       tableFn: Function,
       options: Object
     },
     destroyed () {
-//      this.$store.unregisterModule(this.options.gridKey)
+      if (this.isUnregisterModule) {
+        try {
+          this.$store.unregisterModule(this.options.gridKey)
+        } catch (e) {
+        }
+      }
 //      console.log(this.$store.state)
       isFirst = true
     },
@@ -129,7 +137,7 @@
         return this.$store.state[this.options.gridKey]
       }
     },
-    mounted () {
+    mounted() {
       this.states = this.$store.state[this.options.gridKey]
       // 来自父组建的事件集合
       try {
@@ -455,7 +463,7 @@
           }
 
           o(_self.states.url).take(pageSize).skip(pageSkip).get(function (data) {
-              console.log('-------date---------')
+//              console.log('-------date---------')
             _self.$store.dispatch(_self.options.gridKey + '_set_table_data', data)
             _self.ready = true
           })
@@ -500,7 +508,7 @@
         let _self = this
         _self.$Modal.confirm({
           title: '删除确认',
-          content: '此操作将删除该文件, 是否继续?',
+          content: '此操作将删除该项, 是否继续?',
           onOk: function () {
             o(_self.options.api).find(row['Id']).remove().save().then(function (data) {
               let msg = row.Name ? row.Name + '删除成功' : '删除成功'

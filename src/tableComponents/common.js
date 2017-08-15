@@ -327,7 +327,7 @@ export function dicData(dicName, keyWrod, fn, $this, opt = 'options', isFilter =
   let arr = []
   let filters = []
   datas.forEach(function (item) {
-    if (keyWrod === 'WarehousingCompany' || keyWrod === 'WarehoseingCompanyId') {  // 仓储公司（数据字典后期改了）
+    if (keyWrod === 'WarehousingCompany' || keyWrod === 'WarehousingCompanyId') {  // 仓储公司（数据字典后期改了）
       let o = {}
       o['label'] = item.WarehousingCompany
       o['values'] = item.Id

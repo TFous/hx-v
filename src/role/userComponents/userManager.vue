@@ -3,7 +3,9 @@
     <div class="header">
       <h2>{{options.title}}</h2>
     </div>
-    <xheaderBar :options="options"></xheaderBar>
+    <xheaderBar
+      :delShow="false"
+      :options="options"></xheaderBar>
     <!--新增-->
     <add-components :options="options"></add-components>
     <!--修改-->

@@ -126,7 +126,7 @@
     props: {
       editClass: {
         type: String,
-        default: 'hxLayer',
+        default: 'hxLayer'
       },
       // api接口
       editFn: Function,
@@ -191,7 +191,7 @@
         this.handleReset('editForm')
       },
       handleSubmit (formName) {
-        this.bntShow = false
+//        this.bntShow = false
         let _self = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -203,7 +203,7 @@
               _self.$Message.success('修改成功')
               _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
               _self.setVisible() // 关闭弹窗
-              _self.bntShow = true
+//              _self.bntShow = true
             })
           } else {
             console.log('error submit!!')

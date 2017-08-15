@@ -172,10 +172,13 @@
         this.handleReset('addForm')
       },
       handleSubmit (formName) {
-        this.bntShow = false
         let _self = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            _self.bntShow = false
+            setTimeout(function () {
+              _self.bntShow = true
+            }, 2000)
             let newData = Object.assign({}, _self.dataMsg)
 //            为date 设置null
             for (let item in newData) {
@@ -190,7 +193,6 @@
               _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
               _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {addSucess: data.data})
               _self.setAddVisible() // 关闭弹窗
-              _self.bntShow = true
             })
           } else {
             console.log('error submit!!')

@@ -115,7 +115,6 @@ export function registerModule(_this, state, gridKey) {
 }
 
 export const options = {
-  num: 1,
   orderBox: {}, // 存储排序信息
   filterBox: {}, // 存储筛选信息
   advancedSearchBox: {}, // 存储高级搜索信息
