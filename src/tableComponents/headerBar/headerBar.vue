@@ -68,7 +68,7 @@
             <slot name="searchAfter"></slot>
             <template v-if="options.timeSearch && timeSearchShow">
               <Row>
-                <Col span="5">
+                <Col span="6">
                 <div style="margin-right: 4px;">
                   <Select v-model="timeSelectKey">
                     <Option v-for="item in SelectOpints" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -157,7 +157,7 @@
       },
       dorpStyle: {
         type: [Boolean, String],
-        default: 'width:120px'
+        default: 'width:130px'
       },
       addShow: {
         type: [Boolean, String],
