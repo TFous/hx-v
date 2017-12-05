@@ -42,7 +42,6 @@ function createMutations(state, gridKey) {
       Object.assign(state.pager, data)
     },
     ['ADD_NUM'] (state, data) {
-      console.log(state.num)
       state.num = state.num + data
     },
     [gridKey + '_EDIT_WINDOW_VISIBLE'] (state, val) {
@@ -81,11 +80,12 @@ export function registerModule(_this, state, gridKey) {
         _this.$store.commit(gridKey + '_DETAILS_WINDOW_VISIBLE')
         if (data) {
           _this.$store.commit(gridKey + '_DETAILS_WINDOW_DATA', data)
+          _this.$store.commit(gridKey + '_EDIT_WINDOW_DATA', data)
         }
       },
-      [gridKey + '_set_details_data'] ({dispatch, commit}, data) {
-          _this.$store.commit(gridKey + '_DETAILS_WINDOW_DATA', data)
-      },
+      // [gridKey + '_set_details_data'] ({dispatch, commit}, data) {
+      //     _this.$store.commit(gridKey + '_DETAILS_WINDOW_DATA', data)
+      // },
       [gridKey + '_set_table_data'] ({dispatch, commit}, val) {
         _this.$store.commit(gridKey + '_TABLE_DATA', val)
       },

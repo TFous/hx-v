@@ -56,7 +56,6 @@
         } catch (e) {
         }
       }
-//      console.log(this.$store.state)
       isFirst = true
     },
     watch: {
@@ -157,6 +156,10 @@
 //      if (tableWidth < wrapWidth) {
 //        $('.ivu-table-wrapper').width(tableWidth)
 //      }
+    },
+    beforeMount () {
+//            防止组建先执行报错，放入子组建执行生成 vuex
+      this.$xvuex.registerModule(this, this.options, this.options.gridKey)
     },
     methods: {
       /**
@@ -440,6 +443,7 @@
         } else { // 上面加了个？
           sUrl = splitUrl[0].split('?')[0] + '/$count'
         }
+
         o(sUrl).get(function (data) {
           let lengths = data
           if (lengths === 0) {
@@ -461,9 +465,8 @@
             pageSize = _self.states.pager_Size
             pageSkip = _self.states.pager_Size * (pagerCurrentPage - 1)
           }
-
+          //          let url = `${_self.states.url}&$top=${pageSize}&$skip=${pageSkip}`
           o(_self.states.url).take(pageSize).skip(pageSkip).get(function (data) {
-//              console.log('-------date---------')
             _self.$store.dispatch(_self.options.gridKey + '_set_table_data', data)
             _self.ready = true
           })

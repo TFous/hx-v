@@ -15,8 +15,8 @@
             <div class="row item_input_row">
               <Form ref="editForm"
                     :model="eidtData"
-                    :label-width="120">
-                <template v-for="(item, key, index) in options.arr" v-if="item.edit_hide!==1">
+                    :label-width="200">
+                <template v-for="(item, key, index) in options.arr" v-if="item.details_hide!==1 && item.key!=='action' && item.key!=='IsDelete' && item.key!=='Id' && item.type!=='selection'">
                   <div class="xtable-left">
                     <Form-item
                       :prop="item.key"
@@ -33,6 +33,7 @@
       </div>
       <div slot="footer">
         <Button @click="setVisible">关闭</Button>
+        <slot></slot>
       </div>
     </Modal>
   </div>
@@ -67,7 +68,8 @@
             let optArr = clone(this.getOptions.arr)
             optArr.forEach(function (arrItem) {
               if (arrItem.type === 'select') {
-                let arr = _this.getOptions[arrItem.key]
+//                let arr = _this.getOptions[arrItem.key]
+                let arr = JSON.parse(localStorage.getItem(arrItem.key))
                 try {
                   arr.forEach(function (item) {
                     if (item.values === _this.eidtData[arrItem.key]) {
@@ -98,6 +100,10 @@
     methods: {
       setVisible () {
         this.$store.dispatch(this.options.gridKey + '_details_Window_Visible')
+      },
+      edit () {
+        this.setVisible()
+        this.$store.dispatch(this.options.gridKey + '_edit_Window_Visible')
       }
     }
   }

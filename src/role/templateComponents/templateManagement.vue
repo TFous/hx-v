@@ -198,7 +198,7 @@
     }
   }
 </script>
-<style lang="scss" type="text/scss" rel="stylesheet/scss" scoped>
+<style type="text/css" rel="stylesheet/css" scoped>
   .template {
     background: #fff;
     padding: 12px;
@@ -210,22 +210,25 @@
 
   .header {
     padding: 12px 0px;
-    h2 {
-      border-left: 6px solid #39f;
-      padding-left: 12px;
-      font-size: 24px;
-    }
+  }
+
+  .header h2 {
+    border-left: 6px solid #39f;
+    padding-left: 12px;
+    font-size: 24px;
   }
 
   .filterBox {
     margin-top: 20px;
-    label {
-      font-weight: 500 !important;
-    }
-    .filterName {
-      margin-right: 12px;
-      margin-bottom: 0px !important;
-      vertical-align: middle;
-    }
+  }
+
+  .filterBox .filterName {
+    margin-right: 12px;
+    margin-bottom: 0px !important;
+    vertical-align: middle;
+  }
+
+  .filterBox label {
+    font-weight: 500 !important;
   }
 </style>

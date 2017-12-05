@@ -35,7 +35,7 @@
                           </Date-picker>
                         </Form-item>
                       </template>
-                      <template v-else-if="item.type ==='select'">
+                      <template v-else-if="item.type ==='select' && item.key!=='WarehousingCompany'&& item.key!=='Warehouse'">
                         <Form-item
                           :prop="item.key"
                           :label="item.title"
@@ -46,7 +46,7 @@
                             v-model="eidtData[item.key]" placeholder="请选择...">
                             <Option
                               :key="key"
-                              v-for="a in getOptions[item.key]"
+                              v-for="a in getlocalStorageData(item.key)"
                               :label="a.label"
                               :value="a.values">
                             </Option>
@@ -183,6 +183,9 @@
       }
     },
     methods: {
+      getlocalStorageData (key) {
+        return JSON.parse(localStorage.getItem(key))
+      },
 //      otherFn () {
 //
 //      },

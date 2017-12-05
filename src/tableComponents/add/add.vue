@@ -45,7 +45,7 @@
                             <Select v-model="dataMsg[item.key]" placeholder="请选择...">
                               <Option
                                 :key="key"
-                                v-for="a in getOptions[item.key]"
+                                v-for="a in getlocalStorageData(item.key)"
                                 :label="a.label"
                                 :value="a.values">
                               </Option>
@@ -164,6 +164,9 @@
     updated () {
     },
     methods: {
+      getlocalStorageData (key) {
+        return JSON.parse(localStorage.getItem(key))
+      },
 //      筛选方法
       remoteMethod (val) {
       },

@@ -129,7 +129,7 @@
     }
   }
 </script>
-<style lang="scss" type="text/scss" rel="stylesheet/scss" scoped>
+<style type="text/css" rel="stylesheet/css" scoped>
   .form-group{
     margin:6px 0px;
   }
