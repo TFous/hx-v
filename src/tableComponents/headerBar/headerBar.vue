@@ -1,145 +1,145 @@
 <template>
   <div>
     <div class="pagerHead">
-      <Row>
-        <Col span="7" align="right" style="float: right;">
-        <slot></slot>
-        <template v-if="refreshShow">
-          <slot name="refreshBtn">
-            <Tooltip content="刷新页面，显示全部结果" placement="top-end">
-              <Button @click="refreshFn">
-                <Icon type="refresh"></Icon>
-              </Button>
-            </Tooltip>
-          </slot>
-        </template>
-        <slot name="refreshAfter"></slot>
-        <template v-if="addShow">
-          <slot name="addBtn">
-            <Tooltip content="新增" placement="top-end">
-              <Button type="primary" @click="setAddVisible">
-                <Icon type="plus"></Icon>
-              </Button>
-            </Tooltip>
-          </slot>
-        </template>
-        <slot name="addAfter"></slot>
-        <template v-if="delShow">
-          <slot name="batchBtn">
-            <Tooltip content="批量删除" placement="top-end">
-              <Button type="error" @click="batchDel">
-                <Icon type="trash-a"></Icon>
-              </Button>
-            </Tooltip>
-          </slot>
-        </template>
-        <slot name="delAfter"></slot>
-        </Col>
-        <Col span="2" style="float: right;" v-show="adSearchShow">
-        <Tooltip content="是否显示高级搜索" placement="top-start">
-          <span style="font-size: 13px;">高级搜索：</span>
-          <i-switch v-model="advancedSearch" @on-change="switchChange">
-            <span slot="open">开</span>
-            <span slot="close">关</span>
-          </i-switch>
-        </Tooltip>
-        </Col>
-        <Col span="10" v-show="advancedSearch">
-        <h3 class="pagerHead3">高级搜索</h3></Col>
-        <Col span="15" style="min-height: 10px;" v-show="!advancedSearch">
-        <template v-if="searchShow">
-          <Row>
-            <Col span="10" style="margin-right: 12px;">
-            <Input
-              @keyup.enter.native="searchFn"
-              v-model="paramsValue"
-              placeholder="请输入..."
-            >
-            <Select :disabled="options.disabledSearch"
-                    v-model="paramsSelect" slot="prepend" :style="dorpStyle">
-              <template v-for="(item, key, val) in paramsOption">
-                <Option :value="key" :key="key">{{item}}</Option>
-              </template>
-            </Select>
-            <Button slot="append" icon="ios-search" @click="searchFn"></Button>
-            </Input>
-            </Col>
-            <Col span="10">
-            <slot name="searchAfter"></slot>
-            <template v-if="options.timeSearch && timeSearchShow">
-              <Row>
-                <Col span="6">
-                <div style="margin-right: 4px;">
-                  <Select v-model="timeSelectKey">
-                    <Option v-for="item in SelectOpints" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                  </Select>
-                </div>
-                </Col>
-                <Col span="12">
-                <Date-picker class="dataSelect" v-model="searchTime" format="yyyy/MM/dd" type="daterange"
-                             placement="bottom"
-                             @on-change="searchTimeChange"
-                             placeholder="选择日期"></Date-picker>
-                </Col>
-                <Col span="3">
-                <Button icon="search" @click="searchFn" style="margin-left: 4px;"></Button>
-                </Col>
-              </Row>
-            </template>
-            </Col>
-          </Row>
-        </template>
-        </Col>
-      </Row>
-      <div class="advancedSearch" v-show="advancedSearch">
-        <Form :model="formItem" :label-width="120">
-          <template v-for="(item, key, index) in arr">
-            <template v-for="(item1, key1, index1) in advancedSearchBox">
-              <template v-if="item.key===key1">
-                <template v-if="item.type==='date'">
-                  <div class="cellCol">
-                    <Form-item :label="item1">
-                      <Date-picker class="dataSelect" v-model="formItem[key1]" format="yyyy/MM/dd" type="daterange"
-                                   placement="bottom"
-                                   placeholder="选择日期"></Date-picker>
-                    </Form-item>
-                  </div>
-                </template>
-                <template v-else>
-                  <div class="cellCol">
-                    <Form-item :label="item1">
-                      <Input v-model="formItem[key1]" placeholder="请输入"></Input>
-                    </Form-item>
-                  </div>
-                </template>
-              </template>
-            </template>
+      <el-row :gutter="20">
+        <el-col :span="7" align="right" style="float: right;">
+          <slot></slot>
+          <template v-if="refreshShow">
+            <slot name="refreshBtn">
+              <el-tooltip effect="dark" content="刷新页面，显示全部结果" placement="top-end">
+                <el-button plain type="" @click="refreshFn">
+                  <i class="iconfont icon-refresh"></i>
+                </el-button>
+              </el-tooltip>
+            </slot>
           </template>
-          <div align="right" class="advancedSearchFoot">
-            <Button type="primary" icon="search" @click="advancedSearchBtn">搜索</Button>
+          <slot name="refreshAfter"></slot>
+          <template v-if="addShow">
+            <slot name="addBtn">
+              <el-tooltip content="新增" placement="top-end">
+                <el-button plain type="primary" @click="setAddVisible">
+                  <i class="iconfont icon-add"></i>
+                </el-button>
+              </el-tooltip>
+            </slot>
+          </template>
+          <slot name="addAfter"></slot>
+          <template v-if="delShow">
+            <slot name="batchBtn">
+              <el-tooltip content="批量删除" placement="top-end">
+                <el-button plain type="danger" @click="batchDel">
+                  <i class="iconfont icon-delete"></i>
+                </el-button>
+              </el-tooltip>
+            </slot>
+          </template>
+          <slot name="delAfter"></slot>
+          <!--<el-dropdown :hide-on-click="false">-->
+          <!--<el-button plain type="info">-->
+          <!--<i class="iconfont icon-set"></i>-->
+          <!--</el-button>-->
+          <!--<el-dropdown-menu slot="dropdown" class="hx-drapMenu">-->
+          <!--<el-checkbox-group v-model="checkList">-->
+          <!--<template v-for="item in dropList">-->
+          <!--<el-dropdown-item>-->
+          <!--<el-checkbox :label="item"></el-checkbox>-->
+          <!--</el-dropdown-item>-->
+          <!--</template>-->
+          <!--</el-checkbox-group>-->
+          <!--<el-dropdown-item divided>-->
+          <!--<el-button type="primary" @click="column">确定</el-button>-->
+          <!--</el-dropdown-item>-->
+          <!--</el-dropdown-menu>-->
+          <!--</el-dropdown>-->
+        </el-col>
+        <el-col :span="8">
+          <div class="searchWrap">
+            <el-input :clearable="true" placeholder="请输入内容" :disabled="isSeniorSearch" @keyup.enter.native="searchFn"
+                      v-model="paramsValue"
+                      class="input-with-select">
+              <el-select v-model="paramsSelect" slot="prepend" placeholder="请选择" style="width:130px;">
+                <el-option v-for="(item, key) in paramsOption"
+                           :key="item.value"
+                           :label="item.label"
+                           :value="item.value"></el-option>
+              </el-select>
+              <el-button :disabled="isSeniorSearch" slot="append" @click="searchFn"
+                         icon="el-icon-search"></el-button>
+            </el-input>
           </div>
-        </Form>
+          <div class="seniorSearchBtn">
+            <el-switch
+              v-model="isSeniorSearch"
+              :active-text="seniorText">
+            </el-switch>
+          </div>
+          <!--<el-button type="primary" icon="el-icon-search">高级</el-button>-->
+        </el-col>
+      </el-row>
+      <!--高级搜索内容-->
+      <div class="seniorWrap" v-show="isSeniorSearch">
+        <el-row :gutter="20">
+          <el-form ref="form" :model="formItem" label-width="130px">
+            <template v-for="tableItem in optTables">
+              <template v-for="seniorItem in seniorSearchOptions">
+                <el-col :span="6" v-if="tableItem.key===seniorItem.key">
+                  <el-form-item :label="seniorItem.title" v-if="seniorItem.type==='date'">
+                    <el-date-picker
+                      v-model="formItem[seniorItem.key]"
+                      type="daterange"
+                      range-separator="至"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期">
+                    </el-date-picker>
+                  </el-form-item>
+                  <el-form-item :label="seniorItem.title" v-else-if="seniorItem.type==='number'">
+                    <el-input v-model="formItem[seniorItem.key]"
+                              :clearable="true"
+                              @change="setNumber(seniorItem.key,seniorItem.title)"></el-input>
+                  </el-form-item>
+                  <el-form-item :label="seniorItem.title" v-else>
+                    <el-input @change="isEmptyKey(seniorItem.key)" v-model="formItem[seniorItem.key]"
+                              :clearable="true"></el-input>
+                  </el-form-item>
+                </el-col>
+              </template>
+            </template>
+            <slot name="seniorSearch"></slot>
+            <div style="text-align: right">
+              <el-button type="primary" @click="seniorSearchFn">搜索</el-button>
+              <!--<el-tooltip :content="'当前搜索方式: ' + seniorSearchTip" placement="top">-->
+              <!--<el-switch-->
+              <!--@change="seniorSearchTypeToggleFn"-->
+              <!--v-model="seniorSearchType">-->
+              <!--</el-switch>-->
+              <!--</el-tooltip>-->
+            </div>
+          </el-form>
+        </el-row>
       </div>
     </div>
   </div>
 </template>
 <script>
-  import o from 'o.js'
+  import Vue from 'vue'
   import urlAppend from 'url-append'
   import clone from 'clone'
   import * as common from '../common.js'
+
   export default {
-    data () {
+    data() {
       return {
-        arr: [],
+        seniorSearchType: true, // 高级搜索方式
+        seniorSearchTip: '列表展示满足任意一个搜索条件的数据', // 高级搜索提示 当seniorSearchType ：false 的文字
+        dropList: [],
+        checkList: JSON.parse(localStorage.getItem('newColumn')) || [],
+        optTables: [],
         advancedSearchBox: {}, // 高级搜索选项
         advancedSearch: false, // 高级搜索是否显示
+        isSeniorSearch: false, // 高级搜索是否显示
+        seniorSearchOptions: [], // 高级搜索选项
         formItem: {}, // 存储高级搜索的值
-        timeSearchShow: true,
-        SelectOpints: [],
-        timeSelectKey: '',
-        searchTime: '',
-        paramsOption: {},
+        paramsOption: [],
         paramsValue: '',
         paramsSelect: 'searchAll' // 默认搜索
       }
@@ -172,28 +172,28 @@
         default: true
       }
     },
+    beforeMount() {
+    },
     mounted: function () {
+      this.$xvuex.registerModule(this, this.options, this.options.gridKey)
+//      this.checkList = JSON.parse(localStorage.getItem('newColumn')) || []
+//      设置 checkList
+      let dropList = []
+      this.getState.table.forEach(function (item) {
+        dropList.push(item.title)
+      })
+      this.dropList = dropList
+
       try {
         let arrFn = this.headerFn()
         common.bindFn(this, arrFn)
       } catch (e) {
       }
-      this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchVal: ''})
-      this.paramsOption = this.setOptions(this.options.arr)
-      this.advancedSearchBox = this.setAdSearchOptions(this.options.arr)
-      this.arr = clone(this.options.arr)
-      this.SelectOpints = this.setSelectOpints(this.options.arr)
-      /**
-       *   时间搜索是否显示：如果没有date属性则自动隐藏
-       */
-      if (this.SelectOpints.length === 0) {
-        this.timeSearchShow = false
-      }
-      try {
-        this.timeSelectKey = this.SelectOpints[0].value
-      } catch (e) {
-
-      }
+//      this.$store.dispatch(this.getState.gridKey + 'setData', {searchVal: ''})
+      this.paramsOption = this.setOptions(this.options.table)
+      // 设置高级搜索键值
+      this.setSeniorSearchOptions()
+      this.optTables = clone(this.getState.table)
       /**
        *  设置默认搜索
        */
@@ -202,12 +202,21 @@
       }
     },
     computed: {
-      getOptions () {
+      getState() {
         return this.$store.state[this.options.gridKey]
+      },
+      seniorText() {
+        let text
+        if (this.isSeniorSearch === false) {
+          text = '高级搜索关'
+        } else {
+          text = '高级搜索开'
+        }
+        return text
       }
     },
     watch: {
-      'getOptions.adSearchBoolean': {
+      'getState.adSearchBoolean': {
         handler: function (val, oldVal) {
           if (oldVal !== undefined) {
             this.advancedSearch = val
@@ -217,133 +226,176 @@
       }
     },
     methods: {
-      advancedSearchBtn () {
+      seniorSearchTypeToggleFn(val) {
+        if (val === true) {
+          this.seniorSearchTip = '列表展示满足所有条件的数据'
+        } else {
+          this.seniorSearchTip = '列表展示满足任意一个搜索条件的数据'
+        }
+        this.$store.dispatch(this.options.gridKey + 'setData', {seniorSearchType: val})
+      },
+      isEmptyKey(key) {
+        if (this.formItem[key] === '') {
+          delete this.formItem[key]
+        }
+      },
+      setNumber(key, title) {
+        if (this.formItem[key] === '') {
+          delete this.formItem[key]
+          return
+        }
+        let val = Number(this.formItem[key])
+        let isNumber = !Number.isNaN(val)
+        if (isNumber === true) {
+          this.formItem[key] = val
+        } else {
+          this.formItem[key] = ''
+          this.$message({
+            showClose: true,
+            message: `${title} -- 必须为填写数字！`,
+            type: 'warning'
+          })
+        }
+      },
+//     高级搜索
+      seniorSearchFn() {
         for (let item in this.formItem) {
           this.formItem[item] = common.trim(this.formItem[item])
         }  // 去除空格
-        this.$store.dispatch(this.options.gridKey + '_set_state_data', {advancedSearchBox: this.formItem})
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchBtn: !this.getOptions.searchBtn})
+        let seniorSearchBox = clone(this.formItem)
+        this.$store.dispatch(this.options.gridKey + 'setData', {seniorSearchBox: seniorSearchBox})
+        this.$store.dispatch(this.options.gridKey + 'setData', {searchBtn: !this.getState.searchBtn})
+        this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: this.isSeniorSearch})
       },
-      switchChange (val) {
-        this.$store.dispatch(this.options.gridKey + '_set_state_data', {adSearchBoolean: val})
+//      设置高级搜索键值
+      setSeniorSearchOptions() {
+        let tableOptions = this.getState.table
+        let _this = this
+        tableOptions.forEach(function (item) {
+          if (item.searchKey !== 1 && item.type !== 'select') {
+            _this.seniorSearchOptions.push(item)
+          }
+        })
       },
-      refreshFn () {
-        this.searchTime = null
+      column() {
+        let newColumn = this.checkList
+//        let newTable = []
+//        let newOpt = clone(_this.getState)
+//        newOpt.table.forEach(function (item) {
+//          newColumn.forEach(function (column) {
+//            if (column === item.title) {
+//              newTable.push(item)
+//            }
+//          })
+//        })
+//        newOpt.table = newTable
+//        localStorage.setItem('newOpt', JSON.stringify(newOpt))
+        localStorage.setItem('newColumn', JSON.stringify(newColumn))
+//        location.reload()
+        // DOM updated
+//          _this.$store.dispatch(_this.options.gridKey + '_set_state_data', {table: newTable})
+//        this.$store.dispatch(this.options.gridKey + '_set_refresh')
+        this.$router.replace(`/app?r=${Math.random()}`)
+      },
+      refreshFn() {
         this.paramsValue = null
         this.$store.dispatch(this.options.gridKey + '_set_refresh')
       },
-      setAddVisible () {
+      setAddVisible() {
         this.$store.dispatch(this.options.gridKey + '_add_Window_Visible')
       },
-      batchDel () { // 批量删除
-        let _self = this
-        let delObjs = _self.getOptions.delData
+      batchDel() { // 批量删除
+        let _this = this
+        let delObjs = _this.getState.selection
         let $length = delObjs.length
         if ($length === 0) {
-          this.$Message.warning('请先选中需要删除的项目。')
-          return
+          this.$message({
+            message: '请先选中需要删除的项目。',
+            type: 'warning'
+          })
+          return false
         }
-        let nowNumber = 0
-        _self.$Modal.confirm({
-          title: '批量删除确认',
-          content: '此操作将删除选中项, 是否继续?',
-          onOk: function () {
-            let url = _self.options.api.split('?$filter')[0]
-            delObjs.forEach(function (Item) {
-              o(urlAppend(url, {r: Math.random()})).find(Item.Id).remove().save().then(function (data) {
-                nowNumber += 1
-                if (nowNumber === $length) {
-                  _self.$Message.info('删除成功')
-                  _self.$store.dispatch(_self.options.gridKey + '_set_refresh')
-                }
-              })
+        this.$confirm('此操作将删除选中项, 是否继续?', '批量删除确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let myRequests = []
+          delObjs.forEach(function (item) {
+            let url = `${_this.getState.delUrl}(${item.Id})`
+            myRequests.push(Vue.prototype.$api.request(url, {
+              method: 'DELETE'
+            }))
+          })
+          Promise.all(myRequests.map(myRequest =>
+            fetch(myRequest).then(resp => {
+              return resp.json()
             })
+          )).then(datas => {
+            _this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+            _this.$store.dispatch(_this.options.gridKey + '_set_refresh')
             //            删除最后一页 bug
-            let states = _self.$store.state[_self.options.gridKey]
-            let pagerCurrentPage = states.pager_CurrentPage
-            let pageSize = states.pager_Size
-            let pagerTotal = states.pager_Total
-//            console.log(pager_Total % pageSize + '---------' + $length)
+            let pagerCurrentPage = _this.getState.pager_CurrentPage
+            let pageSize = _this.getState.pager_Size
+            let pagerTotal = _this.getState.pager_Total
             if (pagerCurrentPage > 1 && pagerTotal % pageSize === $length) {
-              _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {pager_CurrentPage: pagerCurrentPage - 1})
+              _this.$store.dispatch(_this.getState.gridKey + 'setData', {pager_CurrentPage: pagerCurrentPage - 1})
             }
-            _self.$store.dispatch(_self.options.gridKey + '_set_state_data', {delData: []})
-          }
+            _this.$store.dispatch(_this.getState.gridKey + 'setData', {selection: []})
+          })
+        }).catch(() => {
+
         })
       },
-      setSelectOpints (data) {
-        let arr = data
-        let newArr = []
-        arr.filter(function (e) {
-          let o = {}
-          if (e.type === 'date') {
-            o['value'] = e.key
-            o['label'] = e.title
-            newArr.push(o)
-          }
-        })
-        return newArr
-      },
-      searchTimeChange (val) {
-        let startTime = val[0]
-        let endTime = val[1]
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {endTime: endTime})
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {startTime: startTime})
-      },
-      endTimeFn (val) {
-      },
-      searchFn () {
+      searchFn() {
         this.paramsValue = common.trim(this.paramsValue)
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {timeSelectKey: this.timeSelectKey})
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchBtn: !this.getOptions.searchBtn})
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchVal: this.paramsValue})
-        this.$store.dispatch(this.getOptions.gridKey + '_set_state_data', {searchKeys: [this.paramsSelect]})
+        this.$store.dispatch(this.getState.gridKey + 'setData', {searchBtn: !this.getState.searchBtn})
+        this.$store.dispatch(this.getState.gridKey + 'setData', {searchVal: this.paramsValue})
+        this.$store.dispatch(this.getState.gridKey + 'setData', {searchKeys: this.paramsSelect})
       },
-      setOptions (data) {
-        let o = {}
-        o['searchAll'] = '全部'
+      /**
+       * 设置搜索下拉选项
+       * @param data
+       * @returns {[null]}
+       */
+      setOptions(data) {
+        let paramsOption = [{
+          label: '全部',
+          value: 'searchAll'
+        }]
         for (let item of data) {
-          if (item.search_hide !== 1 && item.type !== 'select' && item.type !== 'date') {
-            o[item.key] = item.title
+          if (item.searchKey !== 1 && item.type !== 'select' && item.type !== 'date') {
+            let o = {}
+            o.label = item.title
+            o.value = item.key
+            paramsOption.push(o)
           }
         }
-        return o
-      },
-      setAdSearchOptions (data) {
-        let o = {}
-        for (let item of data) {
-          if (item.search_hide !== 1 && item.type !== 'select') {
-            o[item.key] = item.title
-          }
-        }
-        return o
+        return paramsOption
       }
     }
   }
 </script>
-<style scoped>
-  .advancedSearchFoot {
-    padding: 0px 63px 15px 63px;
-    margin-bottom: 12px;
-    border-bottom: 1px solid #dddee1;
-  }
-
-  .pagerHead3 {
-    border-left: 6px solid red;
-    padding-left: 12px;
-    font-size: 18px;
-  }
-
+<style>
   .pagerHead {
-    padding: 12px 0px;
+    overflow: hidden;
+    padding: 0px 0px 12px 0px;
   }
 
-  .advancedSearch {
-    margin-top: 20px;
-  }
-
-  .cellCol {
+  .seniorSearchBtn {
     display: inline-block;
-    width: 24%;
+  }
+
+  .searchWrap {
+    /*padding:20px 0px;*/
+    margin-right: 20px;
+    display: inline-block;
+  }
+
+  .searchWrap .el-input__inner {
+    text-align: center;
   }
 </style>

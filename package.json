@@ -46,8 +46,7 @@
     "node-sass": "^4.6.1",
     "popper.js": "^0.6.4",
     "sass-loader": "^6.0.6",
-    "url-append": "^0.1.0",
-    "ztree": "^3.5.24"
+    "url-append": "^0.1.0"
   },
   "peerDependencies": {
     "vue": "^2.1.10"
@@ -88,7 +87,6 @@
     "less-loader": "^2.2.3",
     "lolex": "^1.5.2",
     "mocha": "^3.2.0",
-    "o.js": "^0.2.2",
     "phantomjs-prebuilt": "^2.1.13",
     "sinon": "^1.17.7",
     "sinon-chai": "^2.8.0",
