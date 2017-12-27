@@ -1,21 +1,3 @@
-export function filterData(val) {
-  let items = val;
-  let obj = {};
-  items.forEach(function (item) {
-    if (item.addLayer !== 'hide') {
-      // 測試
-      // obj[item.key] = (item.type === 'date' ? 1 : '123')
-      obj[item.key] = null
-      // obj[item.key] = (item.type === 'date' ? '2017-06-06' : null)
-      // obj[item.key] = (item.type === 'number' ? null : '')
-      if (item.addLayer === 'relyOn' || item.addLayer === 'relyOn|show') {
-        obj[item.key] = item.value
-      }
-    }
-  })
-  return obj
-}
-
 export function bind(fn, ctx) {
   function boundFn(a) {
     var l = arguments.length;
@@ -43,6 +25,16 @@ export function bindFn(_this, fn) {
   for (let key in arrFn) {
     vue[key] = bind(arrFn[key], vue)
   }
+}
+
+export function filterependence(columns) {
+    let obj = {};
+    columns.forEach(function (item) {
+        if (item.type === 'dependence') {
+            obj[item.key] = item.dependenceVal
+        }
+    })
+    return obj
 }
 
 export function trim(text) {

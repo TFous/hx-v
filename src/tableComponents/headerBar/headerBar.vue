@@ -272,7 +272,7 @@
         let tableOptions = this.getState.table
         let _this = this
         tableOptions.forEach(function (item) {
-          if (item.searchKey !== 1 && item.type !== 'select') {
+          if (item.searchKey !== 'hide' && item.type !== 'select') {
             _this.seniorSearchOptions.push(item)
           }
         })
@@ -367,7 +367,7 @@
           value: 'searchAll'
         }]
         for (let item of data) {
-          if (item.searchKey !== 1 && item.type !== 'select' && item.type !== 'date') {
+          if (item.searchKey !== 'hide' && item.type !== 'select' && item.type !== 'date') {
             let o = {}
             o.label = item.title
             o.value = item.key

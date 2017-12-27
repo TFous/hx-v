@@ -153,7 +153,7 @@
     },
     mounted: function () {
       let _this = this
-      let filterData = common.filterData(_this.getState.table)
+      let filterData = common.filterependence(_this.getState.table)
       _this.dataMsg = clone(filterData)
       try {
         let arrFn = _this.addFn()
