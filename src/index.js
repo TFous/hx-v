@@ -3,6 +3,7 @@ var validate = require('./validate.js');
 var xtable = require('./tableComponents/table');
 var xheaderBar = require('./tableComponents/headerBar');
 var xadd = require('./tableComponents/add');
+var xdetails = require('./tableComponents/details');
 var xedit = require('./tableComponents/edit');
 var xpagers = require('./tableComponents/pagers');
 // xvuex
@@ -10,6 +11,7 @@ var xvuex = require('./tableComponents/xVuex');
 var common = require('./tableComponents/common');
 
 const hxqh = {
+    xdetails,
     xedit,
     xpagers,
     xadd,

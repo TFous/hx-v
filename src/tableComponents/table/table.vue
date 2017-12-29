@@ -5,6 +5,7 @@
                 :data="getState.tableData"
                 border
                 :stripe="false"
+                @cell-dblclick="showDetails"
                 @selection-change="selectCheckbox"
                 @filter-change="filterChangeFn"
                 @sort-change="sortChangeFn"
@@ -22,7 +23,7 @@
                                 :prop="item.key"
                                 :column-key="item.key"
                                 :label="item.title"
-                                sortable
+                                :sortable="item.sortable"
                                 :filters="item.filters"
                                 filter-placement="bottom-end"
                                 :width="item.width">
@@ -34,7 +35,7 @@
                                 :prop="item.key"
                                 :column-key="item.key"
                                 :label="item.title"
-                                sortable
+                                :sortable="item.sortable"
                                 :width="item.width">
                             </el-table-column>
                         </template>
@@ -68,10 +69,8 @@
 </template>
 <script>
     import Vue from 'vue'
-
     let isFirst = true
     import * as common from '../common'
-    import urlAppend from 'url-append'
     import clone from 'clone'
 
     export default {
@@ -194,6 +193,10 @@
 
         },
         methods: {
+            // 显示详情
+            showDetails (rowData) {
+                this.$store.dispatch(this.options.gridKey + '_details_Window_Visible', rowData)
+            },
             selectCheckbox(selection) {
                 let select = clone(selection)
                 this.$store.dispatch(this.options.gridKey + 'setData', {selection: select})
@@ -286,7 +289,7 @@
                         url += `&${item}`
                     }
                 })
-                _this.$store.dispatch(_this.options.gridKey + 'setData', {requestUrl: urlAppend(url, {r: Math.random()})})
+                _this.$store.dispatch(_this.options.gridKey + 'setData', {requestUrl: url})
             },
 //     高级搜索
             seniorSearchFn(urlObj) {
@@ -469,7 +472,6 @@
                  */
                 let requestCountHeader = Vue.prototype.$api.request($countUrl)
                 fetch(requestCountHeader).then(resp => {
-                    console.log(resp)
                     return resp.text()
                 }).then(count => {
                     if (Number(count) === 0) {

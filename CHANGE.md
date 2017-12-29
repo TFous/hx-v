@@ -18,4 +18,23 @@
       }).then(function (myBlob) {
         console.log(myBlob)
       })
+
+
+
+      // colunm 默认添加
+       table.forEach(function (item) {
+              let newColunm = Object.assign({
+                  addLayer: 'show',
+                  editLayer: 'show', // show hide
+                  searchKey: 'show',
+                  sortable: false,  // 排序
+                  readOnly: false, // 修改的是否是否是只读不可改
+                  column: 'show',  // 表格列是否展示  show  hide
+                  width: 'auto', // 180
+                  type: 'string'  // type: string number select remoteMethod
+              }, item)
+              newTable.push(newColunm)
+          })
+
+
 ```
