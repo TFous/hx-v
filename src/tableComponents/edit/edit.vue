@@ -238,8 +238,8 @@
                             method: 'PATCH',
                             body: JSON.stringify(_this.dataMsg)
                         })
+                        let isRequestOk
                         fetch(requestDataHeader).then(resp => {
-                            console.log(resp)
                             if (resp.ok === true) {
                                 _this.$message({
                                     showClose: true,
@@ -249,10 +249,17 @@
                                 _this.$store.dispatch(_this.options.gridKey + '_set_refresh')
                                 _this.show = false // 关闭弹窗
                             } else {
+                                isRequestOk = resp.ok
                                 return resp.json()
                             }
                         }).then(data => {
-
+                            if (isRequestOk === false) {
+                                _this.$notify.error({
+                                    title: '错误消息',
+                                    message: data.message
+                                })
+                                return false
+                            }
                         })
                     } else {
                         console.log('error submit!!')

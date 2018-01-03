@@ -194,9 +194,19 @@
                             method: 'POST',
                             body: JSON.stringify(newData)
                         })
+                        let isRequestOk
                         fetch(requestDataHeader).then(resp => {
+                            isRequestOk = resp.ok
                             return resp.json()
                         }).then(data => {
+                            if (isRequestOk === false) {
+                                _this.$notify.error({
+                                    title: '错误消息',
+                                    message: data.message
+                                })
+                                return false
+                            }
+
                             _this.$message({
                                 showClose: true,
                                 message: '新增成功',

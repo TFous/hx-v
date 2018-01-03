@@ -17,11 +17,10 @@ const hxqh = {
     xadd,
     xtable,
     xheaderBar,
-    common,
     validate
 };
 
-const install = function (Vue, baseUrl = {}) {
+const install = function (Vue, options = {}) {
     Object.keys(hxqh).forEach((key) => {
         Vue.component(key, hxqh[key]['default']);
     });
@@ -29,9 +28,11 @@ const install = function (Vue, baseUrl = {}) {
     //     return Vue.component(key, hxqh[key]['default']);
     // });
     Vue.$validate = validate.validate;
-    Vue.$baseUrl = baseUrl;
+    Vue.$table_options = options;
     Vue.$xvuex = xvuex;
-    Vue.prototype.$baseUrl = baseUrl;
+    Vue.$common = common;
+    Vue.prototype.$common = common;
+    Vue.prototype.$table_options = options;
     Vue.prototype.$xvuex = xvuex;
     Vue.prototype.$validate = validate.validate;
 };

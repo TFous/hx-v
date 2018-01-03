@@ -58,6 +58,9 @@
                                         v-else-if="renderItem.tag==='a'"
                                         :href="renderItem.href"
                                     >{{s.row[item.key]}}</a>
+                                    <template v-else>
+                                        <span :title="renderItem.title" :class="renderItem.class?renderItem.class:'cell-cursor'" @click="renderItem.fn(s)">{{s.row[item.key]}}</span>
+                                    </template>
                                 </template>
                             </template>
                         </el-table-column>
@@ -471,9 +474,22 @@
                  *
                  */
                 let requestCountHeader = Vue.prototype.$api.request($countUrl)
+                let isRequestOk
                 fetch(requestCountHeader).then(resp => {
-                    return resp.text()
+                    isRequestOk = resp.ok
+                    if(isRequestOk===false){
+                        return resp.json()
+                    }else{
+                        return resp.text()  // 没有问题
+                    }
                 }).then(count => {
+                    if (isRequestOk === false) {
+                        _this.$notify.error({
+                            title: '错误消息',
+                            message: data.message
+                        })
+                        return false
+                    }
                     if (Number(count) === 0) {
                         _this.ready = true
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {tableData: []})
@@ -490,8 +506,16 @@
                     // requestDataHeader 获取分页 的data
                     let requestDataHeader = Vue.prototype.$api.request($requestUrl)
                     fetch(requestDataHeader).then(resp => {
+                        isRequestOk = resp.ok
                         return resp.json()
                     }).then(data => {
+                        if (isRequestOk === false) {
+                            _this.$notify.error({
+                                title: '错误消息',
+                                message: data.message
+                            })
+                            return false
+                        }
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: data.value})
                     })
                 })
@@ -535,6 +559,12 @@
                 })
                 Promise.all(myRequests.map(myRequest =>
                     fetch(myRequest).then(resp => {
+                        if (resp.ok === false) {
+                            _this.$notify.error({
+                                title: '错误消息',
+                                message: `获取莫项数据字典发生错误`
+                            })
+                        }
                         return resp.json()
                     })
                 )).then(datas => {

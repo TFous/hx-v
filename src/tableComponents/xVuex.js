@@ -1,3 +1,4 @@
+import Vue from 'vue'
 function createMutations(state, gridKey) {
     return {
         [gridKey + '_SET_DATA'](state, data) {
@@ -6,7 +7,7 @@ function createMutations(state, gridKey) {
         [gridKey + '_EDIT_WINDOW_DATA'](state, data) {
             state.edit_Window_Data = data
         },
-        [gridKey + '_DETAILS_WINDOW_DATA'] (state, data) {
+        [gridKey + '_DETAILS_WINDOW_DATA'](state, data) {
             state.details_Window_Data = data
         },
         [gridKey + '_FILTER_BOX_DATA'](state, data) {
@@ -46,10 +47,10 @@ function createMutations(state, gridKey) {
 }
 
 function initOpt(opt) {
-    let table = opt.table
-    let newTable = []
+    var table = opt.table
+    var newTable = []
     table.forEach(function (item) {
-        let newColunm = Object.assign({
+        var newColunm = Object.assign({
             addLayer: 'show',
             editLayer: 'show', // show hide
             detailsLayer: 'show', // 详情页默认展示
@@ -62,6 +63,10 @@ function initOpt(opt) {
         }, item)
         newTable.push(newColunm)
     })
+    var pager_size_opts = Vue.prototype.$table_options.pager_size_opts
+    var pager_Size = Vue.prototype.$table_options.pager_Size
+    opt.pager_size_opts = pager_size_opts ? pager_size_opts : opt.pager_size_opts
+    opt.pager_Size = pager_Size ? pager_Size : opt.pager_Size
     opt.table = newTable
     return opt;
 }

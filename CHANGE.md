@@ -37,4 +37,31 @@
           })
 
 
+        // render 三种形式
+
+        btn
+        a
+
+        render: [
+                //  a 标签
+                    {
+                        fn: this.editRow,
+                        type: 'primary',
+                        tag: 'button',
+                        text: '编辑'
+                    },
+        //  button
+            {
+                fn: this.editRow,
+                type: 'primary',
+                tag: 'button',
+                text: '编辑'
+            },
+            //  其他
+            {
+                fn: this.editRow,   // 事件
+                class: 'classname', // 此项可没有，默认为.cell-cursor
+                tips: '点击查看详情'  // 鼠标移到上面展示的内容
+            }
+        ]
 ```

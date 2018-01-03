@@ -2,7 +2,7 @@
     <div>
         <div class="pagerHead">
             <el-row :gutter="20">
-                <el-col :span="7" align="right" style="float: right;">
+                <el-col :span="12" align="right" style="float: right;">
                     <slot></slot>
                     <template v-if="refreshShow">
                         <slot name="refreshBtn">
@@ -52,7 +52,7 @@
                     <!--</el-dropdown-menu>-->
                     <!--</el-dropdown>-->
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="12">
                     <div class="searchWrap" v-show="isShowSearch">
                         <el-input :clearable="true" placeholder="请输入内容" :disabled="isSeniorSearch"
                                   @keyup.enter.native="searchFn"
@@ -326,6 +326,12 @@
                     })
                     Promise.all(myRequests.map(myRequest =>
                         fetch(myRequest).then(resp => {
+                            if (resp.ok === false) {
+                                _this.$notify.error({
+                                    title: '错误消息',
+                                    message: `删除某项发生错误。`
+                                })
+                            }
                             return resp.json()
                         })
                     )).then(datas => {
@@ -344,8 +350,6 @@
                         }
                         _this.$store.dispatch(_this.getState.gridKey + 'setData', {selection: []})
                     })
-                }).catch(() => {
-
                 })
             },
             searchFn() {
