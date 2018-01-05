@@ -38,18 +38,13 @@
 
 
         // render 三种形式
-
-        btn
-        a
-
         render: [
-                //  a 标签
-                    {
-                        fn: this.editRow,
-                        type: 'primary',
-                        tag: 'button',
-                        text: '编辑'
-                    },
+        //  a 标签
+            {
+              tag: 'a',
+              href: 'http://www.baidu.com',
+              text: '删除'
+            },
         //  button
             {
                 fn: this.editRow,
@@ -64,4 +59,34 @@
                 tips: '点击查看详情'  // 鼠标移到上面展示的内容
             }
         ]
+        // table 折叠expand
+        <xtable
+                :tableFn="tableFn"
+                :options="options"
+            >
+                <span slot="expand">
+                     <el-table-column
+                     fixed="left"  // 必须，否则某些页面会出现问题
+                      type="expand">
+                            <template slot-scope="props">
+                        <el-table
+                            :data="props.row.ClientSecondSeat"
+                            style="width: 100%">
+                            <el-table-column
+                                label="客户ID"
+                                prop="ClientId">
+                            </el-table-column>
+                            <el-table-column
+                                label="次席状态（SecondSeatStatus）"
+                                prop="SecondSeatStatus">
+                            </el-table-column>
+                            <el-table-column
+                                label="CreationTime时间"
+                                prop="CreationTime">
+                            </el-table-column>
+                        </el-table>
+                    </template>
+                        </el-table-column>
+                </span>
+            </xtable>
 ```

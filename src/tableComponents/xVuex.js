@@ -123,6 +123,7 @@ export function registerModule(_this, state, gridKey) {
 }
 
 export const options = {
+    border: true, // table 是否展示竖排 border
     requestUrl: '', // 最终请求的url
     sortBox: {}, // 存储排序信息  // 理论可以实现多列排序，目前组建展示效果不支持，功能保留
     filterBox: {}, // 存储筛选信息

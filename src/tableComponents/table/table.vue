@@ -2,61 +2,66 @@
     <div class="otable">
         <slot>
             <el-table
-                :data="getState.tableData"
-                border
-                :stripe="false"
-                @cell-dblclick="showDetails"
-                @selection-change="selectCheckbox"
-                @filter-change="filterChangeFn"
-                @sort-change="sortChangeFn"
-                style="width: 100%">
+                    :data="getState.tableData"
+                    :border="getState.border"
+                    :stripe="false"
+                    @cell-dblclick="showDetails"
+                    @selection-change="selectCheckbox"
+                    @filter-change="filterChangeFn"
+                    @sort-change="sortChangeFn"
+                    style="width: 100%">
                 <el-table-column
-                    v-if="getState.isSelection"
-                    type="selection"
-                    width="35">
+                        v-if="getState.isSelection"
+                        type="selection"
+                        fixed="left"
+                        width="35">
                 </el-table-column>
+                <slot name="expand"></slot>
                 <template v-for="(item, index) in getState.table" v-if="item.column==='show'">
                     <template v-if="!item.render">
                         <template v-if="item.filter === true">
                             <el-table-column
-                                :fixed="item.fixed"
-                                :prop="item.key"
-                                :column-key="item.key"
-                                :label="item.title"
-                                :sortable="item.sortable"
-                                :filters="item.filters"
-                                filter-placement="bottom-end"
-                                :width="item.width">
+                                    show-overflow-tooltip
+                                    :fixed="item.fixed"
+                                    :prop="item.key"
+                                    :column-key="item.key"
+                                    :label="item.title"
+                                    :sortable="item.sortable"
+                                    :filters="item.filters"
+                                    filter-placement="bottom-end"
+                                    :width="item.width">
                             </el-table-column>
                         </template>
                         <template v-else>
                             <el-table-column
-                                :fixed="item.fixed"
-                                :prop="item.key"
-                                :column-key="item.key"
-                                :label="item.title"
-                                :sortable="item.sortable"
-                                :width="item.width">
+                                    show-overflow-tooltip
+                                    :fixed="item.fixed"
+                                    :prop="item.key"
+                                    :column-key="item.key"
+                                    :label="item.title"
+                                    :sortable="item.sortable"
+                                    :width="item.width">
                             </el-table-column>
                         </template>
                     </template>
                     <template v-else-if="item.render">
                         <el-table-column
-                            :fixed="item.fixed"
-                            :label="item.title"
-                            :width="item.width">
-                            <template scope="s">
+                                show-overflow-tooltip
+                                :fixed="item.fixed"
+                                :label="item.title"
+                                :width="item.width">
+                            <template slot-scope="s">
                                 <template v-for="renderItem in item.render">
                                     <el-button
-                                        v-if="renderItem.tag==='button'"
-                                        @click.native.prevent="renderItem.fn(s)"
-                                        :type="renderItem.type"
-                                        plain>
+                                            v-if="renderItem.tag==='button'"
+                                            @click.native.prevent="renderItem.fn(s)"
+                                            :type="renderItem.type"
+                                            plain>
                                         {{renderItem.text}}
                                     </el-button>
                                     <a
-                                        v-else-if="renderItem.tag==='a'"
-                                        :href="renderItem.href"
+                                            v-else-if="renderItem.tag==='a'"
+                                            :href="renderItem.href"
                                     >{{s.row[item.key]}}</a>
                                     <template v-else>
                                         <span :title="renderItem.title" :class="renderItem.class?renderItem.class:'cell-cursor'" @click="renderItem.fn(s)">{{s.row[item.key]}}</span>
