@@ -22,6 +22,7 @@
 
 
       // colunm 默认添加
+      // 当type 为 dependence 时为依赖关系，需填写  dependenceVal: 默认值
        table.forEach(function (item) {
               let newColunm = Object.assign({
                   addLayer: 'show',
@@ -31,12 +32,14 @@
                   readOnly: false, // 修改的是否是否是只读不可改
                   column: 'show',  // 表格列是否展示  show  hide
                   width: 'auto', // 180
-                  type: 'string'  // type: string number select remoteMethod
+                  type: 'string'  // type: string number select remoteMethod dependence
               }, item)
               newTable.push(newColunm)
           })
 
+```
 
+``` javascript
         // render 三种形式
         render: [
         //  a 标签
@@ -59,7 +62,11 @@
                 tips: '点击查看详情'  // 鼠标移到上面展示的内容
             }
         ]
-        // table 折叠expand
+
+```
+
+``` javascript
+// table 折叠expand
         <xtable
                 :tableFn="tableFn"
                 :options="options"
@@ -89,4 +96,36 @@
                         </el-table-column>
                 </span>
             </xtable>
+
+```
+
+``` javascript
+// 新增全局分页设置
+isSetPage: false,  // 是否使用页面设置每页展示，覆盖用全局设置
+当为true时，页面使用不实用全局，使用当前设置的
+
+Vue.use(hxqh,{
+    pager_size_opts: [30, 50, 100],  // 每页展示数量
+    pager_Size: 30   //  默认显示每页数量，和opts第一个一样
+})
+```
+
+```javascript
+// 可替换组建内部所有方法
+    headerFn() {
+        return {}
+    }
+
+    tableFn() {
+        return {}
+    }
+
+    addFn() {
+        return {}
+    }
+
+    editFn() {
+        return {}
+    }
+
 ```

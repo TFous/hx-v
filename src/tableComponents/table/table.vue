@@ -5,6 +5,7 @@
                     :data="getState.tableData"
                     :border="getState.border"
                     :stripe="false"
+                    ref="xtable"
                     @cell-dblclick="showDetails"
                     @selection-change="selectCheckbox"
                     @filter-change="filterChangeFn"
@@ -140,7 +141,8 @@
 //      'getState.tableData': {
 //        handler: function (val, oldVal) {
 //          if (oldVal !== undefined) {
-//            this.tableData = val
+//              console.log(val[0])
+//              this.$refs.xtable.toggleRowSelection([val[0]]);
 //          }
 //        },
 //        deep: true

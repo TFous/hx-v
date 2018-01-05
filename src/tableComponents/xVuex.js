@@ -1,4 +1,5 @@
 import Vue from 'vue'
+
 function createMutations(state, gridKey) {
     return {
         [gridKey + '_SET_DATA'](state, data) {
@@ -59,14 +60,16 @@ function initOpt(opt) {
             readOnly: false, // 修改的是否是否是只读不可改
             column: 'show',  // 表格列是否展示  show  hide
             width: 'auto', // 180
-            type: 'string'  // type: string number select remoteMethod
+            type: 'string'  // type: string number select remoteMethod dependence
         }, item)
         newTable.push(newColunm)
     })
-    var pager_size_opts = Vue.prototype.$table_options.pager_size_opts
-    var pager_Size = Vue.prototype.$table_options.pager_Size
-    opt.pager_size_opts = pager_size_opts ? pager_size_opts : opt.pager_size_opts
-    opt.pager_Size = pager_Size ? pager_Size : opt.pager_Size
+    if (opt.isSetPage === false) {
+        var pager_size_opts = Vue.prototype.$table_options.pager_size_opts
+        var pager_Size = Vue.prototype.$table_options.pager_Size
+        opt.pager_size_opts = pager_size_opts ? pager_size_opts : opt.pager_size_opts
+        opt.pager_Size = pager_Size ? pager_Size : opt.pager_Size
+    }
     opt.table = newTable
     return opt;
 }
@@ -139,6 +142,7 @@ export const options = {
     arrCopy: [], // 存储arr原始对象
     defaultSearch: '',  // 默认 搜索选项
     disabledSearch: false, // 是否禁用搜索下拉 true：禁用
+    isSetPage: false,  // 是否使用页面设置每页展示，覆盖用全局设置
     pager_size_opts: [5, 10, 50],  // 每页展示数量
     pager_Size: 5,   //  默认显示每页数量，和opts第一个一样
     pager_CurrentPage: 1, // 当前第几页
