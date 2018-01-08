@@ -70,8 +70,8 @@
                     </div>
                     <div class="seniorSearchBtn" v-show="isShowSenior">
                         <el-switch
-                            v-model="isSeniorSearch"
-                            :active-text="seniorText">
+                                v-model="isSeniorSearch"
+                                :active-text="seniorText">
                         </el-switch>
                     </div>
                     <!--<el-button type="primary" icon="el-icon-search">高级</el-button>-->
@@ -86,20 +86,23 @@
                                 <el-col :span="6" v-if="tableItem.key===seniorItem.key">
                                     <el-form-item :label="seniorItem.title" v-if="seniorItem.type==='date'">
                                         <el-date-picker
-                                            v-model="formItem[seniorItem.key]"
-                                            type="daterange"
-                                            range-separator="至"
-                                            start-placeholder="开始日期"
-                                            end-placeholder="结束日期">
+                                                v-model="formItem[seniorItem.key]"
+                                                @blur="seniorSearchFn"
+                                                type="daterange"
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期">
                                         </el-date-picker>
                                     </el-form-item>
                                     <el-form-item :label="seniorItem.title" v-else-if="seniorItem.type==='number'">
                                         <el-input v-model="formItem[seniorItem.key]"
                                                   :clearable="true"
+                                                  @blur="seniorSearchFn"
                                                   @change="setNumber(seniorItem.key,seniorItem.title)"></el-input>
                                     </el-form-item>
                                     <el-form-item :label="seniorItem.title" v-else>
                                         <el-input @change="isEmptyKey(seniorItem.key)"
+                                                  @blur="seniorSearchFn"
                                                   v-model="formItem[seniorItem.key]"
                                                   :clearable="true"></el-input>
                                     </el-form-item>
@@ -108,7 +111,7 @@
                         </template>
                         <slot name="seniorSearch"></slot>
                         <div style="text-align: right">
-                            <el-button type="primary" @click="seniorSearchFn">搜索</el-button>
+                            <!--<el-button type="primary" @click="seniorSearchFn">搜索</el-button>-->
                             <!--<el-tooltip :content="'当前搜索方式: ' + seniorSearchTip" placement="top">-->
                             <!--<el-switch-->
                             <!--@change="seniorSearchTypeToggleFn"-->

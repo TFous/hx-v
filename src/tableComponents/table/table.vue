@@ -266,14 +266,29 @@
                         let filtersHtmls = ``
                         expandFiltersBOx[filters].forEach(function (key) {
                             let splitKey = key.split(' ')
-                            let newKey = `(${splitKey[0].split('.')[1]} ${splitKey[1]} ${splitKey[2]}`
+                            let splitKey01 = splitKey[0].split('.')
+                            let key1
+                            if(splitKey01.length===1){
+                                key1 = splitKey[0]
+                            }else if(splitKey01.length===2){
+                                key1 = splitKey[1]
+                            }else{
+                                console.error('splitKey设置有错误')
+                                console.error(splitKey)
+                            }
+                            let newKey = `(${key1.split('(')[1]} ${splitKey[1]} ${splitKey[2]}`
                             filtersHtmls += `${newKey}or`
                         })
                         expandFilterUrl += `(${filtersHtmls.slice(0, -2)})and`
                     }
                 }
                 let initExpand = _this.getState.urlParameter.$expand
-                let expandUrl = initExpand !== '' ? initExpand : ''
+                let expandUrl
+                if (initExpand !== '' && initExpand !== undefined) {
+                    expandUrl = initExpand
+                } else {
+                    expandUrl = ''
+                }
                 if (expandUrl !== '') {
                     if(expandFilterUrl!==''){
                         urlObj['expandUrl'] = `$expand=${expandUrl}($filter=${expandFilterUrl.slice(0, -3)})`
@@ -322,7 +337,7 @@
                 let initSort = _this.getState.urlParameter.$orderby
                 if (sortUrl !== '') {
                     urlObj['sortUrl'] = sortUrl
-                } else if (initSort !== '') {
+                } else if (initSort !== '' && initSort!== undefined) {
                     urlObj['sortUrl'] = `$orderby=${initSort}`
                 }
                 /**
