@@ -130,10 +130,10 @@
              */
             'getState.requestUrl': {
                 handler: function (val, oldVal) {
-                    this.getList()
-//                    if (oldVal !== val && oldVal !== undefined) {
-//                        this.getList()
-//                    }
+//                    this.getList()
+                    if (oldVal !== val && oldVal !== undefined) {
+                        this.getList()
+                    }
                 },
                 deep: true
             },
