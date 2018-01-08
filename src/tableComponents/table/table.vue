@@ -4,7 +4,7 @@
             <el-table
                     :data="getState.tableData"
                     :border="getState.border"
-                    :stripe="false"
+                    :stripe="true"
                     ref="xtable"
                     @cell-dblclick="showDetails"
                     @selection-change="selectCheckbox"
