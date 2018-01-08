@@ -25,6 +25,20 @@ function createMutations(state, gridKey) {
             }
             state.filterBox = Object.assign({}, state.filterBox, data)
         },
+        [gridKey + '_EFILTER_BOX_DATA'](state, data) {
+            // reset
+            if (data === null) {
+                state.efilterBox = {}
+                return
+            }
+            for (let item in data) {
+                if (data[item].length === 0) {
+                    delete state.efilterBox[item]
+                    return
+                }
+            }
+            state.efilterBox = Object.assign({}, state.efilterBox, data)
+        },
         [gridKey + '_SORT_BOX_DATA'](state, data) {
             if (data.prop === null) {
                 state.sortBox = {}
@@ -60,11 +74,12 @@ function initOpt(opt) {
             readOnly: false, // 修改的是否是否是只读不可改
             column: 'show',  // 表格列是否展示  show  hide
             width: 'auto', // 180
-            type: 'string'  // type: string number select remoteMethod dependence
+            isExpand: false, // 180
+            type: 'string'  // type: string number select remoteMethod
         }, item)
         newTable.push(newColunm)
     })
-    if (opt.isSetPage === false) {
+    if (opt.isPageSet === false) {
         var pager_size_opts = Vue.prototype.$table_options.pager_size_opts
         var pager_Size = Vue.prototype.$table_options.pager_Size
         opt.pager_size_opts = pager_size_opts ? pager_size_opts : opt.pager_size_opts
@@ -96,6 +111,9 @@ export function registerModule(_this, state, gridKey) {
         actions: {
             [gridKey + 'setData']({dispatch, commit}, obj) {
                 _this.$store.commit(gridKey + '_SET_DATA', obj)
+            },
+            [gridKey + '_set_efilterbox']({dispatch, commit}, val) {
+                _this.$store.commit(gridKey + '_EFILTER_BOX_DATA', val)
             },
             [gridKey + '_set_filterbox']({dispatch, commit}, val) {
                 _this.$store.commit(gridKey + '_FILTER_BOX_DATA', val)
@@ -130,6 +148,7 @@ export const options = {
     requestUrl: '', // 最终请求的url
     sortBox: {}, // 存储排序信息  // 理论可以实现多列排序，目前组建展示效果不支持，功能保留
     filterBox: {}, // 存储筛选信息
+    efilterBox: {}, // 存储 expend 筛选信息
     seniorSearchBox: {}, // 存储高级搜索信息
     seniorSearchType: true, // 高级搜索方式是and 还是 or
     otherSeniorSearchOpt: {},  // 其他手动添加的高级搜索项 对象内部值必须为数组.ps {key:[123,123]} 目前考虑的是模糊搜索，支持同事筛选多个
@@ -142,7 +161,7 @@ export const options = {
     arrCopy: [], // 存储arr原始对象
     defaultSearch: '',  // 默认 搜索选项
     disabledSearch: false, // 是否禁用搜索下拉 true：禁用
-    isSetPage: false,  // 是否使用页面设置每页展示，覆盖用全局设置
+    isPageSet: false,  // 是否使用页面设置每页展示，覆盖用全局设置
     pager_size_opts: [5, 10, 50],  // 每页展示数量
     pager_Size: 5,   //  默认显示每页数量，和opts第一个一样
     pager_CurrentPage: 1, // 当前第几页

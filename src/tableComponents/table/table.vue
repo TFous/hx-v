@@ -65,7 +65,9 @@
                                             :href="renderItem.href"
                                     >{{s.row[item.key]}}</a>
                                     <template v-else>
-                                        <span :title="renderItem.title" :class="renderItem.class?renderItem.class:'cell-cursor'" @click="renderItem.fn(s)">{{s.row[item.key]}}</span>
+                                        <span :title="renderItem.title"
+                                              :class="renderItem.class?renderItem.class:'cell-cursor'"
+                                              @click="renderItem.fn(s)">{{s.row[item.key]}}</span>
                                     </template>
                                 </template>
                             </template>
@@ -78,6 +80,7 @@
 </template>
 <script>
     import Vue from 'vue'
+
     let isFirst = true
     import * as common from '../common'
     import clone from 'clone'
@@ -204,12 +207,31 @@
         },
         methods: {
             // 显示详情
-            showDetails (rowData) {
+            showDetails(rowData) {
                 this.$store.dispatch(this.options.gridKey + '_details_Window_Visible', rowData)
             },
             selectCheckbox(selection) {
                 let select = clone(selection)
                 this.$store.dispatch(this.options.gridKey + 'setData', {selection: select})
+            },
+            filterChangeFn(filters) {
+                let keys = Object.keys(filters)
+                let _this = this
+                let searchBtn = _this.getState.searchBtn
+                this.getState.table.forEach(function (item) {
+                    if (keys[0] === item.key) {
+                        if (item.isExpand === true) {
+                            let key = Object.keys(filters)[0]
+                            let newFilters = {}
+                            newFilters[key.replace('.','_')] = filters[key]
+                            _this.$store.dispatch(_this.options.gridKey + '_set_efilterbox', newFilters)
+                            _this.$store.dispatch(_this.options.gridKey + 'setData', {searchBtn: !searchBtn})
+                        } else {
+                            _this.$store.dispatch(_this.options.gridKey + '_set_filterbox', filters)
+                            _this.$store.dispatch(_this.options.gridKey + 'setData', {searchBtn: !searchBtn})
+                        }
+                    }
+                })
             },
             /**
              *  基本思路：创建一个urlObj,每个属性是一个关键词的集合，条件关键词无非就是filter/order等，
@@ -224,6 +246,7 @@
                  *  条件筛选
                  *
                  */
+                    // 正常筛选
                 let filterUrl = ``
                 let filtersBOx = _this.getState.filterBox
                 if (Object.keys(filtersBOx).length !== 0) {
@@ -235,6 +258,30 @@
                         filterUrl += `(${filtersHtmls.slice(0, -2)})and`
                     }
                 }
+                // expand 筛选
+                let expandFilterUrl = ``
+                let expandFiltersBOx = _this.getState.efilterBox
+                if (Object.keys(expandFiltersBOx).length !== 0) {
+                    for (let filters in expandFiltersBOx) {
+                        let filtersHtmls = ``
+                        expandFiltersBOx[filters].forEach(function (key) {
+                            let splitKey = key.split(' ')
+                            let newKey = `(${splitKey[0].split('.')[1]} ${splitKey[1]} ${splitKey[2]}`
+                            filtersHtmls += `${newKey}or`
+                        })
+                        expandFilterUrl += `(${filtersHtmls.slice(0, -2)})and`
+                    }
+                }
+                let initExpand = _this.getState.urlParameter.$expand
+                let expandUrl = initExpand !== '' ? initExpand : ''
+                if (expandUrl !== '') {
+                    if(expandFilterUrl!==''){
+                        urlObj['expandUrl'] = `$expand=${expandUrl}($filter=${expandFilterUrl.slice(0, -3)})`
+                    } else {
+                        urlObj['expandUrl'] = `$expand=${expandUrl}`
+                    }
+                }
+
                 let initFilter = _this.getState.urlParameter.$filter
                 if (filterUrl !== '') {
                     if (initFilter !== '') {
@@ -283,11 +330,11 @@
                  *  目前只支持初加载 vuex => options => urlParameter  => $expand
                  *
                  */
-                let initExpand = _this.getState.urlParameter.$expand
-                let expandUrl = initExpand !== '' ? initExpand : ''
-                if (expandUrl !== '') {
-                    urlObj['expandUrl'] = `$expand=${expandUrl}`
-                }
+//                let initExpand = _this.getState.urlParameter.$expand
+//                let expandUrl = initExpand !== '' ? initExpand : ''
+//                if (expandUrl !== '') {
+//                    urlObj['expandUrl'] = `$expand=${expandUrl}`
+//                }
                 /**
                  *  url 拼接
                  */
@@ -417,11 +464,6 @@
                 }
                 return string
             },
-            filterChangeFn(filters) {
-                this.$store.dispatch(this.options.gridKey + '_set_filterbox', filters)
-                let searchBtn = this.getState.searchBtn
-                this.$store.dispatch(this.options.gridKey + 'setData', {searchBtn: !searchBtn})
-            },
             sortChangeFn(column, prop, order) {
                 let orderKey = column.order === 'descending' ? 'desc' : 'asc'
                 let orderObj = {
@@ -484,9 +526,9 @@
                 let isRequestOk
                 fetch(requestCountHeader).then(resp => {
                     isRequestOk = resp.ok
-                    if(isRequestOk===false){
+                    if (isRequestOk === false) {
                         return resp.json()
-                    }else{
+                    } else {
                         return resp.text()  // 没有问题
                     }
                 }).then(count => {
