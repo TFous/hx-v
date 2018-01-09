@@ -219,7 +219,6 @@
             toggleRowExpansion(rows, boolean) {
                 if (rows) {
                     rows.forEach(row => {
-                        console.log(row)
                         this.$refs.xtable.toggleRowExpansion(row, boolean)
                     })
                 }
