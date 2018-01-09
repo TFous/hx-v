@@ -166,7 +166,7 @@
              */
             'getState.refresh': {
                 handler: function (val, oldVal) {
-                    if (oldVal !== undefined) {
+                    if (oldVal !== val) {
                         this.refreshFn()
                     }
                 },
@@ -195,6 +195,15 @@
                     }
                 },
                 deep: true
+            },
+            'getState.toggleRowExpansion': {
+                handler: function (val, oldVal) {
+                    if (oldVal !== undefined && oldVal !== val) {
+                        let rows = this.getState.tableData
+                        this.toggleRowExpansion(rows,val)
+                    }
+                },
+                deep: true
             }
         },
         computed: {
@@ -206,6 +215,15 @@
 
         },
         methods: {
+            // 展开
+            toggleRowExpansion(rows, boolean) {
+                if (rows) {
+                    rows.forEach(row => {
+                        console.log(row)
+                        this.$refs.xtable.toggleRowExpansion(row, boolean)
+                    })
+                }
+            },
             // 显示详情
             showDetails(rowData) {
                 this.$store.dispatch(this.options.gridKey + '_details_Window_Visible', rowData)
@@ -223,7 +241,7 @@
                         if (item.isExpand === true) {
                             let key = Object.keys(filters)[0]
                             let newFilters = {}
-                            newFilters[key.replace('.','_')] = filters[key]
+                            newFilters[key.replace('.', '_')] = filters[key]
                             _this.$store.dispatch(_this.options.gridKey + '_set_efilterbox', newFilters)
                             _this.$store.dispatch(_this.options.gridKey + 'setData', {searchBtn: !searchBtn})
                         } else {
@@ -268,11 +286,11 @@
                             let splitKey = key.split(' ')
                             let splitKey01 = splitKey[0].split('.')
                             let key1
-                            if(splitKey01.length===1){
+                            if (splitKey01.length === 1) {
                                 key1 = splitKey[0]
-                            }else if(splitKey01.length===2){
+                            } else if (splitKey01.length === 2) {
                                 key1 = splitKey[1]
-                            }else{
+                            } else {
                                 console.error('splitKey设置有错误')
                                 console.error(splitKey)
                             }
@@ -290,7 +308,7 @@
                     expandUrl = ''
                 }
                 if (expandUrl !== '') {
-                    if(expandFilterUrl!==''){
+                    if (expandFilterUrl !== '') {
                         urlObj['expandUrl'] = `$expand=${expandUrl}($filter=${expandFilterUrl.slice(0, -3)})`
                     } else {
                         urlObj['expandUrl'] = `$expand=${expandUrl}`
@@ -337,7 +355,7 @@
                 let initSort = _this.getState.urlParameter.$orderby
                 if (sortUrl !== '') {
                     urlObj['sortUrl'] = sortUrl
-                } else if (initSort !== '' && initSort!== undefined) {
+                } else if (initSort !== '' && initSort !== undefined) {
                     urlObj['sortUrl'] = `$orderby=${initSort}`
                 }
                 /**
