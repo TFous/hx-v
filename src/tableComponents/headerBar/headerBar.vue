@@ -71,6 +71,7 @@
                     <div class="seniorSearchBtn" v-show="isShowSenior">
                         <el-switch
                                 v-model="isSeniorSearch"
+                                @change="switchChangeFn"
                                 :active-text="seniorText">
                         </el-switch>
                     </div>
@@ -218,16 +219,19 @@
             }
         },
         watch: {
-            'getState.adSearchBoolean': {
+            'getState.isSeniorSearch': {
                 handler: function (val, oldVal) {
                     if (oldVal !== undefined) {
-                        this.advancedSearch = val
+                        this.isSeniorSearch = val
                     }
                 },
                 deep: true
             }
         },
         methods: {
+            switchChangeFn (val) {
+                this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: val})
+            },
             seniorSearchTypeToggleFn(val) {
                 if (val === true) {
                     this.seniorSearchTip = '列表展示满足所有条件的数据'
@@ -267,7 +271,7 @@
                 let seniorSearchBox = clone(this.formItem)
                 this.$store.dispatch(this.options.gridKey + 'setData', {seniorSearchBox: seniorSearchBox})
                 this.$store.dispatch(this.options.gridKey + 'setData', {searchBtn: !this.getState.searchBtn})
-                this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: this.isSeniorSearch})
+//                this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: this.isSeniorSearch})
             },
 //      设置高级搜索键值
             setSeniorSearchOptions() {

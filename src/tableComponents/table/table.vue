@@ -63,11 +63,11 @@
                                     <a
                                             v-else-if="renderItem.tag==='a'"
                                             :href="renderItem.href"
-                                    >{{s.row[item.key]}}</a>
+                                    >{{getKey(s, item.key)}}</a>
                                     <template v-else>
                                         <span :title="renderItem.title"
                                               :class="renderItem.class?renderItem.class:'cell-cursor'"
-                                              @click="renderItem.fn(s)">{{s.row[item.key]}}</span>
+                                              @click="renderItem.fn(s)">{{getKey(s, item.key)}}</span>
                                     </template>
                                 </template>
                             </template>
@@ -112,6 +112,11 @@
             this.$xvuex.registerModule(this, this.options, this.options.gridKey)
         },
         mounted() {
+            try {
+                let arrFn = this.tableFn()
+                common.bindFn(this, arrFn)
+            } catch (e) {
+            }
             this.loadingFn()
         },
         destroyed() {
@@ -200,7 +205,7 @@
                 handler: function (val, oldVal) {
                     if (oldVal !== undefined && oldVal !== val) {
                         let rows = this.getState.tableData
-                        this.toggleRowExpansion(rows,val)
+                        this.toggleRowExpansion(rows, val)
                     }
                 },
                 deep: true
@@ -215,6 +220,18 @@
 
         },
         methods: {
+            getKey(scope, key) {
+                let splitKey = key.split('.')
+                let text = scope.row
+                if (splitKey.length === 1) {
+                    text = text[key]
+                } else {
+                    splitKey.forEach(function (item, index) {
+                        text = text[item]
+                    })
+                }
+                return text
+            },
             // 展开
             toggleRowExpansion(rows, boolean) {
                 if (rows) {
@@ -260,6 +277,16 @@
                 let url = this.getState.url
                 let urlObj = {}
                 /**
+                 *  $expand 扩展
+                 *  目前只支持初加载 vuex => options => urlParameter  => $expand
+                 *
+                 */
+                let initExpand = _this.getState.urlParameter.$expand
+                let expandUrl = initExpand !== '' ? initExpand : ''
+                if (expandUrl !== '') {
+                    urlObj['expandUrl'] = `$expand=${expandUrl}`
+                }
+                /**
                  *  条件筛选
                  *
                  */
@@ -275,6 +302,7 @@
                         filterUrl += `(${filtersHtmls.slice(0, -2)})and`
                     }
                 }
+
                 // expand 筛选
                 let expandFilterUrl = ``
                 let expandFiltersBOx = _this.getState.efilterBox
@@ -293,26 +321,23 @@
                                 console.error('splitKey设置有错误')
                                 console.error(splitKey)
                             }
-                            let newKey = `(${key1.split('(')[1]} ${splitKey[1]} ${splitKey[2]}`
+                            let newKey = `(s/${key1.split('(')[1]} ${splitKey[1]} ${splitKey[2]}`
                             filtersHtmls += `${newKey}or`
                         })
                         expandFilterUrl += `(${filtersHtmls.slice(0, -2)})and`
                     }
+                    filterUrl += `${expandUrl}/any(s:${expandFilterUrl.slice(0, -3)})and`
                 }
-                let initExpand = _this.getState.urlParameter.$expand
-                let expandUrl
-                if (initExpand !== '' && initExpand !== undefined) {
-                    expandUrl = initExpand
-                } else {
-                    expandUrl = ''
-                }
-                if (expandUrl !== '') {
-                    if (expandFilterUrl !== '') {
-                        urlObj['expandUrl'] = `$expand=${expandUrl}($filter=${expandFilterUrl.slice(0, -3)})`
-                    } else {
-                        urlObj['expandUrl'] = `$expand=${expandUrl}`
-                    }
-                }
+//                let initExpand = _this.getState.urlParameter.$expand
+//                let expandUrl
+//                if (initExpand !== '' && initExpand !== undefined) {
+//                    expandUrl = initExpand
+//                } else {
+//                    expandUrl = ''
+//                }
+//                    if (expandFilterUrl !== '') {
+//                        urlObj['filterUrl'] = `$filter=${expandUrl}/any(s:${expandFilterUrl.slice(0, -3)})`
+//                    }
 
                 let initFilter = _this.getState.urlParameter.$filter
                 if (filterUrl !== '') {
@@ -357,16 +382,6 @@
                 } else if (initSort !== '' && initSort !== undefined) {
                     urlObj['sortUrl'] = `$orderby=${initSort}`
                 }
-                /**
-                 *  $expand 扩展
-                 *  目前只支持初加载 vuex => options => urlParameter  => $expand
-                 *
-                 */
-//                let initExpand = _this.getState.urlParameter.$expand
-//                let expandUrl = initExpand !== '' ? initExpand : ''
-//                if (expandUrl !== '') {
-//                    urlObj['expandUrl'] = `$expand=${expandUrl}`
-//                }
                 /**
                  *  url 拼接
                  */
@@ -665,11 +680,14 @@
                 this.getList()
             },
             reset() {
+                this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: false})  // 恢复高级搜索，不然会影像表格数据
                 this.$store.dispatch(this.getState.gridKey + 'setData', {selection: []})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {searchVal: ''})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {filterBox: {}})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {efilterBox: {}})
+                this.$store.dispatch(this.getState.gridKey + 'setData', {seniorSearchBox: {}})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {sortBox: {}})
+                this.$store.dispatch(this.options.gridKey + 'setData', {searchBtn: !this.getState.searchBtn})
             }
         },
         filters: {}
