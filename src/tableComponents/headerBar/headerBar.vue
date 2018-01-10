@@ -97,12 +97,14 @@
                                     <el-form-item :label="seniorItem.title" v-else-if="seniorItem.type==='number'">
                                         <el-input v-model="formItem[seniorItem.key]"
                                                   :clearable="true"
+                                                  @keyup.enter.native="seniorSearchFn"
                                                   @blur="seniorSearchFn"
                                                   @change="setNumber(seniorItem.key,seniorItem.title)"></el-input>
                                     </el-form-item>
                                     <el-form-item :label="seniorItem.title" v-else>
                                         <el-input @change="isEmptyKey(seniorItem.key)"
                                                   @blur="seniorSearchFn"
+                                                  @keyup.enter.native="seniorSearchFn"
                                                   v-model="formItem[seniorItem.key]"
                                                   :clearable="true"></el-input>
                                     </el-form-item>

@@ -668,6 +668,7 @@
                 this.$store.dispatch(this.getState.gridKey + 'setData', {selection: []})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {searchVal: ''})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {filterBox: {}})
+                this.$store.dispatch(this.getState.gridKey + 'setData', {efilterBox: {}})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {sortBox: {}})
             }
         },
