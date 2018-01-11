@@ -223,13 +223,27 @@
                 handler: function (val, oldVal) {
                     if (oldVal !== undefined) {
                         this.isSeniorSearch = val
+                        if (val === false) {
+                            this.clearValFn()
+                        }
+                    }
+                },
+                deep: true
+            },
+            'getState.refresh': {
+                handler: function (val, oldVal) {
+                    if (oldVal !== undefined && oldVal !== val) {
+                        this.clearValFn()
                     }
                 },
                 deep: true
             }
         },
         methods: {
-            switchChangeFn (val) {
+            clearValFn() {
+                this.formItem = {}
+            },
+            switchChangeFn(val) {
                 this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: val})
             },
             seniorSearchTypeToggleFn(val) {
