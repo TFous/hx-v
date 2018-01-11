@@ -692,7 +692,7 @@
             },
             reset() {
                 this.$refs.xtable.clearFilter()
-                this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: false})  // 恢复高级搜索，不然会影像表格数据
+//                this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: false})  // 恢复高级搜索
                 this.$store.dispatch(this.getState.gridKey + 'setData', {selection: []})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {searchVal: ''})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {filterBox: {}})
