@@ -29,7 +29,7 @@
                                     :label="item.title"
                                     :sortable="item.sortable"
                                     :filters="item.filters"
-                                    filter-placement="bottom"
+                                    filter-placement="bottom-start"
                                     :width="item.width">
                             </el-table-column>
                         </template>
