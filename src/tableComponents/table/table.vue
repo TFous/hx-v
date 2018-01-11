@@ -282,9 +282,18 @@
                  *
                  */
                 let initExpand = _this.getState.urlParameter.$expand
+                let expandUrl
                 if (initExpand !== '' && initExpand !== undefined) {
+                    expandUrl = initExpand
                     urlObj['expandUrl'] = `$expand=${initExpand}`
+                } else {
+                    expandUrl = ''
                 }
+
+//                let expandUrl = initExpand !== '' ? initExpand : ''
+//                if (expandUrl !== '') {
+//                    urlObj['expandUrl'] = `$expand=${expandUrl}`
+//                }
                 /**
                  *  条件筛选
                  *
@@ -302,31 +311,34 @@
                     }
                 }
 
-                // expand 筛选
-                let expandFilterUrl = ``
-                let expandFiltersBOx = _this.getState.efilterBox
-                if (Object.keys(expandFiltersBOx).length !== 0) {
-                    for (let filters in expandFiltersBOx) {
-                        let filtersHtmls = ``
-                        expandFiltersBOx[filters].forEach(function (key) {
-                            let splitKey = key.split(' ')
-                            let splitKey01 = splitKey[0].split('.')
-                            let key1
-                            if (splitKey01.length === 1) {
-                                key1 = splitKey[0]
-                            } else if (splitKey01.length === 2) {
-                                key1 = splitKey[1]
-                            } else {
-                                console.error('splitKey设置有错误')
-                                console.error(splitKey)
-                            }
-                            let newKey = `(s/${key1.split('(')[1]} ${splitKey[1]} ${splitKey[2]}`
-                            filtersHtmls += `${newKey}or`
-                        })
-                        expandFilterUrl += `(${filtersHtmls.slice(0, -2)})and`
+                // expand 筛选，目前只支持展开一个，并进行筛选
+                if(expandUrl !== '') {
+                    let expandFilterUrl = ``
+                    let expandFiltersBOx = _this.getState.efilterBox
+                    if (Object.keys(expandFiltersBOx).length !== 0) {
+                        for (let filters in expandFiltersBOx) {
+                            let filtersHtmls = ``
+                            expandFiltersBOx[filters].forEach(function (key) {
+                                let splitKey = key.split(' ')
+                                let splitKey01 = splitKey[0].split('.')
+                                let key1
+                                if (splitKey01.length === 1) {
+                                    key1 = splitKey[0]
+                                } else if (splitKey01.length === 2) {
+                                    key1 = splitKey[1]
+                                } else {
+                                    console.error('splitKey设置有错误')
+                                    console.error(splitKey)
+                                }
+                                let newKey = `(s/${key1.split('(')[1]} ${splitKey[1]} ${splitKey[2]}`
+                                filtersHtmls += `${newKey}or`
+                            })
+                            expandFilterUrl += `(${filtersHtmls.slice(0, -2)})and`
+                        }
+                        filterUrl += `${expandUrl}/any(s:${expandFilterUrl.slice(0, -3)})and`
                     }
-                    filterUrl += `${expandUrl}/any(s:${expandFilterUrl.slice(0, -3)})and`
                 }
+
 //                let initExpand = _this.getState.urlParameter.$expand
 //                let expandUrl
 //                if (initExpand !== '' && initExpand !== undefined) {
