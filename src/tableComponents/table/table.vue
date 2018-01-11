@@ -282,9 +282,8 @@
                  *
                  */
                 let initExpand = _this.getState.urlParameter.$expand
-                let expandUrl = initExpand !== '' ? initExpand : ''
-                if (expandUrl !== '') {
-                    urlObj['expandUrl'] = `$expand=${expandUrl}`
+                if (initExpand !== '' && initExpand !== undefined) {
+                    urlObj['expandUrl'] = `$expand=${initExpand}`
                 }
                 /**
                  *  条件筛选
