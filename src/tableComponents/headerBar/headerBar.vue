@@ -348,15 +348,15 @@
                         }))
                     })
                     Promise.all(myRequests.map(myRequest =>
-                        fetch(myRequest).then(resp => {
-                            if (resp.ok === false) {
-                                _this.$notify.error({
-                                    title: '错误消息',
-                                    message: `删除某项发生错误。`
-                                })
-                            }
-                            return resp.json()
-                        })
+                            fetch(myRequest).then(resp => {
+                                if (resp.ok === false) {
+                                    _this.$notify.error({
+                                        title: '错误消息',
+                                        message: `删除某项发生错误。`
+                                    })
+                                }
+//                            return resp.json()
+                            })
                     )).then(datas => {
                         _this.$message({
                             showClose: true,
