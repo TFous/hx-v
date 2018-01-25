@@ -312,7 +312,7 @@
                 }
 
                 // expand 筛选，目前只支持展开一个，并进行筛选
-                if(expandUrl !== '') {
+                if (expandUrl !== '') {
                     let expandFilterUrl = ``
                     let expandFiltersBOx = _this.getState.efilterBox
                     if (Object.keys(expandFiltersBOx).length !== 0) {
@@ -566,7 +566,46 @@
                     pageSize = _this.getState.pager_Size
                     pageSkip = _this.getState.pager_Size * (pagerCurrentPage - 1)
                 }
+                /**
+                 *  下面是本地分页
+                 *
+                 */
+                let isRequestOk
 
+                if (_this.getState.isLocalPages === true) {
+                    let requestDataHeader = Vue.prototype.$api.request($requestUrl)
+                    if (_this.getState.localTableData.length !== 0) {
+                        let pagerCurrentPage = _this.getState.pager_CurrentPage
+                        pageSize = _this.getState.pager_Size
+                        pageSkip = _this.getState.pager_Size * (pagerCurrentPage - 1)
+                        let tableData = _this.getState.localTableData.slice(pageSkip, pageSkip+pageSize)
+                        _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: tableData})
+                        return false
+                    }
+                    fetch(requestDataHeader).then(resp => {
+                        isRequestOk = resp.ok
+                        return resp.json()
+                    }).then(data => {
+                        if (isRequestOk === false) {
+                            _this.$notify.error({
+                                title: '错误消息',
+                                message: data.message
+                            })
+                            return false
+                        }
+                        let count = data.value.length;
+                        _this.$store.dispatch(_this.options.gridKey + 'setData', {pager_Total: count})
+                        _this.$store.dispatch(_this.options.gridKey + 'setData', {localTableData: data.value})
+                        let tableData = _this.getState.localTableData.slice(pageSkip, pageSize)
+                        _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: tableData})
+                    })
+                    return false
+                }
+
+                /**
+                 *  下面是服务器分页
+                 *
+                 */
                 if (splitUrl.length === 1) {
                     $countUrl = `${splitUrl[0]}/$count`
                     $requestUrl += `?$top=${pageSize}&$skip=${pageSkip}`
@@ -581,7 +620,6 @@
                  *
                  */
                 let requestCountHeader = Vue.prototype.$api.request($countUrl)
-                let isRequestOk
                 fetch(requestCountHeader).then(resp => {
                     isRequestOk = resp.ok
                     if (isRequestOk === false) {
