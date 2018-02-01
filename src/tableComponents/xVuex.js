@@ -144,6 +144,7 @@ export function registerModule(_this, state, gridKey) {
 }
 
 export const options = {
+    getData_val: 'value', // 获取table list 数据参数，默认是data.value
     toggleRowExpansion: false, // table 是否展开
     border: true, // table 是否展示竖排 border
     requestUrl: '', // 最终请求的url

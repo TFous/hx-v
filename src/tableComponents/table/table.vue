@@ -555,6 +555,7 @@
                 let _this = this
                 let $requestUrl = clone(this.getState.requestUrl)
                 let $countUrl
+                let dataVal = _this.getState.getData_val
                 let splitUrl = $requestUrl.split('?$')
                 // page
                 let pageSize, pageSkip
@@ -593,9 +594,9 @@
                             })
                             return false
                         }
-                        let count = data.value.length;
+                        let count = data[dataVal].length;
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {pager_Total: count})
-                        _this.$store.dispatch(_this.options.gridKey + 'setData', {localTableData: data.value})
+                        _this.$store.dispatch(_this.options.gridKey + 'setData', {localTableData: data[dataVal]})
                         let tableData = _this.getState.localTableData.slice(pageSkip, pageSize)
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: tableData})
                     })
@@ -661,7 +662,7 @@
                             })
                             return false
                         }
-                        _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: data.value})
+                        _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: data[dataVal]})
                     })
                 })
             },
