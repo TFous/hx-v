@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import * as common from './common'
 function createMutations(state, gridKey) {
     return {
         [gridKey + '_SET_DATA'](state, data) {
@@ -49,6 +49,9 @@ function createMutations(state, gridKey) {
         [gridKey + '_ADD_WINDOW_VISIBLE'](state, val) {
             state.add_Window_Visible = !state.add_Window_Visible
         },
+        [gridKey + '_SET_WINDOW_VISIBLE'](state, val) {
+            state.setting_Window_Visible = !state.setting_Window_Visible
+        },
         [gridKey + '_DETAILS_WINDOW_VISIBLE'](state, val) {
             state.details_Window_Visible = !state.details_Window_Visible
         },
@@ -64,6 +67,18 @@ function createMutations(state, gridKey) {
 function initOpt(opt) {
     var table = opt.table
     var newTable = []
+    // 自动赋值：表格width
+    table = common.setTabWidth(table,opt.gridKey)
+    // let tableWidthsObj = JSON.parse(localStorage.getItem('TABLES_WIDTH')) || {}
+    // if(tableWidthsObj[opt.gridKey]!==undefined){
+    //     table.forEach(function (item) {
+    //         tableWidthsObj[opt.gridKey].forEach(function (column) {
+    //             if(item.title === column.name){
+    //                 item.width = column.width
+    //             }
+    //         })
+    //     })
+    // }
     table.forEach(function (item) {
         var newColunm = Object.assign({
             addLayer: 'show',
@@ -103,6 +118,7 @@ export function registerModule(_this, state, gridKey) {
     if (_this.$store.state[gridKey]) {
         return
     }
+
     let initState = initOpt(state)
     var mutations = createMutations(initState, gridKey)
     _this.$store.registerModule(gridKey, {
@@ -123,6 +139,9 @@ export function registerModule(_this, state, gridKey) {
             },
             [gridKey + '_add_Window_Visible']({dispatch, commit}, val) {
                 _this.$store.commit(gridKey + '_ADD_WINDOW_VISIBLE', val)
+            },
+            [gridKey + '_set_Window_Visible']({dispatch, commit}, val) {
+                _this.$store.commit(gridKey + '_SET_WINDOW_VISIBLE', val)
             },
             [gridKey + '_details_Window_Visible']({dispatch, commit}, data) {
                 _this.$store.commit(gridKey + '_DETAILS_WINDOW_VISIBLE')
@@ -176,6 +195,7 @@ export const options = {
     addSucess: null,   // 新增成功后返回的对象
     edit_Window_Visible: false,  // 修改弹窗显示状态
     details_Window_Visible: false,  // 详情页弹窗显示状态
+    setting_Window_Visible: false,  // table设置弹窗显示状态
     edit_Window_Data: {},  // 弹窗显示信息
     details_Window_Data: {}  // 详情显示信息
 }

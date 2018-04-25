@@ -152,11 +152,11 @@
         },
         mounted: function () {
             let _this = this
-            let filterData = common.filterependence(_this.getState.table)
+            let filterData = this.$common.filterependence(_this.getState.table)
             _this.dataMsg = clone(filterData)
             try {
                 let arrFn = _this.addFn()
-                common.bindFn(_this, arrFn)
+                this.$common.bindFn(_this, arrFn)
             } catch (e) {
             }
         },
@@ -206,7 +206,6 @@
                                 })
                                 return false
                             }
-
                             _this.$message({
                                 showClose: true,
                                 message: '新增成功',

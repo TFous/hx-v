@@ -1,7 +1,8 @@
 <template>
-    <div class="otable">
-        <slot>
-            <el-table
+    <div>
+        <div class="otable">
+            <slot>
+                <el-table
                     :data="getState.tableData"
                     :border="getState.border"
                     :stripe="true"
@@ -10,18 +11,19 @@
                     @selection-change="selectCheckbox"
                     @filter-change="filterChangeFn"
                     @sort-change="sortChangeFn"
+                    @header-dragend="headerDragendFn"
                     style="width: 100%">
-                <el-table-column
+                    <el-table-column
                         v-if="getState.isSelection"
                         type="selection"
                         fixed="left"
                         width="35">
-                </el-table-column>
-                <slot name="expand"></slot>
-                <template v-for="(item, index) in getState.table" v-if="item.column==='show'">
-                    <template v-if="!item.render">
-                        <template v-if="item.filter === true">
-                            <el-table-column
+                    </el-table-column>
+                    <slot name="expand"></slot>
+                    <template v-for="(item, index) in getState.table" v-if="item.column==='show'">
+                        <template v-if="!item.render">
+                            <template v-if="item.filter === true">
+                                <el-table-column
                                     show-overflow-tooltip
                                     :fixed="item.fixed"
                                     :prop="item.key"
@@ -31,10 +33,10 @@
                                     :filters="item.filters"
                                     filter-placement="bottom-start"
                                     :width="item.width">
-                            </el-table-column>
-                        </template>
-                        <template v-else>
-                            <el-table-column
+                                </el-table-column>
+                            </template>
+                            <template v-else>
+                                <el-table-column
                                     show-overflow-tooltip
                                     :fixed="item.fixed"
                                     :prop="item.key"
@@ -42,49 +44,52 @@
                                     :label="item.title"
                                     :sortable="item.sortable"
                                     :width="item.width">
-                            </el-table-column>
+                                </el-table-column>
+                            </template>
                         </template>
-                    </template>
-                    <template v-else-if="item.render">
-                        <el-table-column
+                        <template v-else-if="item.render">
+                            <el-table-column
                                 show-overflow-tooltip
                                 :fixed="item.fixed"
                                 :label="item.title"
                                 :width="item.width">
-                            <template slot-scope="s">
-                                <template v-for="renderItem in item.render">
-                                    <el-button
+                                <template slot-scope="s">
+                                    <template v-for="renderItem in item.render">
+                                        <el-button
                                             v-if="renderItem.tag==='button'"
                                             @click.native.prevent="renderItem.fn(s)"
                                             :type="renderItem.type"
                                             plain>
-                                        {{renderItem.text}}
-                                    </el-button>
-                                    <a
+                                            {{renderItem.text}}
+                                        </el-button>
+                                        <a
                                             v-else-if="renderItem.tag==='a'"
                                             :href="renderItem.href"
-                                    >{{getKey(s, item.key)}}</a>
-                                    <template v-else>
+                                        >{{getKey(s, item.key)}}</a>
+                                        <template v-else>
                                         <span :title="renderItem.title"
                                               :class="renderItem.class?renderItem.class:'cell-cursor'"
                                               @click="renderItem.fn(s)">{{getKey(s, item.key)}}</span>
+                                        </template>
                                     </template>
                                 </template>
-                            </template>
-                        </el-table-column>
+                            </el-table-column>
+                        </template>
                     </template>
-                </template>
-            </el-table>
-        </slot>
+                </el-table>
+            </slot>
+        </div>
+        <column-layer
+            :options='options'
+        ></column-layer>
     </div>
 </template>
 <script>
     import Vue from 'vue'
-
     let isFirst = true
-    import * as common from '../common'
+    // import * as common from '../common'
     import clone from 'clone'
-
+    import columnLayer from '../columnSetting'
     export default {
         name: 'xtable',
         data() {
@@ -94,6 +99,9 @@
                 urlsKey: [],  // 数据字典名称
                 urlsValues: []  // 数据字典url
             }
+        },
+        components: {
+            'column-layer':columnLayer,
         },
         props: {
             // api接口
@@ -114,7 +122,7 @@
         mounted() {
             try {
                 let arrFn = this.tableFn()
-                common.bindFn(this, arrFn)
+                this.$common.bindFn(this, arrFn)
             } catch (e) {
             }
             this.loadingFn()
@@ -135,7 +143,6 @@
              */
             'getState.requestUrl': {
                 handler: function (val, oldVal) {
-//                    this.getList()
                     if (oldVal !== val && oldVal !== undefined) {
                         this.getList()
                     }
@@ -427,8 +434,8 @@
                     } else if (typeof seniorObj[item] === 'string') {
                         valUrl += `(contains(${item},'${seniorObj[item]}'))${typeKey}`
                     } else if (seniorObj[item] instanceof Array === true) {
-                        let startTime = common.setStarTime(seniorObj[item][0])
-                        let endTime = common.endTime(seniorObj[item][1])
+                        let startTime = this.$common.setStarTime(seniorObj[item][0])
+                        let endTime = this.$common.endTime(seniorObj[item][1])
                         valUrl += `(${item} ge ${startTime} and ${item} le ${endTime})${typeKey}`
                     }
                 }
@@ -522,6 +529,37 @@
                 }
                 return string
             },
+            headerDragendFn (newWidth, oldWidth, column, event) {
+                /**
+                 * 每个表格自己特有的gridKey 作为存储表格宽度
+                 *  {gridKey:[{name:名称;width:123;}]}
+                 *
+                 **/
+                let saveKey = this.options.gridKey
+                let saveObj = JSON.parse(localStorage.getItem('TABLES_WIDTH')) || {}
+                let isHas = false
+                if(saveObj[saveKey] === undefined ){
+                    saveObj[saveKey] = []
+                    let columnObj= {}
+                    columnObj.name = column.label
+                    columnObj.width = newWidth
+                    saveObj[saveKey].push(columnObj)
+                }else {
+                    saveObj[saveKey].forEach(function (value) {
+                        if(value.name === column.label){
+                            value.width = newWidth
+                            isHas = true
+                        }
+                    })
+                    if(isHas === false){
+                        let columnObj= {}
+                        columnObj.name = column.label
+                        columnObj.width = newWidth
+                        saveObj[saveKey].push(columnObj)
+                    }
+                }
+                localStorage.setItem('TABLES_WIDTH',JSON.stringify(saveObj))
+            },
             sortChangeFn(column, prop, order) {
                 let orderKey = column.order === 'descending' ? 'desc' : 'asc'
                 let orderObj = {
@@ -553,7 +591,12 @@
             //        获取表格和数据字典数据
             getList(size) {
                 let _this = this
-                let $requestUrl = clone(this.getState.requestUrl)
+                let $requestUrl = this.getState.requestUrl
+                // 如果初始化url 为空，则不继续往下走
+                if ($requestUrl === '') {
+                    console.log('初始化url为空')
+                    return false
+                }
                 let $countUrl
                 let dataVal = _this.getState.getData_val
                 let splitUrl = $requestUrl.split('?$')
@@ -579,7 +622,7 @@
                         let pagerCurrentPage = _this.getState.pager_CurrentPage
                         pageSize = _this.getState.pager_Size
                         pageSkip = _this.getState.pager_Size * (pagerCurrentPage - 1)
-                        let tableData = _this.getState.localTableData.slice(pageSkip, pageSkip+pageSize)
+                        let tableData = _this.getState.localTableData.slice(pageSkip, pageSkip + pageSize)
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: tableData})
                         return false
                     }
@@ -681,6 +724,7 @@
                 if (this.$store.state[gridKey]) {
                     return
                 }
+
                 this.$store.registerModule(gridKey, {
                     state: initState
                 })

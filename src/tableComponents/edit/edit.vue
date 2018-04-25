@@ -162,7 +162,7 @@
             this.$forceUpdate()
             try {
                 let arrFn = this.editFn()
-                common.bindFn(this, arrFn)
+                this.$common.bindFn(this, arrFn)
             } catch (e) {
             }
             this.title = this.getState.edit_Window_Data.Name || this.options.title
@@ -231,7 +231,7 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         for (let item in _this.dataMsg) {
-                            _this.dataMsg[item] = common.trim(_this.dataMsg[item])
+                            _this.dataMsg[item] = this.$common.trim(_this.dataMsg[item])
                         }  // 去除空格
                         let url = `${this.getState.editUrl}(${_this.dataMsg.Id})`
                         let requestDataHeader = Vue.prototype.$api.request(url, {

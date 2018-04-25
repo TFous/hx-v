@@ -34,6 +34,16 @@
                         </slot>
                     </template>
                     <slot name="delAfter"></slot>
+                    <template v-if="settingShow">
+                        <slot name="batchBtn">
+                            <el-tooltip content="表格设置" placement="top-end">
+                                <el-button plain type="info" @click="setting">
+                                    <i class="iconfont icon-set"></i>
+                                </el-button>
+                            </el-tooltip>
+                        </slot>
+                    </template>
+                    <slot name="setAfter"></slot>
                     <!--<el-dropdown :hide-on-click="false">-->
                     <!--<el-button plain type="info">-->
                     <!--<i class="iconfont icon-set"></i>-->
@@ -170,6 +180,10 @@
                 type: [Boolean, String],
                 default: true
             },
+            settingShow: {  // 添加按钮
+                type: [Boolean, String],
+                default: true
+            },
             delShow: {  // 删除按钮
                 type: [Boolean, String],
                 default: true
@@ -240,6 +254,9 @@
             }
         },
         methods: {
+            setting() {
+                this.$store.dispatch(this.options.gridKey + '_set_Window_Visible')
+            },
             clearValFn() {
                 this.formItem = {}
             },

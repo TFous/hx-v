@@ -111,3 +111,18 @@ export function fetchRequest(url, obj = {}) {
     }, obj)
     return new Request(url, initObj)
 }
+
+export function setTabWidth(tables,gridKey) {
+    let table = tables
+    let tableWidthsObj = JSON.parse(localStorage.getItem('TABLES_WIDTH')) || {}
+    if(tableWidthsObj[gridKey]!==undefined){
+        table.forEach(function (item) {
+            tableWidthsObj[gridKey].forEach(function (column) {
+                if(item.title === column.name){
+                    item.width = column.width
+                }
+            })
+        })
+    }
+    return table
+}
