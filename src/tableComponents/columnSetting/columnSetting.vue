@@ -6,18 +6,38 @@
             :close-on-click-modal="false"
             @close="setAddVisible"
             :visible.sync="show">
-            <slot name="main">
-                <div style="margin-bottom: 12px;">
-                    <template v-for="(item, index) in checked">
-                        <el-checkbox style="margin: 8px;" v-model="item.column" :label="item.title" border></el-checkbox>
-                    </template>
-                </div>
-            </slot>
-            <div style="text-align: right">
-                <el-button @click="show = false">取 消</el-button>
-                <el-button type="primary" @click="handleSubmit()">确 定</el-button>
-            </div>
-      </span>
+            <el-tabs tab-position="left" style="height: 200px;">
+                <el-tab-pane label="表格列展示">
+                    <el-alert
+                        style="margin-bottom: 12px;"
+                        title="请根据个人需求合理展示表格列表。设置信息保存在当前浏览器"
+                        type="success"
+                        :closable="false">
+                    </el-alert>
+                    <div style="margin-bottom: 12px;">
+                        <template v-for="(item, index) in checked">
+                            <el-checkbox style="margin: 8px;" v-model="item.column" :label="item.title" border></el-checkbox>
+                        </template>
+                    </div>
+                    <div style="text-align: right">
+                        <el-button @click="show = false">取 消</el-button>
+                        <el-button type="primary" @click="handleSubmit()">确 定</el-button>
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="表格列宽度">
+                    <div style="">
+                        <el-alert
+                            style="margin-bottom: 12px;"
+                            :closable="false"
+                            title="表格宽度和列数设置信息保存在当前浏览器，清空款存或者换一个浏览器表格状态则为初始状态"
+                            type="error">
+                        </el-alert>
+                        <el-button type="primary" @click="recovery">恢复当前表格默认宽度</el-button>
+                        <el-button type="danger" @click="recoveryAll">恢复所有表格默认宽度</el-button>
+                    </div>
+                </el-tab-pane>
+            </el-tabs>
+
         </el-dialog>
     </div>
 </template>
@@ -56,6 +76,20 @@
             }
         },
         methods: {
+            recovery(){
+                let table = JSON.parse(localStorage.getItem('TABLES_WIDTH')) || {}
+                if(table[this.gridKey] !== undefined ){
+                    delete table[this.gridKey]
+                    localStorage.setItem('TABLES_WIDTH',JSON.stringify(table))
+                    location.reload()
+                    // this.$common.setTabWidth(this.getState.table,this.gridKey)
+                }
+            },
+            recoveryAll(){
+                localStorage.removeItem('TABLES_WIDTH')
+                location.reload()
+                // this.$common.setTabWidth(this.getState.table,this.gridKey)
+            },
             tableshowFn () {
                 // 获取 checked
                 let _this = this

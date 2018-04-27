@@ -152,8 +152,6 @@
         },
         mounted: function () {
             let _this = this
-            let filterData = this.$common.filterependence(_this.getState.table)
-            _this.dataMsg = clone(filterData)
             try {
                 let arrFn = _this.addFn()
                 this.$common.bindFn(_this, arrFn)
@@ -172,6 +170,8 @@
             'getState.add_Window_Visible': {
                 handler: function (val, oldVal) {
                     this.show = val
+                    let filterData = this.$common.filterependence(this.getState.table)
+                    this.dataMsg = clone(filterData)
                 },
                 deep: true
             }

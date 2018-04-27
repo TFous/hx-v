@@ -178,7 +178,7 @@
              */
             'getState.refresh': {
                 handler: function (val, oldVal) {
-                    if (oldVal !== val) {
+                    if (oldVal !== val && oldVal !== undefined) {
                         this.refreshFn()
                     }
                 },
@@ -411,6 +411,8 @@
                         url += `&${item}`
                     }
                 })
+                let hashCode = this.$common.gethashcode()
+                url = `${url}&?r=${hashCode}`
                 _this.$store.dispatch(_this.options.gridKey + 'setData', {requestUrl: url})
             },
 //     高级搜索
@@ -771,7 +773,7 @@
 //    刷新
             refreshFn() {
                 this.reset()
-                this.getList()
+                // this.getList()
             },
             reset() {
                 this.$refs.xtable.clearFilter()

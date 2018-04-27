@@ -359,10 +359,20 @@
                 }).then(() => {
                     let myRequests = []
                     delObjs.forEach(function (item) {
-                        let url = `${_this.getState.delUrl}(${item.Id})`
-                        myRequests.push(Vue.prototype.$api.request(url, {
-                            method: 'DELETE'
-                        }))
+                        let url = `${_this.getState.delUrl}`
+                        let delRequest = {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/x-www-form-urlencoded',
+                                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                'Authorization': Vue.prototype.$api.getAuthorization()
+                            },
+                            mode: 'cors',
+                            body: `Id=${item.Id}`
+                        }
+                        let request = new Request(url, delRequest)
+                        myRequests.push(request)
                     })
                     Promise.all(myRequests.map(myRequest =>
                             fetch(myRequest).then(resp => {
