@@ -3,10 +3,11 @@
         <div class="otable">
             <slot>
                 <el-table
-                    :data="getState.tableData"
+                    :data="getTableData"
                     :border="getState.border"
                     :stripe="true"
                     ref="xtable"
+                    :row-class-name="tableRowClassName"
                     @cell-dblclick="showDetails"
                     @selection-change="selectCheckbox"
                     @filter-change="filterChangeFn"
@@ -48,7 +49,11 @@
                             </template>
                         </template>
                         <template v-else-if="item.render">
+                            <div class="render-wrap">
+
+                            </div>
                             <el-table-column
+                                class="render-wrap"
                                 show-overflow-tooltip
                                 :fixed="item.fixed"
                                 :label="item.title"
@@ -56,10 +61,12 @@
                                 <template slot-scope="s">
                                     <template v-for="renderItem in item.render">
                                         <el-button
+                                            class="render-toggle"
                                             v-if="renderItem.tag==='button'"
                                             @click.native.prevent="renderItem.fn(s)"
                                             :type="renderItem.type"
                                             plain>
+                                            {{renderItem.show}}
                                             {{renderItem.text}}
                                         </el-button>
                                         <a
@@ -94,6 +101,7 @@
         name: 'xtable',
         data() {
             return {
+                tableIndex: null, // 用于 表格自动补充列 需要影藏的按钮
                 loading: false, // 表格是否加载OK
                 tableData: [], // 表格数据
                 urlsKey: [],  // 数据字典名称
@@ -221,12 +229,35 @@
         computed: {
             getState() {
                 return this.$store.state[this.options.gridKey]
+            },
+            getTableData() {
+                let data = clone(this.$store.state[this.options.gridKey].tableData)
+                let dataLength = data.length
+                // 最小显示条数，撑开高度
+                let length = 12
+                let value = length -dataLength
+                this.tableIndex = dataLength - 1
+                if(dataLength === 0){
+                    return []
+                }
+                if(value > 0) {
+                    for (let i = 0; i < value; i++) {
+                        data.push({show:true})
+                    }
+                }
+                return data
             }
         },
         updated() {
 
         },
         methods: {
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex> this.tableIndex) {
+                    return 'hide-row';
+                }
+                return '';
+            },
             getKey(scope, key) {
                 let splitKey = key.split('.')
                 let text = scope.row

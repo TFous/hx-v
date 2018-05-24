@@ -1,3 +1,17 @@
+## 更新记录
+> * 2018.4.27
+> * 修改刷新按钮不刷新（拼接hashcode）
+> * 修改批量删除方法，`"Content-Type": "application/x-www-form-urlencoded"`
+> * 进一步优化接口重复加载
+
+
+
+
+## 注意事项
+
+> * 表格column显示，title不能同名，不然显示与否会牵扯到同名的（理论上不可能重名）
+
+
 ## Fetch DEMO
 
 ```javascript
