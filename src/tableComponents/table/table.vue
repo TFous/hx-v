@@ -49,9 +49,9 @@
                             </template>
                         </template>
                         <template v-else-if="item.render">
-                            <div class="render-wrap">
+                            <!--<div class="render-wrap">-->
 
-                            </div>
+                            <!--</div>-->
                             <el-table-column
                                 class="render-wrap"
                                 show-overflow-tooltip
@@ -59,14 +59,14 @@
                                 :label="item.title"
                                 :width="item.width">
                                 <template slot-scope="s">
-                                    <template v-for="renderItem in item.render">
+                                    <template v-for="(renderItem,index) in item.render" v-if="btnToggle(index,s) && getState.actionDisplayType ===1">
                                         <el-button
                                             class="render-toggle"
                                             v-if="renderItem.tag==='button'"
                                             @click.native.prevent="renderItem.fn(s)"
                                             :type="renderItem.type"
                                             plain>
-                                            {{renderItem.show}}
+                                            <!--{{renderItem.show}}-->
                                             {{renderItem.text}}
                                         </el-button>
                                         <a
@@ -78,6 +78,21 @@
                                               :class="renderItem.class?renderItem.class:'cell-cursor'"
                                               @click="renderItem.fn(s)">{{getKey(s, item.key)}}</span>
                                         </template>
+                                    </template>
+
+                                    <template v-if="getState.actionDisplayType ===2">
+                                        <el-popover
+                                            placement="left"
+                                            trigger="hover">
+                                            <ul class="table-btn-ul">
+                                                <li
+                                                    v-if="btnToggle(index,s)"
+                                                    v-for="(renderItem,index) in item.render"
+                                                    @click="renderItem.fn(s)"
+                                                >{{renderItem.text}}</li>
+                                            </ul>
+                                            <svg-icon slot="reference" icon-class="more" class="icon icon-org"/>
+                                        </el-popover>
                                     </template>
                                 </template>
                             </el-table-column>
@@ -252,6 +267,15 @@
 
         },
         methods: {
+            /**
+             *
+             * index:需要影藏按钮的下标
+             *  scope ,表格信息
+             *
+             * */
+            btnToggle(index,scope){
+                return true
+            },
             tableRowClassName({row, rowIndex}) {
                 if (rowIndex> this.tableIndex) {
                     return 'hide-row';

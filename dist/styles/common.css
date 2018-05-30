@@ -1,0 +1,136 @@
+@import url(../fontStyle/iconfont.css);
+.tableBtn .ivu-btn{
+  margin:0px 4px;
+}
+.edit .ivu-select-dropdown{
+  position: absolute!important;
+}
+
+.xtable-left{
+  display: inline-block;
+  width:49%;
+  word-wrap:break-word;
+  position: relative;
+}
+.details .xtable-left{
+  overflow: hidden;
+}
+
+.hx-drapMenu{
+  height:300px;
+  overflow-y: auto;
+}
+
+/*弹出层内部元素长度*/
+.formDialog .el-input-number{
+  width:100%!important;
+}
+.formDialog .el-select{
+  width:100%!important;
+}
+
+.formDialog .el-date-editor.el-input{
+  width:100%!important;
+}
+
+.tablePager{
+  padding:20px 0px;
+  text-align: right;
+}
+.seniorWrap{
+  padding:20px;
+}
+.seniorWrap .el-input--mini .el-input__inner,.seniorWrap .el-range-editor--mini.el-input__inner{
+  width: 330px;
+}
+.seniorWrap .el-date-editor .el-range-input{
+  width:37%;
+}
+.seniorWrap .el-date-editor .el-range-separator{
+  width:8%;
+}
+.seniorWrap .el-col-6{
+  min-width: 450px;
+  width:24%;
+  padding:0px!important;
+  float: none;
+  display: inline-block;
+}
+.otable .el-table .cell {
+  white-space: nowrap;
+}
+/* header 按钮样式*/
+.pagerHead .iconfont{
+  font-size:12px;
+}
+
+.pagerHead .el-button+.el-button{
+  margin-left:0px;
+}
+
+.xtable-left .el-input-number .el-input__inner{
+  text-align: left;
+}
+.cell-cursor{
+  color:#409EFF;
+  cursor: pointer;
+}
+.el-table__expanded-cell:hover{
+  background: none!important;
+}
+/*!*ie 11 hack*!*/
+/*.seniorSearchBtn .el-switch{*/
+  /*position: relative;*/
+  /*top:-10px;*/
+/*}*/
+/* 隐藏自增的按钮*/
+.hide-row .render-toggle{
+    display: none;
+}
+
+.hide-row .el-tooltip{
+    display: none;
+}
+
+/*弹出层层级设置*/
+.el-dialog__wrapper,{
+    z-index: 3999!important;
+}
+/*消息层级*/
+.el-message{
+    z-index: 100000!important;
+}
+.el-select-dropdown{
+    z-index: 4101!important;
+}
+.el-message-box__wrapper{
+    z-index: 4200!important;
+}
+
+.table-btn-ul {
+    width: 110px;
+    padding: 12px 0px;
+    margin: 0px;
+}
+.otable .icon-org{
+    cursor: pointer;
+    font-size: 18px;
+}
+.table-btn-ul li{
+    padding: 0 20px;
+    font-size: 14px;
+    line-height: 36px;
+    min-width: 40px;
+    text-align: center;
+    cursor: pointer;
+    color: #555459;
+}
+.table-btn-ul li:hover{
+     background: #eaf6f5;
+ }
+
+.el-popover{
+    padding:0px!important;
+    margin:0px!important;
+    min-width: 110px!important;
+}
