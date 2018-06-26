@@ -116,7 +116,7 @@
                     </template>
                 </el-form>
             </slot>
-            <span slot="footer" class="dialog-footer">
+            <span slot="footer" class="dialog-footer" >
         <el-button @click="show = false">取 消</el-button>
         <el-button type="primary" @click="handleSubmit('addLayer')">提 交</el-button>
       </span>

@@ -134,3 +134,8 @@
     margin:0px!important;
     min-width: 110px!important;
 }
+
+.el-dialog__footer{
+    text-align: right!important;
+    padding: 25px 25px 30px;
+}

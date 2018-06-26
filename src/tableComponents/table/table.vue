@@ -49,9 +49,6 @@
                             </template>
                         </template>
                         <template v-else-if="item.render">
-                            <!--<div class="render-wrap">-->
-
-                            <!--</div>-->
                             <el-table-column
                                 class="render-wrap"
                                 show-overflow-tooltip
@@ -59,7 +56,7 @@
                                 :label="item.title"
                                 :width="item.width">
                                 <template slot-scope="s">
-                                    <template v-for="(renderItem,index) in item.render" v-if="btnToggle(index,s) && getState.actionDisplayType ===1">
+                                    <template v-for="(renderItem,index) in item.render" v-if="btnToggle(index,s,item) && item.displayType ===1">
                                         <el-button
                                             class="render-toggle"
                                             v-if="renderItem.tag==='button'"
@@ -80,13 +77,13 @@
                                         </template>
                                     </template>
 
-                                    <template v-if="getState.actionDisplayType ===2">
+                                    <template v-if="item.displayType ===2">
                                         <el-popover
                                             placement="left"
                                             trigger="hover">
                                             <ul class="table-btn-ul">
                                                 <li
-                                                    v-if="btnToggle(index,s)"
+                                                    v-if="btnToggle(index,s,item)"
                                                     v-for="(renderItem,index) in item.render"
                                                     @click="renderItem.fn(s)"
                                                 >{{renderItem.text}}</li>
@@ -149,6 +146,7 @@
             } catch (e) {
             }
             this.loadingFn()
+            // this.setFilters()
         },
         destroyed() {
             if (this.isUnregisterModule === true) {
@@ -166,7 +164,7 @@
              */
             'getState.requestUrl': {
                 handler: function (val, oldVal) {
-                    if (oldVal !== val && oldVal !== undefined) {
+                    if (oldVal !== val) {
                         this.getList()
                     }
                 },
@@ -179,7 +177,6 @@
 //      'getState.tableData': {
 //        handler: function (val, oldVal) {
 //          if (oldVal !== undefined) {
-//              console.log(val[0])
 //              this.$refs.xtable.toggleRowSelection([val[0]]);
 //          }
 //        },
@@ -190,7 +187,7 @@
              */
             'getState.searchBtn': {
                 handler: function (val, oldVal) {
-                    if (oldVal !== val && oldVal !== undefined) {
+                    if (oldVal !== val) {
                         this.searchFn()
                     }
                 },
@@ -273,7 +270,7 @@
              *  scope ,表格信息
              *
              * */
-            btnToggle(index,scope){
+            btnToggle(index,scope,item){
                 return true
             },
             tableRowClassName({row, rowIndex}) {
@@ -308,7 +305,14 @@
             },
             selectCheckbox(selection) {
                 let select = clone(selection)
-                this.$store.dispatch(this.options.gridKey + 'setData', {selection: select})
+                let data = []
+                // 当对象有Id 属性时才添加到批量删除对象里
+                select.forEach(item=>{
+                    if(item.Id){
+                        data.push(item)
+                    }
+                })
+                this.$store.dispatch(this.options.gridKey + 'setData', {selection: data})
             },
             filterChangeFn(filters) {
                 let keys = Object.keys(filters)
@@ -367,9 +371,9 @@
                     for (let filters in filtersBOx) {
                         let filtersHtmls = ``
                         filtersBOx[filters].forEach(function (key) {
-                            filtersHtmls += `${key}or`
+                            filtersHtmls += `${key} or `
                         })
-                        filterUrl += `(${filtersHtmls.slice(0, -2)})and`
+                        filterUrl += `(${filtersHtmls.slice(0, -3)})and`
                     }
                 }
 
@@ -648,7 +652,8 @@
             //        获取表格和数据字典数据
             getList(size) {
                 let _this = this
-                let $requestUrl = this.getState.requestUrl
+                let regexp = /&\?r=[0-9]{4}/i
+                let $requestUrl = this.getState.requestUrl.replace(regexp, '');
                 // 如果初始化url 为空，则不继续往下走
                 if ($requestUrl === '') {
                     console.log('初始化url为空')
@@ -729,6 +734,7 @@
                         return resp.text()  // 没有问题
                     }
                 }).then(count => {
+                    let length = count
                     if (isRequestOk === false) {
                         _this.$notify.error({
                             title: '错误消息',
@@ -736,7 +742,10 @@
                         })
                         return false
                     }
-                    if (Number(count) === 0) {
+                    if(typeof JSON.parse(count) == 'object'){
+                        length = JSON.parse(count)[dataVal]
+                    }
+                    if (Number(length) === 0) {
                         _this.ready = true
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {tableData: []})
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {pager_Total: 0})
@@ -747,7 +756,7 @@
                     /**
                      *  当获取总条数不位0的时候，在拉取数据
                      */
-                    _this.$store.dispatch(_this.options.gridKey + 'setData', {pager_Total: Number(count)})
+                    _this.$store.dispatch(_this.options.gridKey + 'setData', {pager_Total: Number(length)})
 
                     // requestDataHeader 获取分页 的data
                     let requestDataHeader = Vue.prototype.$api.request($requestUrl)
@@ -840,7 +849,40 @@
                 this.$store.dispatch(this.getState.gridKey + 'setData', {seniorSearchBox: {}})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {sortBox: {}})
                 this.$store.dispatch(this.options.gridKey + 'setData', {searchBtn: !this.getState.searchBtn})
-            }
+            },
+
+        },
+        /**
+         *  设置筛选项内容
+         */
+        setFilters() {
+            let _this = this
+            let table = clone(this.getState.table)
+            table.forEach(function (item) {
+                if (item.filter === true && item.filterItem) {
+                    let filters = []
+                    let selects = []
+                    let dicData = _this.$api.getItem(item.filterItem)
+                    if(dicData.length>0){
+                        dicData[0].DataDictionary.forEach(function (dicItem) {
+                            //筛选
+                            let filterItem = {}
+                            filterItem.text = dicItem.Name
+                            filterItem.value = `(${item.key} eq ${dicItem.Id})`
+                            filters.push(filterItem)
+                            //修改新增
+                            let selectItem = {}
+                            selectItem.text = dicItem.Name
+                            selectItem.value = dicItem.Id
+                            selects.push(selectItem)
+                        })
+                        item['filters'] = filters
+                        item['selects'] = selects
+                        _this.remoteListAll[item.key] = filters
+                    }
+                }
+            })
+            _this.$store.dispatch(_this.options.gridKey + 'setData', {table: table})
         },
         filters: {}
     }

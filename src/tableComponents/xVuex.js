@@ -89,6 +89,7 @@ function initOpt(opt) {
             readOnly: false, // 修改的是否是否是只读不可改
             column: 'show',  // 表格列是否展示  show  hide
             width: 'auto', // 180
+            displayType: 1,
             isExpand: false, // 180
             type: 'string'  // type: string number select remoteMethod
         }, item)
@@ -163,7 +164,6 @@ export function registerModule(_this, state, gridKey) {
 }
 
 export const options = {
-    actionDisplayType: 1,
     getData_val: 'value', // 获取table list 数据参数，默认是data.value
     toggleRowExpansion: false, // table 是否展开
     border: true, // table 是否展示竖排 border
