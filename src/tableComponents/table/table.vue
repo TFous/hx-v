@@ -371,9 +371,9 @@
                     for (let filters in filtersBOx) {
                         let filtersHtmls = ``
                         filtersBOx[filters].forEach(function (key) {
-                            filtersHtmls += `${key} or `
+                            filtersHtmls += `${key}or`
                         })
-                        filterUrl += `(${filtersHtmls.slice(0, -3)})and`
+                        filterUrl += `(${filtersHtmls.slice(0, -2)})and`
                     }
                 }
 
