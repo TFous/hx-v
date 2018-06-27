@@ -33,6 +33,9 @@ export function filterependence(columns) {
         if (item.type === 'dependence') {
             obj[item.key] = item.dependenceVal
         }
+        if (item.default !== null) {
+            obj[item.key] = item.default
+        }
     })
     return obj
 }

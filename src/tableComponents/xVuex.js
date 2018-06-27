@@ -84,6 +84,7 @@ function initOpt(opt) {
             addLayer: 'show',
             editLayer: 'show', // show hide
             detailsLayer: 'show', // 详情页默认展示
+            default:null, // 添加时默认项
             searchKey: 'show',
             sortable: false,
             readOnly: false, // 修改的是否是否是只读不可改
