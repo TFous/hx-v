@@ -181,6 +181,8 @@ export const options = {
     searchKeys: ['searchAll'], // 存储search对象
     searchVal: '', // 存储search对象
     searchBtn: false, // 存储search对象
+    isResetCurrentPage: false, // 是否重置  pager_CurrentPage 为1
+    isRun: true, // 是否继续执行，某些方法多次执行
     arrCopy: [], // 存储arr原始对象
     defaultSearch: '',  // 默认 搜索选项
     disabledSearch: false, // 是否禁用搜索下拉 true：禁用

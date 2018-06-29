@@ -20,6 +20,7 @@
                                 >
                                     <div class="block">
                                         <el-date-picker
+                                            value-format="yyyy-MM-dd"
                                                 :disabled="item.readOnly"
                                                 :clearable="item.readOnly===true?false:true"
                                                 :editable="false"

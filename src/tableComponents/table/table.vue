@@ -113,6 +113,7 @@
         name: 'xtable',
         data() {
             return {
+                isRefresh: false, // 用于 表格自动补充列 需要影藏的按钮
                 tableIndex: null, // 用于 表格自动补充列 需要影藏的按钮
                 loading: false, // 表格是否加载OK
                 tableData: [], // 表格数据
@@ -190,6 +191,13 @@
                     if (oldVal !== val) {
                         this.searchFn()
                     }
+                    let isResetCurrentPage = this.getState.isResetCurrentPage
+                    if (isResetCurrentPage === true) {
+                        this.$store.dispatch(this.options.gridKey + 'setData', {pager_CurrentPage: 1})
+                        this.$store.dispatch(this.options.gridKey + 'setData', {isRun: false})
+                        // 执行后重置
+                        this.$store.dispatch(this.getState.gridKey + 'setData', {isResetCurrentPage: false})
+                    }
                 },
                 deep: true
             },
@@ -223,7 +231,13 @@
                 handler: function (val, oldVal) {
                     this.$store.dispatch(this.options.gridKey + 'setData', {pager_CurrentPage: val})
                     if (oldVal !== undefined && oldVal !== val) {
-                        this.getList()
+                        let isRun = this.getState.isRun
+                        if(isRun === true){
+                            this.getList()
+                        }else {
+                            // 每次都必须回位
+                            this.$store.dispatch(this.options.gridKey + 'setData', {isRun: true})
+                        }
                     }
                 },
                 deep: true
@@ -495,8 +509,10 @@
                     } else if (typeof seniorObj[item] === 'string') {
                         valUrl += `(contains(${item},'${seniorObj[item]}'))${typeKey}`
                     } else if (seniorObj[item] instanceof Array === true) {
+
                         let startTime = this.$common.setStarTime(seniorObj[item][0])
                         let endTime = this.$common.endTime(seniorObj[item][1])
+
                         valUrl += `(${item} ge ${startTime} and ${item} le ${endTime})${typeKey}`
                     }
                 }
@@ -849,6 +865,7 @@
                 this.$store.dispatch(this.getState.gridKey + 'setData', {seniorSearchBox: {}})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {sortBox: {}})
                 this.$store.dispatch(this.options.gridKey + 'setData', {searchBtn: !this.getState.searchBtn})
+                this.$store.dispatch(this.getState.gridKey + 'setData', {isRun: true})
             },
 
         },

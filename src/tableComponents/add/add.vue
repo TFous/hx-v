@@ -19,6 +19,7 @@
                                 >
                                     <div class="block">
                                         <el-date-picker
+                                            value-format="yyyy-MM-dd"
                                             :clearable="true"
                                             :editable="false"
                                             v-model="dataMsg[item.key]"

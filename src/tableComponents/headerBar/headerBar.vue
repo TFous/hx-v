@@ -302,6 +302,8 @@
                 let seniorSearchBox = clone(this.formItem)
                 this.$store.dispatch(this.options.gridKey + 'setData', {seniorSearchBox: seniorSearchBox})
                 this.$store.dispatch(this.options.gridKey + 'setData', {searchBtn: !this.getState.searchBtn})
+                this.$store.dispatch(this.getState.gridKey + 'setData', {isResetCurrentPage: true})
+
 //                this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: this.isSeniorSearch})
             },
 //      设置高级搜索键值
@@ -405,6 +407,7 @@
             searchFn() {
                 this.paramsValue = common.trim(this.paramsValue)
                 this.$store.dispatch(this.getState.gridKey + 'setData', {searchBtn: !this.getState.searchBtn})
+                this.$store.dispatch(this.getState.gridKey + 'setData', {isResetCurrentPage: true})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {searchVal: this.paramsValue})
                 this.$store.dispatch(this.getState.gridKey + 'setData', {searchKeys: this.paramsSelect})
             },

@@ -48,23 +48,50 @@ export function trim(text) {
     }
 }
 
-export function setStarTime(dateTime) {
-    let times = new Date(dateTime)
-    let year = times.getFullYear()
-    let month = (times.getMonth() + 1).toString().length === 2 ? (times.getMonth() + 1) : `0${(times.getMonth() + 1)}`
-    let day = (times.getDate()).toString().length === 2 ? (times.getDate()) : `0${(times.getDate())}`
-    // let hours = (times.getHours()).toString().length === 2 ? (times.getHours()) : `0${(times.getHours())}`
-    // let minutes = (times.getMinutes()).toString().length === 2 ? (times.getMinutes()) : `0${(times.getMinutes())}`
-    // let seconds = (times.getSeconds()).toString().length === 2 ? (times.getSeconds()) : `0${(times.getSeconds())}`
-    // return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`
-    return `${year}-${month}-${day}T00:00:00Z`
+export function setStarTime(date) {
+    date = new Date(date.getTime() - 8*60*60*1000)
+    var format = 'yyyy-MM-dd HH:mm:ss'
+    date = new Date(date);
+    var o = {
+        'M+' : date.getMonth() + 1, //month
+        'd+' : date.getDate(), //day
+        'H+' : date.getHours(), //hour+8小时</span>
+        'm+' : date.getMinutes(), //minute
+        's+' : date.getSeconds(), //second
+        'q+' : Math.floor((date.getMonth() + 3) / 3), //quarter
+        'S' : date.getMilliseconds() //millisecond
+    };
+    if (/(y+)/.test(format))
+        format = format.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+
+    for (var k in o)
+        if (new RegExp('(' + k + ')').test(format))
+            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+
+    return format.replace(' ','T')+"Z";
 }
-export function endTime(dateTime) {
-    let times = new Date(dateTime)
-    let year = times.getFullYear()
-    let month = (times.getMonth() + 1).toString().length === 2 ? (times.getMonth() + 1) : `0${(times.getMonth() + 1)}`
-    let day = (times.getDate()).toString().length === 2 ? (times.getDate()) : `0${(times.getDate())}`
-    return `${year}-${month}-${day}T15:59:59Z`
+export function endTime(date) {
+    date = new Date(date.getTime() + 16*60*60*1000-1000)
+    var format = 'yyyy-MM-dd HH:mm:ss'
+    date = new Date(date);
+    var o = {
+        'M+' : date.getMonth() + 1, //month
+        'd+' : date.getDate(), //day
+        'H+' : date.getHours(), //hour+8小时</span>
+        'm+' : date.getMinutes(), //minute
+        's+' : date.getSeconds(), //second
+        'q+' : Math.floor((date.getMonth() + 3) / 3), //quarter
+        'S' : date.getMilliseconds() //millisecond
+    };
+    if (/(y+)/.test(format))
+        format = format.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+
+    for (var k in o)
+        if (new RegExp('(' + k + ')').test(format))
+            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+
+    return format.replace(' ','T')+"Z";
+    // return `${year}-${month}-${day}T15:59:59Z`
 }
 
 export function timeType(t) {
