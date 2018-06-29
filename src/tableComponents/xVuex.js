@@ -91,6 +91,7 @@ function initOpt(opt) {
             column: 'show',  // 表格列是否展示  show  hide
             width: 'auto', // 180
             displayType: 1,
+            isFilterBtn:false,
             isExpand: false, // 180
             type: 'string'  // type: string number select remoteMethod
         }, item)

@@ -56,24 +56,27 @@
                                 :label="item.title"
                                 :width="item.width">
                                 <template slot-scope="s">
-                                    <template v-for="(renderItem,index) in item.render" v-if="btnToggle(index,s,item) && item.displayType ===1">
-                                        <el-button
-                                            class="render-toggle"
-                                            v-if="renderItem.tag==='button'"
-                                            @click.native.prevent="renderItem.fn(s)"
-                                            :type="renderItem.type"
-                                            plain>
-                                            <!--{{renderItem.show}}-->
-                                            {{renderItem.text}}
-                                        </el-button>
-                                        <a
-                                            v-else-if="renderItem.tag==='a'"
-                                            :href="renderItem.href"
-                                        >{{getKey(s, item.key)}}</a>
-                                        <template v-else>
+                                    <template v-for="(renderItem,index) in item.render"
+                                              v-if="item.displayType ===1">
+                                        <template v-if="(item.isFilterBtn&&s.row.btnShow)?JSON.parse(s.row.btnShow)[item.key].indexOf(index)>-1:true">
+                                            <el-button
+                                                class="render-toggle"
+                                                v-if="renderItem.tag==='button'"
+                                                @click.native.prevent="renderItem.fn(s)"
+                                                :type="renderItem.type"
+                                                plain>
+                                                <!--{{renderItem.show}}-->
+                                                {{renderItem.text}}
+                                            </el-button>
+                                            <a
+                                                v-else-if="renderItem.tag==='a'"
+                                                :href="renderItem.href"
+                                            >{{getKey(s, item.key)}}</a>
+                                            <template v-else>
                                         <span :title="renderItem.title"
                                               :class="renderItem.class?renderItem.class:'cell-cursor'"
                                               @click="renderItem.fn(s)">{{getKey(s, item.key)}}</span>
+                                            </template>
                                         </template>
                                     </template>
 
@@ -83,8 +86,8 @@
                                             trigger="hover">
                                             <ul class="table-btn-ul">
                                                 <li
-                                                    v-if="btnToggle(index,s,item)"
-                                                    v-for="(renderItem,index) in item.render"
+                                                    v-for="(renderItem,index1) in item.render"
+                                                    v-if="(item.isFilterBtn&&s.row.btnShow)?JSON.parse(s.row.btnShow)[item.key].indexOf(index1)>-1:true"
                                                     @click="renderItem.fn(s)"
                                                 >{{renderItem.text}}</li>
                                             </ul>
@@ -278,15 +281,6 @@
 
         },
         methods: {
-            /**
-             *
-             * index:需要影藏按钮的下标
-             *  scope ,表格信息
-             *
-             * */
-            btnToggle(index,scope,item){
-                return true
-            },
             tableRowClassName({row, rowIndex}) {
                 if (rowIndex> this.tableIndex) {
                     return 'hide-row';
@@ -720,6 +714,7 @@
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {localTableData: data[dataVal]})
                         let tableData = _this.getState.localTableData.slice(pageSkip, pageSize)
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: tableData})
+                        _this.$store.dispatch(_this.options.gridKey + 'setData', {isRun: true})
                     })
                     return false
                 }
@@ -787,6 +782,7 @@
                             })
                             return false
                         }
+                        _this.$store.dispatch(_this.options.gridKey + 'setData', {isRun: true})
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: data[dataVal]})
                     })
                 })
