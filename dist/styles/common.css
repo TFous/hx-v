@@ -92,20 +92,16 @@
     display: none;
 }
 
-/*弹出层层级设置*/
-.el-dialog__wrapper,{
-    z-index: 3999!important;
-}
 /*消息层级*/
 .el-message{
     z-index: 100000!important;
 }
-.el-select-dropdown{
-    z-index: 4101!important;
-}
-.el-message-box__wrapper{
-    z-index: 4200!important;
-}
+/*.el-select-dropdown{*/
+    /*z-index: 4101!important;*/
+/*}*/
+/*.el-message-box__wrapper{*/
+    /*z-index: 4200!important;*/
+/*}*/
 
 .table-btn-ul {
     width: 110px;
