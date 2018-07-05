@@ -91,7 +91,6 @@ function initOpt(opt) {
             column: 'show',  // 表格列是否展示  show  hide
             width: 'auto', // 180
             displayType: 1,
-            isFilterBtn:false,
             isExpand: false, // 180
             type: 'string'  // type: string number select remoteMethod
         }, item)
@@ -190,8 +189,8 @@ export const options = {
     isPageSet: false,  // 是否使用页面设置每页展示，覆盖用全局设置
     isLocalPages: false,  // 是否使用本地分页
     localTableData: [],  // 本地分页存储的总数据
-    pager_size_opts: [5, 10, 50],  // 每页展示数量
-    pager_Size: 5,   //  默认显示每页数量，和opts第一个一样
+    pager_size_opts: [15, 25, 50],  // 每页展示数量
+    pager_Size: 15,   //  默认显示每页数量，和opts第一个一样
     pager_CurrentPage: 1, // 当前第几页
     pager_Total: 0,   // 总页数
     tableData: [],  // 所有的增删改拆后的数据覆盖存储

@@ -10,6 +10,33 @@
 > * 可以更具具体需求修改每行按钮的显示影藏  fn=>  btnToggle
 
 
+> * 2018.7.1
+> * table 功能按钮新增两种显示效果，actionDisplayType  1  2 ，表格按钮svg 是外部引用的
+> * 可以更具具体需求修改每行按钮的显示影藏  fn=>  btnToggle 这个功能废弃掉，table组件中不能
+执行任何方法。改为下面的方法
+
+```javascript
+/**
+     * 设置展现给用户的表格数据
+     * @param tableData 表格数据
+     */
+    setTableData(tableData) {
+        let _self = this
+        let initData = clone(tableData)
+        initData.forEach(function (item) {
+            //0入职 1转正 2 调岗 3改聘 4离职 5再入职 6删除
+            if(item.WorkingStatus == _self.$api.ValueTokey('WorkingStatusEnum','待岗')){ //待岗
+            // 对应数据对象中新增btnShow 属性，存入 属性为是 table 中对应clomn，值为想要显示的index下标
+                item.btnShow = JSON.stringify({
+                    action:'0,6'
+                })
+            }
+        })
+        this.$store.dispatch(this.options.gridKey + 'setData', {tableData: initData})
+    }
+
+```
+
 
 
 ## 注意事项
