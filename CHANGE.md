@@ -1,19 +1,58 @@
 ## 更新记录
 > * 2018.4.27
-> * 修改刷新按钮不刷新（拼接hashcode）
-> * 修改批量删除方法，`"Content-Type": "application/x-www-form-urlencoded"`
-> * 进一步优化接口重复加载
+>> * 修改刷新按钮不刷新（拼接hashcode）
+>> * 修改批量删除方法，`"Content-Type": "application/x-www-form-urlencoded"`
+>> * 进一步优化接口重复加载
 
 
 > * 2018.5.28
-> * table 功能按钮新增两种显示效果，actionDisplayType  1  2 ，表格按钮svg 是外部引用的
-> * 可以更具具体需求修改每行按钮的显示影藏  fn=>  btnToggle
+>> * table 功能按钮新增两种显示效果，actionDisplayType  1  2 ，表格按钮svg 是外部引用的
+>> * 可以更具具体需求修改每行按钮的显示影藏  fn=>  btnToggle
 
 
 > * 2018.7.1
-> * table 功能按钮新增两种显示效果，actionDisplayType  1  2 ，表格按钮svg 是外部引用的
-> * 可以更具具体需求修改每行按钮的显示影藏  fn=>  btnToggle 这个功能废弃掉，table组件中不能
+>> * table 功能按钮新增两种显示效果，actionDisplayType  1  2 ，表格按钮svg 是外部引用的
+>> * 可以更具具体需求修改每行按钮的显示影藏  fn=>  btnToggle 这个功能废弃掉，table组件中不能
 执行任何方法。改为下面的方法
+
+
+
+> * 2018.7.13
+>> * table 支持复杂表头，目前只支持二级，同时修改表头宽度记录。
+>> * 表格设置弹出层高度修改。
+
+```javascript
+负责表头
+{
+                key:'msg',
+                title:'人员信息',
+                children:[
+                    {
+                        key: 'Name',
+                        title: '姓名',
+                        // column:'hide',
+                        displayType:1,
+                        rules: [{required: true, message: '必填'}],
+                        render: [
+                            {
+                                fn: this.showEditModel,   // 事件
+                                title: '点击查看详情'  // 鼠标移到上面展示的内容
+                            }
+                        ]
+                    },
+                    {
+                        key: 'Phone',
+                        title: '联系手机',
+                        rules: [{required: true, message: '必填'}]
+                    },
+                ]
+            },
+
+```
+
+
+
+
 
 ```javascript
 /**

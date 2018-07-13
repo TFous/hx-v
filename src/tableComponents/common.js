@@ -148,8 +148,16 @@ export function setTabWidth(tables,gridKey) {
     if(tableWidthsObj[gridKey]!==undefined){
         table.forEach(function (item) {
             tableWidthsObj[gridKey].forEach(function (column) {
-                if(item.title === column.name){
-                    item.width = column.width
+                if(item.children && item.children.length>0){
+                    item.children.forEach(value=>{
+                        if(value.title === column.name){
+                            value.width = column.width
+                        }
+                    })
+                }else {
+                    if(item.title === column.name){
+                        item.width = column.width
+                    }
                 }
             })
         })
@@ -203,4 +211,42 @@ export function gethashcode() {
     var myRandom=randomWord(false,6);
     var hashcode=hashCode(myRandom+timestamp.toString());
     return hashcode.toString().substr(0,4);
+}
+
+
+
+function IsNull(data){
+    if(data == null){
+        return " "
+    }else{
+        return data
+    }
+}
+
+function stringify(data){
+    if(data == null){
+        return " "
+    }else{
+        let html = ''
+        data.forEach((item,index)=>{
+            html+=`<div>${index+1}: ${item.message}</div>`
+        })
+        return JSON.stringify(html)
+    }
+}
+
+export function autoMsg(isAutoShowErr,data,msg={successMsg:null,errMsg: null}){
+    if(isAutoShowErr){
+        if (data.__abp && (data.success === false || data.Success === false)) {
+            let validationErrors = stringify(data.error.validationErrors)
+            let details = IsNull(data.error.details)
+            let errMsg = validationErrors!==''?validationErrors:details
+            platHttp.errTit = data.error.message
+            platHttp.errMsg = (msg.errMsg === null? errMsg:msg.errMsg)
+            platHttp.errBoolean = !platHttp.errBoolean
+        }else if (data.success === true || data.Success === true){
+            platHttp.successMsg = msg.successMsg
+            platHttp.successBoolean = !platHttp.successBoolean
+        }
+    }
 }

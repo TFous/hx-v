@@ -1,18 +1,18 @@
 <template>
     <div>
         <el-dialog
-            title="表格设置"
-            class="formDialog"
-            :close-on-click-modal="false"
-            @close="setAddVisible"
-            :visible.sync="show">
-            <el-tabs tab-position="left" style="height: 200px;">
+                title="表格设置"
+                class="formDialog"
+                :close-on-click-modal="false"
+                @close="setAddVisible"
+                :visible.sync="show">
+            <el-tabs tab-position="left" style="min-height: 200px;">
                 <el-tab-pane label="表格列展示">
                     <el-alert
-                        style="margin-bottom: 12px;"
-                        title="请根据个人需求合理展示表格列表。设置信息保存在当前浏览器"
-                        type="success"
-                        :closable="false">
+                            style="margin-bottom: 12px;"
+                            title="请根据个人需求合理展示表格列表。设置信息保存在当前浏览器"
+                            type="success"
+                            :closable="false">
                     </el-alert>
                     <div style="margin-bottom: 12px;">
                         <template v-for="(item, index) in checked">
@@ -27,10 +27,10 @@
                 <el-tab-pane label="表格列宽度">
                     <div style="">
                         <el-alert
-                            style="margin-bottom: 12px;"
-                            :closable="false"
-                            title="表格宽度和列数设置信息保存在当前浏览器，清空款存或者换一个浏览器表格状态则为初始状态"
-                            type="error">
+                                style="margin-bottom: 12px;"
+                                :closable="false"
+                                title="表格宽度和列数设置信息保存在当前浏览器，清空款存或者换一个浏览器表格状态则为初始状态"
+                                type="error">
                         </el-alert>
                         <el-button type="primary" @click="recovery">恢复当前表格默认宽度</el-button>
                         <el-button type="danger" @click="recoveryAll">恢复所有表格默认宽度</el-button>
@@ -61,7 +61,7 @@
         },
         computed: {
             gridKey (){
-              return this.options.gridKey
+                return this.options.gridKey
             },
             getState() {
                 return this.$store.state[this.options.gridKey]

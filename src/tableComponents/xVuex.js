@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import * as common from './common'
+
 function createMutations(state, gridKey) {
     return {
         [gridKey + '_SET_DATA'](state, data) {
@@ -67,34 +68,35 @@ function createMutations(state, gridKey) {
 function initOpt(opt) {
     var table = opt.table
     var newTable = []
+    let initObj = {
+        addLayer: 'show',
+        editLayer: 'show', // show hide
+        detailsLayer: 'show', // 详情页默认展示
+        default: null, // 添加时默认项
+        searchKey: 'show',
+        sortable: false,
+        readOnly: false, // 修改的是否是否是只读不可改
+        column: 'show',  // 表格列是否展示  show  hide
+        width: 'auto', // 180
+        displayType: 1,  // 功能按钮样式
+        isExpand: false, // 180
+        type: 'string'  // type: string number select remoteMethod
+    }
     // 自动赋值：表格width
-    table = common.setTabWidth(table,opt.gridKey)
-    // let tableWidthsObj = JSON.parse(localStorage.getItem('TABLES_WIDTH')) || {}
-    // if(tableWidthsObj[opt.gridKey]!==undefined){
-    //     table.forEach(function (item) {
-    //         tableWidthsObj[opt.gridKey].forEach(function (column) {
-    //             if(item.title === column.name){
-    //                 item.width = column.width
-    //             }
-    //         })
-    //     })
-    // }
+    table = common.setTabWidth(table, opt.gridKey)
     table.forEach(function (item) {
-        var newColunm = Object.assign({
-            addLayer: 'show',
-            editLayer: 'show', // show hide
-            detailsLayer: 'show', // 详情页默认展示
-            default:null, // 添加时默认项
-            searchKey: 'show',
-            sortable: false,
-            readOnly: false, // 修改的是否是否是只读不可改
-            column: 'show',  // 表格列是否展示  show  hide
-            width: 'auto', // 180
-            displayType: 1,
-            isExpand: false, // 180
-            type: 'string'  // type: string number select remoteMethod
-        }, item)
-        newTable.push(newColunm)
+        if (item.children && item.children.length > 0) {
+            let children = []
+            item.children.forEach(value => {
+                var newColunm = Object.assign({},initObj, value)
+                children.push(newColunm)
+            })
+            var newColunm = Object.assign({},initObj, item,{children})
+            newTable.push(newColunm)
+        } else {
+            var newColunm = Object.assign({},initObj, item)
+            newTable.push(newColunm)
+        }
     })
     if (opt.isPageSet === false) {
         var pager_size_opts = Vue.prototype.$table_options.pager_size_opts
