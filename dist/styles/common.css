@@ -1,95 +1,97 @@
 @import url(../fontStyle/iconfont.css);
 .tableBtn .ivu-btn{
-  margin:0px 4px;
+    margin:0px 4px;
 }
 .edit .ivu-select-dropdown{
-  position: absolute!important;
+    position: absolute!important;
 }
 
 .xtable-left{
-  display: inline-block;
-  width:49%;
-  word-wrap:break-word;
-  position: relative;
+    display: inline-block;
+    width:49%;
+    word-wrap:break-word;
+    position: relative;
 }
 .details .xtable-left{
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .hx-drapMenu{
-  height:300px;
-  overflow-y: auto;
+    height:300px;
+    overflow-y: auto;
 }
 
 /*弹出层内部元素长度*/
 .formDialog .el-input-number{
-  width:100%!important;
+    width:100%!important;
 }
 .formDialog .el-select{
-  width:100%!important;
+    width:100%!important;
 }
 
 .formDialog .el-date-editor.el-input{
-  width:100%!important;
+    width:100%!important;
 }
 
 .tablePager{
-  padding:20px 0px;
-  text-align: right;
+    padding:20px 0px;
+    text-align: right;
 }
 .seniorWrap{
-  padding:20px;
+    padding:20px;
 }
 .seniorWrap .el-input--mini .el-input__inner,.seniorWrap .el-range-editor--mini.el-input__inner{
-  width: 330px;
+    width: 330px;
 }
 .seniorWrap .el-date-editor .el-range-input{
-  width:37%;
+    width:37%;
 }
 .seniorWrap .el-date-editor .el-range-separator{
-  width:8%;
+    width:8%;
 }
 .seniorWrap .el-col-6{
-  min-width: 450px;
-  width:24%;
-  padding:0px!important;
-  float: none;
-  display: inline-block;
+    min-width: 450px;
+    width:24%;
+    padding:0px!important;
+    float: none;
+    display: inline-block;
 }
 .otable .el-table .cell {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 /* header 按钮样式*/
 .pagerHead .iconfont{
-  font-size:12px;
+    font-size:12px;
 }
 
 .pagerHead .el-button+.el-button{
-  margin-left:0px;
+    margin-left:0px;
 }
 
 .xtable-left .el-input-number .el-input__inner{
-  text-align: left;
+    text-align: left;
 }
 .cell-cursor{
-  color:#409EFF;
-  cursor: pointer;
+    color:#409EFF;
+    cursor: pointer;
 }
 .el-table__expanded-cell:hover{
-  background: none!important;
+    background: none!important;
 }
 /*!*ie 11 hack*!*/
 /*.seniorSearchBtn .el-switch{*/
-  /*position: relative;*/
-  /*top:-10px;*/
+/*position: relative;*/
+/*top:-10px;*/
 /*}*/
 /* 隐藏自增的按钮*/
 .hide-row .render-toggle{
-    display: none;
+    /*display: none;*/
+    opacity: 0;
 }
 
 .hide-row .el-tooltip{
-    display: none;
+    /*display: none;*/
+    opacity: 0;
 }
 
 /*消息层级*/
@@ -97,10 +99,10 @@
     z-index: 100000!important;
 }
 /*.el-select-dropdown{*/
-    /*z-index: 4101!important;*/
+/*z-index: 4101!important;*/
 /*}*/
 /*.el-message-box__wrapper{*/
-    /*z-index: 4200!important;*/
+/*z-index: 4200!important;*/
 /*}*/
 
 .table-btn-ul {
@@ -122,8 +124,8 @@
     color: #555459;
 }
 .table-btn-ul li:hover{
-     background: #eaf6f5;
- }
+    background: #eaf6f5;
+}
 
 .el-popover{
     padding:0px!important;

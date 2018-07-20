@@ -62,9 +62,16 @@
                                                 <template v-for="(renderItem,index) in value.render"
                                                           v-if="value.displayType ===1">
                                                     <template v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[value.key] ?JSON.parse(scope.row.btnShow)[value.key].indexOf(index)>-1:true">
+                                                        <el-switch
+                                                                v-if="renderItem.tag==='switch'"
+                                                                v-model="item.key"
+                                                                @change="renderItem.fn?renderItem.fn(scope):null"
+                                                                active-color="#13ce66"
+                                                        >
+                                                        </el-switch>
                                                         <el-button
                                                                 class="render-toggle"
-                                                                v-if="renderItem.tag==='button'"
+                                                                v-else-if="renderItem.tag==='button'"
                                                                 @click.native.prevent="renderItem.fn(scope)"
                                                                 :type="renderItem.type"
                                                                 plain>
@@ -140,13 +147,19 @@
                                         <template v-for="(renderItem,index) in item.render"
                                                   v-if="item.displayType ===1">
                                             <template v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[item.key] ?JSON.parse(scope.row.btnShow)[item.key].indexOf(index)>-1:true">
+                                                <el-switch
+                                                        v-if="renderItem.tag==='switch'"
+                                                        v-model="item.key"
+                                                        active-color="#13ce66"
+                                                        @change="renderItem.fn?renderItem.fn(scope):null"
+                                                >
+                                                </el-switch>
                                                 <el-button
                                                         class="render-toggle"
-                                                        v-if="renderItem.tag==='button'"
+                                                        v-else-if="renderItem.tag==='button'"
                                                         @click.native.prevent="renderItem.fn(scope)"
                                                         :type="renderItem.type"
                                                         plain>
-                                                    <!--{{renderItem.show}}-->
                                                     {{renderItem.text}}
                                                 </el-button>
                                                 <a
@@ -154,9 +167,9 @@
                                                         :href="renderItem.href"
                                                 >{{getKey(scope, item.key)}}</a>
                                                 <template v-else>
-                                        <span :title="renderItem.title"
-                                              :class="renderItem.class?renderItem.class:'cell-cursor'"
-                                              @click="renderItem.fn(scope)">{{getKey(scope, item.key)}}</span>
+                                                    <span :title="renderItem.title"
+                                                          :class="renderItem.class?renderItem.class:'cell-cursor'"
+                                                          @click="renderItem.fn(scope)">{{getKey(scope, item.key)}}</span>
                                                 </template>
                                             </template>
                                         </template>
@@ -343,6 +356,7 @@
             },
             getTableData() {
                 let data = clone(this.$store.state[this.options.gridKey].tableData)
+                console.log(data)
                 let dataLength = data.length
                 // 最小显示条数，撑开高度
                 let length = 12

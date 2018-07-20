@@ -21,6 +21,13 @@
 >> * table 支持复杂表头，目前只支持二级，同时修改表头宽度记录。
 >> * 表格设置弹出层高度修改。
 
+
+
+> * 2018.7.19
+>> * tag 新增类型 switch,
+>> * 修改show-overflow-tooltip，在样式为display:none 时默认显示空的问题，改为opacity: 0
+
+
 ```javascript
 负责表头
 {
