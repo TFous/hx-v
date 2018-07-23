@@ -356,7 +356,6 @@
             },
             getTableData() {
                 let data = clone(this.$store.state[this.options.gridKey].tableData)
-                console.log(data)
                 let dataLength = data.length
                 // 最小显示条数，撑开高度
                 let length = 12

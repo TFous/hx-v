@@ -24,8 +24,12 @@
 
 
 > * 2018.7.19
->> * tag 新增类型 switch,
->> * 修改show-overflow-tooltip，在样式为display:none 时默认显示空的问题，改为opacity: 0
+>> * tag 新增类型 switch
+>> * 修改show-overflow-tooltip，在样式为display:none,组件会默认设置为none, 时默认显示空的问题，改为强制设置为block,opacity: 0
+
+
+> * 2018.7.23
+>> * 开启高级搜索时，默认搜索条件disabled，不能下拉选择。
 
 
 ```javascript

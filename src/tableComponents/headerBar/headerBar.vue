@@ -68,7 +68,9 @@
                                   @keyup.enter.native="searchFn"
                                   v-model="paramsValue"
                                   class="input-with-select">
-                            <el-select v-model="paramsSelect" slot="prepend" placeholder="请选择" style="width:130px;">
+                            <el-select v-model="paramsSelect"
+                                       :disabled="isSeniorSearch"
+                                       slot="prepend" placeholder="请选择" style="width:130px;">
                                 <el-option v-for="(item, key) in paramsOption"
                                            :key="item.value"
                                            :label="item.label"

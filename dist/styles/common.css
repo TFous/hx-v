@@ -85,12 +85,12 @@
 /*}*/
 /* 隐藏自增的按钮*/
 .hide-row .render-toggle{
-    /*display: none;*/
+    display: block!important;
     opacity: 0;
 }
 
 .hide-row .el-tooltip{
-    /*display: none;*/
+    display: block!important;
     opacity: 0;
 }
 
