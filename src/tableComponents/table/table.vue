@@ -35,6 +35,7 @@
                                                     :label="value.title"
                                                     :sortable="value.sortable"
                                                     :filters="value.filters"
+                                                    :filter-multiple="item.filterMultiple"
                                                     filter-placement="bottom-start"
                                                     :width="value.width">
                                             </el-table-column>
@@ -120,6 +121,7 @@
                                             :label="item.title"
                                             :sortable="item.sortable"
                                             :filters="item.filters"
+                                            :filter-multiple="item.filterMultiple"
                                             filter-placement="bottom-start"
                                             :width="item.width">
                                     </el-table-column>

@@ -71,6 +71,7 @@ function initOpt(opt) {
     let initObj = {
         addLayer: 'show',
         editLayer: 'show', // show hide
+        filterMultiple: true, // 筛选默认可多选
         detailsLayer: 'show', // 详情页默认展示
         default: null, // 添加时默认项
         searchKey: 'show',
@@ -123,7 +124,11 @@ export function registerModule(_this, state, gridKey) {
         return
     }
 
+    if(state.fn){
+        state = state.fn(state)
+    }
     let initState = initOpt(state)
+
     var mutations = createMutations(initState, gridKey)
     _this.$store.registerModule(gridKey, {
         state: initState,
