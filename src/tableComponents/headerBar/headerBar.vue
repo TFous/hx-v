@@ -63,6 +63,7 @@
                     <!--</el-dropdown>-->
                 </el-col>
                 <el-col :span="12">
+                    <slot name="search"></slot>
                     <div class="searchWrap" v-show="isShowSearch">
                         <el-input :clearable="true" placeholder="请输入内容" :disabled="isSeniorSearch"
                                   @keyup.enter.native="searchFn"

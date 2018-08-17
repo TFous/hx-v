@@ -35,6 +35,10 @@
 >> * 新增筛选可以控制是否选择多条件筛选
 >> * option新增函数支持，用户特定场景下 生成 td ,函数名fn
 
+> * 2018.8.17
+>> * header新增左侧slot  <slot name="search"></slot>
+>> * 所有layer 都设置成在body，防止多层弹出后z-index 问题
+
 
 ```javascript
 负责表头

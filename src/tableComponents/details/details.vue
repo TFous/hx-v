@@ -1,6 +1,7 @@
 <template>
     <div>
         <el-dialog
+            :append-to-body="true"
             :title="'详情 - '+ title"
             class="formDialog details"
             @close="setVisible"

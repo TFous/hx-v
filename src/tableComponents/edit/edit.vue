@@ -1,11 +1,12 @@
 <template>
     <div>
         <el-dialog
-                :title="'编辑 - '+ title"
-                class="formDialog"
-                @close="setVisible"
-                :close-on-click-modal="false"
-                :visible.sync="show"
+            :append-to-body="true"
+            :title="'编辑 - '+ title"
+            class="formDialog"
+            @close="setVisible"
+            :close-on-click-modal="false"
+            :visible.sync="show"
         >
             <slot name="main">
                 <el-form ref="editLayer" :label-position="labelPosition" label-width="150px" :model="dataMsg"
@@ -14,19 +15,19 @@
                         <div class="xtable-left">
                             <template v-if="item.type ==='date'">
                                 <el-form-item
-                                        :prop="item.key"
-                                        :label="item.title"
-                                        :rules="item.rules"
+                                    :prop="item.key"
+                                    :label="item.title"
+                                    :rules="item.rules"
                                 >
                                     <div class="block">
                                         <el-date-picker
                                             value-format="yyyy-MM-dd"
-                                                :disabled="item.readOnly"
-                                                :clearable="item.readOnly===true?false:true"
-                                                :editable="false"
-                                                v-model="dataMsg[item.key]"
-                                                type="date"
-                                                placeholder="选择日期"
+                                            :disabled="item.readOnly"
+                                            :clearable="item.readOnly===true?false:true"
+                                            :editable="false"
+                                            v-model="dataMsg[item.key]"
+                                            type="date"
+                                            placeholder="选择日期"
                                         >
                                         </el-date-picker>
                                     </div>
@@ -34,19 +35,19 @@
                             </template>
                             <template v-else-if="item.type ==='select'">
                                 <el-form-item
-                                        :prop="item.key"
-                                        :label="item.title"
-                                        :rules="item.rules"
+                                    :prop="item.key"
+                                    :label="item.title"
+                                    :rules="item.rules"
                                 >
                                     <el-select
-                                            :clearable="true"
-                                            :disabled="item.readOnly"
-                                            v-model="dataMsg[item.key]" placeholder="请选择">
+                                        :clearable="true"
+                                        :disabled="item.readOnly"
+                                        v-model="dataMsg[item.key]" placeholder="请选择">
                                         <el-option
-                                                v-for="a in item.selects"
-                                                :key="a.value"
-                                                :label="a.text"
-                                                :value="a.value"
+                                            v-for="a in item.selects"
+                                            :key="a.value"
+                                            :label="a.text"
+                                            :value="a.value"
                                         >
                                         </el-option>
                                     </el-select>
@@ -54,71 +55,71 @@
                             </template>
                             <template v-else-if="item.type ==='number'">
                                 <el-form-item
-                                        :prop="item.key"
-                                        :label="item.title"
-                                        :rules="item.rules"
+                                    :prop="item.key"
+                                    :label="item.title"
+                                    :rules="item.rules"
                                 >
                                     <el-input
-                                            :disabled="item.readOnly"
-                                            :clearable="item.readOnly===true?false:true"
-                                            v-model="dataMsg[item.key]"
-                                            placeholder="请输入内容"
-                                            @change="setNumber(item.key)"
+                                        :disabled="item.readOnly"
+                                        :clearable="item.readOnly===true?false:true"
+                                        v-model="dataMsg[item.key]"
+                                        placeholder="请输入内容"
+                                        @change="setNumber(item.key)"
                                     ></el-input>
                                 </el-form-item>
                             </template>
                             <template v-else-if="item.type ==='textarea'">
                                 <el-form-item
-                                        :prop="item.key"
-                                        :label="item.title"
-                                        :rules="item.rules"
+                                    :prop="item.key"
+                                    :label="item.title"
+                                    :rules="item.rules"
                                 >
                                     <el-input
-                                            :disabled="item.readOnly"
-                                            :clearable="item.readOnly===true?false:true"
-                                            type="textarea"
-                                            v-model="dataMsg[item.key]"
-                                            placeholder="请输入内容"
+                                        :disabled="item.readOnly"
+                                        :clearable="item.readOnly===true?false:true"
+                                        type="textarea"
+                                        v-model="dataMsg[item.key]"
+                                        placeholder="请输入内容"
                                     ></el-input>
                                 </el-form-item>
                             </template>
                             <template v-else-if="item.type ==='remoteMethod'">
                                 <el-form-item
-                                        :prop="item.key"
-                                        :label="item.title"
-                                        :rules="item.rules"
+                                    :prop="item.key"
+                                    :label="item.title"
+                                    :rules="item.rules"
                                 >
                                     <el-select
-                                            :disabled="item.readOnly"
-                                            v-model="dataMsg[item.key]"
-                                            filterable
-                                            remote
-                                            :clearable="item.readOnly===true?false:true"
-                                            @change="item.remoteMethodChange"
-                                            reserve-keyword
-                                            placeholder="请输入关键词"
-                                            :remote-method="item.remoteMethod"
-                                            :loading="getParent['loading']">
+                                        :disabled="item.readOnly"
+                                        v-model="dataMsg[item.key]"
+                                        filterable
+                                        remote
+                                        :clearable="item.readOnly===true?false:true"
+                                        @change="item.remoteMethodChange"
+                                        reserve-keyword
+                                        placeholder="请输入关键词"
+                                        :remote-method="item.remoteMethod"
+                                        :loading="getParent['loading']">
                                         <el-option
-                                                v-for="item in getParent[item.remoteList]"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value">
+                                            v-for="item in getParent[item.remoteList]"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
                             </template>
                             <template v-else>
                                 <el-form-item
-                                        :prop="item.key"
-                                        :label="item.title"
-                                        :rules="item.rules"
+                                    :prop="item.key"
+                                    :label="item.title"
+                                    :rules="item.rules"
                                 >
                                     <el-input
-                                            :disabled="item.readOnly"
-                                            :clearable="item.readOnly===true?false:true"
-                                            v-model="dataMsg[item.key]"
-                                            placeholder="请输入内容"
+                                        :disabled="item.readOnly"
+                                        :clearable="item.readOnly===true?false:true"
+                                        v-model="dataMsg[item.key]"
+                                        placeholder="请输入内容"
                                     ></el-input>
                                 </el-form-item>
                             </template>

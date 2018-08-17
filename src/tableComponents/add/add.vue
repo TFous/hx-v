@@ -1,6 +1,7 @@
 <template>
     <div>
         <el-dialog
+            :append-to-body="true"
             :title="'新增 - '+options.title"
             class="formDialog"
             :close-on-click-modal="false"
