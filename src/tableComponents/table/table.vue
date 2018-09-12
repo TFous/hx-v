@@ -2,6 +2,7 @@
     <div>
         <div class="otable">
             <slot>
+                <!--getState.tableData-->
                 <el-table
                         :data="getTableData"
                         :border="getState.border"
@@ -206,6 +207,7 @@
 <script>
     import Vue from 'vue'
     let isFirst = true
+    let isOnce = true
     // import * as common from '../common'
     import clone from 'clone'
     import columnLayer from '../columnSetting'
@@ -266,6 +268,7 @@
             'getState.requestUrl': {
                 handler: function (val, oldVal) {
                     if (oldVal !== val) {
+                        isOnce = false
                         this.getList()
                     }
                 },
@@ -289,7 +292,7 @@
             'getState.searchBtn': {
                 handler: function (val, oldVal) {
                     if (oldVal !== val) {
-                        this.searchFn()
+                        isOnce?this.searchFn():null
                     }
                     let isResetCurrentPage = this.getState.isResetCurrentPage
                     if (isResetCurrentPage === true) {
@@ -359,19 +362,22 @@
             getTableData() {
                 let data = clone(this.$store.state[this.options.gridKey].tableData)
                 let dataLength = data.length
-                // 最小显示条数，撑开高度
-                let length = 12
-                let value = length -dataLength
-                this.tableIndex = dataLength - 1
+
+                this.tableIndex = dataLength
                 if(dataLength === 0){
                     return []
                 }
+                // 最小显示条数，撑开高度
+                let length = 12
+                let value = length -dataLength
+                let arr = []
                 if(value > 0) {
-                    for (let i = 0; i < value; i++) {
-                        data.push({show:true})
+                    let i = 0
+                    for (; i < value; i++) {
+                        arr.push({show:true})
                     }
                 }
-                return data
+                return [...data,...arr]
             }
         },
         updated() {
@@ -379,7 +385,7 @@
         },
         methods: {
             tableRowClassName({row, rowIndex}) {
-                if (rowIndex> this.tableIndex) {
+                if (rowIndex> this.tableIndex-1) {
                     return 'hide-row';
                 }
                 return '';
@@ -438,6 +444,7 @@
                     }
                 })
             },
+
             /**
              *  基本思路：创建一个urlObj,每个属性是一个关键词的集合，条件关键词无非就是filter/order等，
              *  存放之前先判断对象中是否有这个关键词，如果没有直接塞进去，有则在已存在那里继续拼接
@@ -739,6 +746,7 @@
                 this.$store.dispatch(this.options.gridKey + 'setData', {searchBtn: !searchBtn})
             },
 //     初始化url,获取数据字典数据
+            // todo  isFirst 下次可去除，貌似没用
             loadingFn() {
                 this.getDicMsg()
                 let url = this.getState.url
@@ -881,6 +889,7 @@
                         }
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {isRun: true})
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: data[dataVal]})
+                        isOnce = true
                     })
                 })
             },

@@ -75,7 +75,7 @@ function initOpt(opt) {
         detailsLayer: 'show', // 详情页默认展示
         default: null, // 添加时默认项
         searchKey: 'show',
-        sortable: false,
+        sortable: false,  // 自定义为‘custom’
         readOnly: false, // 修改的是否是否是只读不可改
         column: 'show',  // 表格列是否展示  show  hide
         width: 'auto', // 180
