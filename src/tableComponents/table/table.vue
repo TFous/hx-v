@@ -4,6 +4,7 @@
             <slot>
                 <!--getState.tableData-->
                 <el-table
+                    max-height="490"
                         :data="getTableData"
                         :border="getState.border"
                         :stripe="true"
@@ -368,7 +369,7 @@
                     return []
                 }
                 // 最小显示条数，撑开高度
-                let length = 12
+                let length = 10
                 let value = length -dataLength
                 let arr = []
                 if(value > 0) {
@@ -772,6 +773,7 @@
                 // 如果初始化url 为空，则不继续往下走
                 if ($requestUrl === '') {
                     console.log('初始化url为空')
+                    isOnce = true
                     return false
                 }
                 let $countUrl
@@ -851,6 +853,7 @@
                     }
                 }).then(count => {
                     let length = count
+                    isOnce = true
                     if (isRequestOk === false) {
                         _this.$notify.error({
                             title: '错误消息',
@@ -880,6 +883,7 @@
                         isRequestOk = resp.ok
                         return resp.json()
                     }).then(data => {
+                        isOnce = true
                         if (isRequestOk === false) {
                             _this.$notify.error({
                                 title: '错误消息',
@@ -889,7 +893,6 @@
                         }
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {isRun: true})
                         _this.$store.dispatch(_this.options.gridKey + 'setData', {initTableData: data[dataVal]})
-                        isOnce = true
                     })
                 })
             },

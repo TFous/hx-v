@@ -126,15 +126,6 @@
                             </template>
                         </template>
                         <slot name="seniorSearch"></slot>
-                        <div style="text-align: right">
-                            <!--<el-button type="primary" @click="seniorSearchFn">搜索</el-button>-->
-                            <!--<el-tooltip :content="'当前搜索方式: ' + seniorSearchTip" placement="top">-->
-                            <!--<el-switch-->
-                            <!--@change="seniorSearchTypeToggleFn"-->
-                            <!--v-model="seniorSearchType">-->
-                            <!--</el-switch>-->
-                            <!--</el-tooltip>-->
-                        </div>
                     </el-form>
                 </el-row>
             </div>
