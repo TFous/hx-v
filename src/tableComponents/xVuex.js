@@ -4,6 +4,10 @@ import * as common from './common'
 function createMutations(state, gridKey) {
     return {
         [gridKey + '_SET_DATA'](state, data) {
+            // let keys = Object.keys(data)
+            // keys.forEach(key=>{
+            //     state[key]=data[key]
+            // })
             Object.assign(state, data)
         },
         [gridKey + '_EDIT_WINDOW_DATA'](state, data) {

@@ -109,11 +109,23 @@
                                         </el-date-picker>
                                     </el-form-item>
                                     <el-form-item :label="seniorItem.title" v-else-if="seniorItem.type==='number'">
-                                        <el-input v-model="formItem[seniorItem.key]"
-                                                  :clearable="true"
-                                                  @keyup.enter.native="seniorSearchFn"
-                                                  @blur="seniorSearchFn"
-                                                  @change="setNumber(seniorItem.key,seniorItem.title)"></el-input>
+                                        <el-col :span="24" class=" seniorSearch-num-range">
+                                            <el-input class="seniorSearch-num-range-start"
+                                                      @blur="seniorSearchFn"
+                                                      @change="setNumber(seniorItem.key,'start',seniorItem.title)"
+                                                      v-model="formItem[seniorItem.key].start"></el-input>
+                                            <span class="seniorSearch-num-icon"> - </span>
+                                            <el-input  class="seniorSearch-num-range-end"
+                                                       @change="setNumber(seniorItem.key,'end',seniorItem.title)"
+                                                       @blur="seniorSearchFn"
+                                                       v-model="formItem[seniorItem.key].end"></el-input>
+                                        </el-col>
+                                        <!---->
+                                        <!--<el-input v-model="formItem[seniorItem.key]"-->
+                                                  <!--:clearable="true"-->
+                                                  <!--@keyup.enter.native="seniorSearchFn"-->
+                                                  <!--@blur="seniorSearchFn"-->
+                                                  <!--@change="setNumber(seniorItem.key,seniorItem.title)"></el-input>-->
                                     </el-form-item>
                                     <el-form-item :label="seniorItem.title" v-else>
                                         <el-input @change="isEmptyKey(seniorItem.key)"
@@ -186,6 +198,7 @@
         beforeMount() {
         },
         mounted: function () {
+            this.clearValFn()
             this.$xvuex.registerModule(this, this.options, this.options.gridKey)
 //      this.checkList = JSON.parse(localStorage.getItem('newColumn')) || []
 //      设置 checkList
@@ -211,6 +224,7 @@
             if (this.options.defaultSearch) {
                 this.paramsSelect = this.options.defaultSearch
             }
+
         },
         computed: {
             getState() {
@@ -252,7 +266,20 @@
                 this.$store.dispatch(this.options.gridKey + '_set_Window_Visible')
             },
             clearValFn() {
-                this.formItem = {}
+                let _this = this
+                this.getState.table.forEach(function (item) {
+                    if(item.searchKey!=='hide'&& item.type !== 'select'){
+                        if(item.type==='number'){  //初始化 formItem，防止区间段搜索this.formItem.key.start  等报错
+                            _this.$set(_this.formItem,[item.key],{
+                                start:null,
+                                end:null,
+                                type:'number'
+                            })
+                        }else{
+                            _this.$set(_this.formItem,[item.key],null)
+                        }
+                    }
+                })
             },
             switchChangeFn(val) {
                 this.$store.dispatch(this.options.gridKey + 'setData', {isSeniorSearch: val})
@@ -270,17 +297,17 @@
                     delete this.formItem[key]
                 }
             },
-            setNumber(key, title) {
-                if (this.formItem[key] === '') {
-                    delete this.formItem[key]
+            setNumber(key,key2, title) {
+                if (this.formItem[key][key2] === '') {
+                    // delete this.formItem[key]
                     return
                 }
-                let val = Number(this.formItem[key])
+                let val = Number(this.formItem[key][key2])
                 let isNumber = !Number.isNaN(val)
                 if (isNumber === true) {
-                    this.formItem[key] = val
+                    this.formItem[key][key2] = val
                 } else {
-                    this.formItem[key] = ''
+                    this.formItem[key][key2] = ''
                     this.$message({
                         showClose: true,
                         message: `${title} -- 必须为填写数字！`,

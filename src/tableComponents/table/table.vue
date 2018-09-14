@@ -244,6 +244,8 @@
             this.$xvuex.registerModule(this, this.options, this.options.gridKey)
         },
         mounted() {
+            // let appDom = document.getElementById('app')
+            // console.log(appDom.clientHeight)
             try {
                 let arrFn = this.tableFn()
                 this.$common.bindFn(this, arrFn)
@@ -602,19 +604,34 @@
                     sliceLength = -3
                 }
                 let valUrl = ``
-                for (let item in seniorObj) {
-                    if (typeof seniorObj[item] === 'number') {
-                        valUrl += `(${item} eq ${Number(seniorObj[item])})${typeKey}`
-                    } else if (typeof seniorObj[item] === 'string') {
-                        valUrl += `(contains(${item},'${seniorObj[item]}'))${typeKey}`
-                    } else if (seniorObj[item] instanceof Array === true) {
+                    for (let item in seniorObj) {
+                        if (seniorObj[item] && typeof seniorObj[item] === 'object') {
+                            let start = seniorObj[item].start
+                            let end = seniorObj[item].end
+                            // 只有开始值
+                            let url = ''
+                            if(typeof start === 'number' && typeof end !== 'number'){
+                                url = `${item} ge ${parseFloat(start)}`
+                            } else if(typeof start === 'number' && typeof end === 'number'){
+                                url = `${item} ge ${parseFloat(start)} and ${item} le ${parseFloat(end)}`
+                            } else if(typeof start !== 'number' && typeof end === 'number'){
+                                url = `${item} le ${parseFloat(end)}`
+                            }
+                            if(url!==''){
+                                valUrl += `(${url})${typeKey}`
+                            }
+                        } else if (typeof seniorObj[item] === 'string') {
+                            valUrl += `(contains(${item},'${seniorObj[item]}'))${typeKey}`
+                        } else if (seniorObj[item] instanceof Array === true) {
 
-                        let startTime = this.$common.setStarTime(seniorObj[item][0])
-                        let endTime = this.$common.endTime(seniorObj[item][1])
+                            let startTime = this.$common.setStarTime(seniorObj[item][0])
+                            let endTime = this.$common.endTime(seniorObj[item][1])
 
-                        valUrl += `(${item} ge ${startTime} and ${item} le ${endTime})${typeKey}`
+                            valUrl += `(${item} ge ${startTime} and ${item} le ${endTime})${typeKey}`
+                        }
                     }
-                }
+
+
 //        手动添加的搜索条件
                 for (let item in otherSeniorSearchOpt) {
                     if (otherSeniorSearchOpt[item] instanceof Array === true) {

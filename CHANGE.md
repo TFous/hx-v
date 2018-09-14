@@ -39,6 +39,8 @@
 >> * header新增左侧slot  <slot name="search"></slot>
 >> * 所有layer 都设置成在body，防止多层弹出后z-index 问题
 
+> * 2018.9.14
+>> * number 类型的高级搜索改为区间段搜索
 
 ```javascript
 负责表头
