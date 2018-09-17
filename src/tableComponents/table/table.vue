@@ -4,7 +4,7 @@
             <slot>
                 <!--getState.tableData-->
                 <el-table
-                    max-height="490"
+                        max-height="490"
                         :data="getTableData"
                         :border="getState.border"
                         :stripe="true"
@@ -208,7 +208,6 @@
 <script>
     import Vue from 'vue'
     let isFirst = true
-    let isOnce = true
     // import * as common from '../common'
     import clone from 'clone'
     import columnLayer from '../columnSetting'
@@ -216,6 +215,7 @@
         name: 'xtable',
         data() {
             return {
+                isOnce:true,
                 isRefresh: false, // 用于 表格自动补充列 需要影藏的按钮
                 tableIndex: null, // 用于 表格自动补充列 需要影藏的按钮
                 loading: false, // 表格是否加载OK
@@ -271,7 +271,7 @@
             'getState.requestUrl': {
                 handler: function (val, oldVal) {
                     if (oldVal !== val) {
-                        isOnce = false
+                        this.isOnce = false
                         this.getList()
                     }
                 },
@@ -295,7 +295,7 @@
             'getState.searchBtn': {
                 handler: function (val, oldVal) {
                     if (oldVal !== val) {
-                        isOnce?this.searchFn():null
+                        this.isOnce?this.searchFn():null
                     }
                     let isResetCurrentPage = this.getState.isResetCurrentPage
                     if (isResetCurrentPage === true) {
@@ -604,32 +604,32 @@
                     sliceLength = -3
                 }
                 let valUrl = ``
-                    for (let item in seniorObj) {
-                        if (seniorObj[item] && typeof seniorObj[item] === 'object') {
-                            let start = seniorObj[item].start
-                            let end = seniorObj[item].end
-                            // 只有开始值
-                            let url = ''
-                            if(typeof start === 'number' && typeof end !== 'number'){
-                                url = `${item} ge ${parseFloat(start)}`
-                            } else if(typeof start === 'number' && typeof end === 'number'){
-                                url = `${item} ge ${parseFloat(start)} and ${item} le ${parseFloat(end)}`
-                            } else if(typeof start !== 'number' && typeof end === 'number'){
-                                url = `${item} le ${parseFloat(end)}`
-                            }
-                            if(url!==''){
-                                valUrl += `(${url})${typeKey}`
-                            }
-                        } else if (typeof seniorObj[item] === 'string') {
-                            valUrl += `(contains(${item},'${seniorObj[item]}'))${typeKey}`
-                        } else if (seniorObj[item] instanceof Array === true) {
-
-                            let startTime = this.$common.setStarTime(seniorObj[item][0])
-                            let endTime = this.$common.endTime(seniorObj[item][1])
-
-                            valUrl += `(${item} ge ${startTime} and ${item} le ${endTime})${typeKey}`
+                for (let item in seniorObj) {
+                    if (seniorObj[item] && typeof seniorObj[item] === 'object') {
+                        let start = seniorObj[item].start
+                        let end = seniorObj[item].end
+                        // 只有开始值
+                        let url = ''
+                        if(typeof start === 'number' && typeof end !== 'number'){
+                            url = `${item} ge ${parseFloat(start)}`
+                        } else if(typeof start === 'number' && typeof end === 'number'){
+                            url = `${item} ge ${parseFloat(start)} and ${item} le ${parseFloat(end)}`
+                        } else if(typeof start !== 'number' && typeof end === 'number'){
+                            url = `${item} le ${parseFloat(end)}`
                         }
+                        if(url!==''){
+                            valUrl += `(${url})${typeKey}`
+                        }
+                    } else if (typeof seniorObj[item] === 'string') {
+                        valUrl += `(contains(${item},'${seniorObj[item]}'))${typeKey}`
+                    } else if (seniorObj[item] instanceof Array === true) {
+
+                        let startTime = this.$common.setStarTime(seniorObj[item][0])
+                        let endTime = this.$common.endTime(seniorObj[item][1])
+
+                        valUrl += `(${item} ge ${startTime} and ${item} le ${endTime})${typeKey}`
                     }
+                }
 
 
 //        手动添加的搜索条件
@@ -790,7 +790,7 @@
                 // 如果初始化url 为空，则不继续往下走
                 if ($requestUrl === '') {
                     console.log('初始化url为空')
-                    isOnce = true
+                    _this.isOnce = true
                     return false
                 }
                 let $countUrl
@@ -870,7 +870,7 @@
                     }
                 }).then(count => {
                     let length = count
-                    isOnce = true
+                    _this.isOnce = true
                     if (isRequestOk === false) {
                         _this.$notify.error({
                             title: '错误消息',
@@ -900,7 +900,7 @@
                         isRequestOk = resp.ok
                         return resp.json()
                     }).then(data => {
-                        isOnce = true
+                        _this.isOnce = true
                         if (isRequestOk === false) {
                             _this.$notify.error({
                                 title: '错误消息',
