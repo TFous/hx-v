@@ -783,7 +783,7 @@
                 this.$store.dispatch(this.options.gridKey + 'setData', {requestUrl: url})
             },
             //        获取表格和数据字典数据
-            getList(size) {
+            async getList(size) {
                 let _this = this
                 let regexp = /&\?r=[0-9]{4}/i
                 let $requestUrl = this.getState.requestUrl.replace(regexp, '');
@@ -813,7 +813,7 @@
                 let isRequestOk
 
                 if (_this.getState.isLocalPages === true) {
-                    let requestDataHeader = Vue.prototype.$api.request($requestUrl)
+                    let requestDataHeader = await Vue.prototype.$api.request($requestUrl)
                     if (_this.getState.localTableData.length !== 0) {
                         let pagerCurrentPage = _this.getState.pager_CurrentPage
                         pageSize = _this.getState.pager_Size
@@ -860,7 +860,7 @@
                  *  requestCountHeader 获取总条数，不含分页信息
                  *
                  */
-                let requestCountHeader = Vue.prototype.$api.request($countUrl)
+                let requestCountHeader = await Vue.prototype.$api.request($countUrl)
                 fetch(requestCountHeader).then(resp => {
                     isRequestOk = resp.ok
                     if (isRequestOk === false) {
@@ -868,7 +868,7 @@
                     } else {
                         return resp.text()  // 没有问题
                     }
-                }).then(count => {
+                }).then(async count => {
                     let length = count
                     _this.isOnce = true
                     if (isRequestOk === false) {
@@ -895,7 +895,7 @@
                     _this.$store.dispatch(_this.options.gridKey + 'setData', {pager_Total: Number(length)})
 
                     // requestDataHeader 获取分页 的data
-                    let requestDataHeader = Vue.prototype.$api.request($requestUrl)
+                    let requestDataHeader = await Vue.prototype.$api.request($requestUrl)
                     fetch(requestDataHeader).then(resp => {
                         isRequestOk = resp.ok
                         return resp.json()
@@ -944,12 +944,12 @@
                 let _this = this
                 let myRequests = []
 //        避免数据字典重复请求
-                urlsKey.forEach(function (key, index) {
+                urlsKey.forEach(async function (key, index) {
                     // 模块已存在则返回
                     if (_this.$store.state[key]) {
                         return
                     }
-                    myRequests.push(Vue.prototype.$api.request(urlsValues[index]))
+                    myRequests.push(await Vue.prototype.$api.request(urlsValues[index]))
                 })
                 Promise.all(myRequests.map(myRequest =>
                     fetch(myRequest).then(resp => {

@@ -189,10 +189,10 @@
             handleSubmit(formName) {
                 let _this = this
                 let newData = _this.dataMsg
-                this.$refs[formName].validate((valid) => {
+                this.$refs[formName].validate(async(valid) => {
                     if (valid) {
                         let url = this.getState.addUrl
-                        let requestDataHeader = Vue.prototype.$api.request(url, {
+                        let requestDataHeader =await Vue.prototype.$api.request(url, {
                             method: 'POST',
                             body: JSON.stringify(newData)
                         })

@@ -1,4 +1,3 @@
-import Vue from 'vue';
 var validate = require('./validate.js');
 var xtable = require('./tableComponents/table');
 var xheaderBar = require('./tableComponents/headerBar');
@@ -10,7 +9,7 @@ var xpagers = require('./tableComponents/pagers');
 var xvuex = require('./tableComponents/xVuex');
 var common = require('./tableComponents/common');
 
-const hxqh = {
+const components = {
     xdetails,
     xedit,
     xpagers,
@@ -21,8 +20,8 @@ const hxqh = {
 };
 
 const install = function (Vue, options = {}) {
-    Object.keys(hxqh).forEach((key) => {
-        Vue.component(key, hxqh[key]['default']);
+    Object.keys(components).forEach((key) => {
+        Vue.component(key, components[key]['default']);
     });
     // Object.keys(hxqh).forEach(function (key) {
     //     return Vue.component(key, hxqh[key]['default']);
@@ -36,6 +35,16 @@ const install = function (Vue, options = {}) {
     Vue.prototype.$xvuex = xvuex;
     Vue.prototype.$validate = validate.validate;  // 组建内公用验证方法，挂在后外部可用
 };
-const table= Object.assign({}, hxqh, {install})
-// module.exports = table   // eslint-disable-line no-undef
-export default table
+module.exports = {
+    version: '1.4.1',
+    xdetails,
+    xedit,
+    xpagers,
+    xadd,
+    xtable,
+    xheaderBar,
+    validate,
+    install
+};
+module.exports.default = module.exports;
+// export default hx_table;

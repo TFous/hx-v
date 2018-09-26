@@ -381,7 +381,7 @@
                     type: 'warning'
                 }).then(() => {
                     let myRequests = []
-                    delObjs.forEach(function (item) {
+                    delObjs.forEach(async function (item) {
                         let url = `${_this.getState.delUrl}`
                         let delRequest = {
                             method: 'DELETE',
@@ -389,7 +389,7 @@
                                 'Accept': 'application/x-www-form-urlencoded',
                                 'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
                                 "Content-Type": "application/x-www-form-urlencoded",
-                                'Authorization': Vue.prototype.$api.getAuthorization()
+                                'Authorization': await Vue.prototype.$api.getAuthorization()
                             },
                             mode: 'cors',
                             body: `Id=${item.Id}`

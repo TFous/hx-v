@@ -230,13 +230,13 @@
             },
             handleSubmit(formName) {
                 let _this = this
-                this.$refs[formName].validate((valid) => {
+                this.$refs[formName].validate(async (valid) => {
                     if (valid) {
                         for (let item in _this.dataMsg) {
                             _this.dataMsg[item] = this.$common.trim(_this.dataMsg[item])
                         }  // 去除空格
                         let url = `${this.getState.editUrl}(${_this.dataMsg.Id})`
-                        let requestDataHeader = Vue.prototype.$api.request(url, {
+                        let requestDataHeader = await Vue.prototype.$api.request(url, {
                             method: 'PATCH',
                             body: JSON.stringify(_this.dataMsg)
                         })
