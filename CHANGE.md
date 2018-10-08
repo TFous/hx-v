@@ -45,6 +45,24 @@
 > * 2018.9.26
 >> * 采用最新的iview打包配置
 >> * 打包优化，排除clone包，将包命名为  HXTABLE
+
+> * 2018.10.8
+>> * 新增自适应高度
+```javascript
+<!--  默认在body下不用传参，不在的话需要传参  :tableWrap="tableWrap"  :appDom="appDom"
+-->
+    let layer = document.getElementById('orgListLayer')
+    let tableWrap = layer.getElementsByClassName('el-dialog--center')[0]
+    let appDom = tableWrap.getElementsByClassName('el-dialog__body')[0]
+    this.tableWrap.dom=tableWrap
+    this.appDom.dom=appDom
+
+```
+
+
+
+
+
 ```javascript
 负责表头
 {

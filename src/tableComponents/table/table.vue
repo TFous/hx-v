@@ -1,26 +1,28 @@
 <template>
     <div>
-        <div class="otable">
+        <div class="otable"
+             ref="hxTable"
+        >
             <slot>
                 <!--getState.tableData-->
                 <el-table
-                        max-height="490"
-                        :data="getTableData"
-                        :border="getState.border"
-                        :stripe="true"
-                        ref="xtable"
-                        :row-class-name="tableRowClassName"
-                        @cell-dblclick="showDetails"
-                        @selection-change="selectCheckbox"
-                        @filter-change="filterChangeFn"
-                        @sort-change="sortChangeFn"
-                        @header-dragend="headerDragendFn"
-                        style="width: 100%">
+                    :height="tableHeight"
+                    :data="getTableData"
+                    :border="getState.border"
+                    :stripe="true"
+                    ref="xtable"
+                    :row-class-name="tableRowClassName"
+                    @cell-dblclick="showDetails"
+                    @selection-change="selectCheckbox"
+                    @filter-change="filterChangeFn"
+                    @sort-change="sortChangeFn"
+                    @header-dragend="headerDragendFn"
+                    style="width: 100%">
                     <el-table-column
-                            v-if="getState.isSelection"
-                            type="selection"
-                            fixed="left"
-                            width="40">
+                        v-if="getState.isSelection"
+                        type="selection"
+                        fixed="left"
+                        width="40">
                     </el-table-column>
                     <slot name="expand"></slot>
                     <template v-for="(item, index) in getState.table" v-if="item.column==='show'">
@@ -30,60 +32,61 @@
                                     <template v-if="!value.render">
                                         <template v-if="value.filter === true">
                                             <el-table-column
-                                                    show-overflow-tooltip
-                                                    :fixed="value.fixed"
-                                                    :prop="value.key"
-                                                    :column-key="value.key"
-                                                    :label="value.title"
-                                                    :sortable="value.sortable"
-                                                    :filters="value.filters"
-                                                    :filter-multiple="item.filterMultiple"
-                                                    filter-placement="bottom-start"
-                                                    :width="value.width">
+                                                show-overflow-tooltip
+                                                :fixed="value.fixed"
+                                                :prop="value.key"
+                                                :column-key="value.key"
+                                                :label="value.title"
+                                                :sortable="value.sortable"
+                                                :filters="value.filters"
+                                                :filter-multiple="item.filterMultiple"
+                                                filter-placement="bottom-start"
+                                                :width="value.width">
                                             </el-table-column>
                                         </template>
                                         <template v-else>
                                             <el-table-column
-                                                    show-overflow-tooltip
-                                                    :fixed="value.fixed"
-                                                    :prop="value.key"
-                                                    :column-key="value.key"
-                                                    :label="value.title"
-                                                    :sortable="value.sortable"
-                                                    :width="value.width">
+                                                show-overflow-tooltip
+                                                :fixed="value.fixed"
+                                                :prop="value.key"
+                                                :column-key="value.key"
+                                                :label="value.title"
+                                                :sortable="value.sortable"
+                                                :width="value.width">
                                             </el-table-column>
                                         </template>
                                     </template>
                                     <template v-else-if="value.render">
                                         <el-table-column
-                                                class="render-wrap"
-                                                show-overflow-tooltip
-                                                :fixed="value.fixed"
-                                                :label="value.title"
-                                                :width="value.width">
+                                            class="render-wrap"
+                                            show-overflow-tooltip
+                                            :fixed="value.fixed"
+                                            :label="value.title"
+                                            :width="value.width">
                                             <template slot-scope="scope">
                                                 <template v-for="(renderItem,index) in value.render"
                                                           v-if="value.displayType ===1">
-                                                    <template v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[value.key] ?JSON.parse(scope.row.btnShow)[value.key].indexOf(index)>-1:true">
+                                                    <template
+                                                        v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[value.key] ?JSON.parse(scope.row.btnShow)[value.key].indexOf(index)>-1:true">
                                                         <el-switch
-                                                                v-if="renderItem.tag==='switch'"
-                                                                v-model="item.key"
-                                                                @change="renderItem.fn?renderItem.fn(scope):null"
-                                                                active-color="#13ce66"
+                                                            v-if="renderItem.tag==='switch'"
+                                                            v-model="item.key"
+                                                            @change="renderItem.fn?renderItem.fn(scope):null"
+                                                            active-color="#13ce66"
                                                         >
                                                         </el-switch>
                                                         <el-button
-                                                                class="render-toggle"
-                                                                v-else-if="renderItem.tag==='button'"
-                                                                @click.native.prevent="renderItem.fn(scope)"
-                                                                :type="renderItem.type"
-                                                                plain>
+                                                            class="render-toggle"
+                                                            v-else-if="renderItem.tag==='button'"
+                                                            @click.native.prevent="renderItem.fn(scope)"
+                                                            :type="renderItem.type"
+                                                            plain>
                                                             <!--{{renderItem.show}}-->
                                                             {{renderItem.text}}
                                                         </el-button>
                                                         <a
-                                                                v-else-if="renderItem.tag==='a'"
-                                                                :href="renderItem.href"
+                                                            v-else-if="renderItem.tag==='a'"
+                                                            :href="renderItem.href"
                                                         >{{getKey(scope, value.key)}}</a>
                                                         <template v-else>
                                         <span :title="renderItem.title"
@@ -94,16 +97,18 @@
                                                 </template>
                                                 <template v-if="value.displayType ===2">
                                                     <el-popover
-                                                            placement="left"
-                                                            trigger="hover">
+                                                        placement="left"
+                                                        trigger="hover">
                                                         <ul class="table-btn-ul">
                                                             <li
-                                                                    v-for="(renderItem,index1) in value.render"
-                                                                    v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[value.key] ?JSON.parse(scope.row.btnShow)[value.key].indexOf(index1)>-1:true"
-                                                                    @click="renderItem.fn(scope)"
-                                                            >{{renderItem.text}}</li>
+                                                                v-for="(renderItem,index1) in value.render"
+                                                                v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[value.key] ?JSON.parse(scope.row.btnShow)[value.key].indexOf(index1)>-1:true"
+                                                                @click="renderItem.fn(scope)"
+                                                            >{{renderItem.text}}
+                                                            </li>
                                                         </ul>
-                                                        <svg-icon slot="reference" icon-class="more" class="icon icon-org"/>
+                                                        <svg-icon slot="reference" icon-class="more"
+                                                                  class="icon icon-org"/>
                                                     </el-popover>
                                                 </template>
                                             </template>
@@ -116,59 +121,60 @@
                             <template v-if="!item.render">
                                 <template v-if="item.filter === true">
                                     <el-table-column
-                                            show-overflow-tooltip
-                                            :fixed="item.fixed"
-                                            :prop="item.key"
-                                            :column-key="item.key"
-                                            :label="item.title"
-                                            :sortable="item.sortable"
-                                            :filters="item.filters"
-                                            :filter-multiple="item.filterMultiple"
-                                            filter-placement="bottom-start"
-                                            :width="item.width">
+                                        show-overflow-tooltip
+                                        :fixed="item.fixed"
+                                        :prop="item.key"
+                                        :column-key="item.key"
+                                        :label="item.title"
+                                        :sortable="item.sortable"
+                                        :filters="item.filters"
+                                        :filter-multiple="item.filterMultiple"
+                                        filter-placement="bottom-start"
+                                        :width="item.width">
                                     </el-table-column>
                                 </template>
                                 <template v-else>
                                     <el-table-column
-                                            show-overflow-tooltip
-                                            :fixed="item.fixed"
-                                            :prop="item.key"
-                                            :column-key="item.key"
-                                            :label="item.title"
-                                            :sortable="item.sortable"
-                                            :width="item.width">
+                                        show-overflow-tooltip
+                                        :fixed="item.fixed"
+                                        :prop="item.key"
+                                        :column-key="item.key"
+                                        :label="item.title"
+                                        :sortable="item.sortable"
+                                        :width="item.width">
                                     </el-table-column>
                                 </template>
                             </template>
                             <template v-else-if="item.render">
                                 <el-table-column
-                                        class="render-wrap"
-                                        show-overflow-tooltip
-                                        :fixed="item.fixed"
-                                        :label="item.title"
-                                        :width="item.width">
+                                    class="render-wrap"
+                                    show-overflow-tooltip
+                                    :fixed="item.fixed"
+                                    :label="item.title"
+                                    :width="item.width">
                                     <template slot-scope="scope">
                                         <template v-for="(renderItem,index) in item.render"
                                                   v-if="item.displayType ===1">
-                                            <template v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[item.key] ?JSON.parse(scope.row.btnShow)[item.key].indexOf(index)>-1:true">
+                                            <template
+                                                v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[item.key] ?JSON.parse(scope.row.btnShow)[item.key].indexOf(index)>-1:true">
                                                 <el-switch
-                                                        v-if="renderItem.tag==='switch'"
-                                                        v-model="item.key"
-                                                        active-color="#13ce66"
-                                                        @change="renderItem.fn?renderItem.fn(scope):null"
+                                                    v-if="renderItem.tag==='switch'"
+                                                    v-model="item.key"
+                                                    active-color="#13ce66"
+                                                    @change="renderItem.fn?renderItem.fn(scope):null"
                                                 >
                                                 </el-switch>
                                                 <el-button
-                                                        class="render-toggle"
-                                                        v-else-if="renderItem.tag==='button'"
-                                                        @click.native.prevent="renderItem.fn(scope)"
-                                                        :type="renderItem.type"
-                                                        plain>
+                                                    class="render-toggle"
+                                                    v-else-if="renderItem.tag==='button'"
+                                                    @click.native.prevent="renderItem.fn(scope)"
+                                                    :type="renderItem.type"
+                                                    plain>
                                                     {{renderItem.text}}
                                                 </el-button>
                                                 <a
-                                                        v-else-if="renderItem.tag==='a'"
-                                                        :href="renderItem.href"
+                                                    v-else-if="renderItem.tag==='a'"
+                                                    :href="renderItem.href"
                                                 >{{getKey(scope, item.key)}}</a>
                                                 <template v-else>
                                                     <span :title="renderItem.title"
@@ -180,14 +186,15 @@
 
                                         <template v-if="item.displayType ===2">
                                             <el-popover
-                                                    placement="left"
-                                                    trigger="hover">
+                                                placement="left"
+                                                trigger="hover">
                                                 <ul class="table-btn-ul">
                                                     <li
-                                                            v-for="(renderItem,index1) in item.render"
-                                                            v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[item.key] ?JSON.parse(scope.row.btnShow)[item.key].indexOf(index1)>-1:true"
-                                                            @click="renderItem.fn(scope)"
-                                                    >{{renderItem.text}}</li>
+                                                        v-for="(renderItem,index1) in item.render"
+                                                        v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[item.key] ?JSON.parse(scope.row.btnShow)[item.key].indexOf(index1)>-1:true"
+                                                        @click="renderItem.fn(scope)"
+                                                    >{{renderItem.text}}
+                                                    </li>
                                                 </ul>
                                                 <svg-icon slot="reference" icon-class="more" class="icon icon-org"/>
                                             </el-popover>
@@ -201,21 +208,39 @@
             </slot>
         </div>
         <column-layer
-                :options='options'
+            :options='options'
         ></column-layer>
     </div>
 </template>
 <script>
+    function hasScroll(el, direction = 'vertical') {
+// scrollTop 和 scrollLeft 可以被设置为任何整数值,但如果一个元素不能被滚动 scrollTop 将被设置为0。
+        var eleScroll = (direction === 'vertical') ? 'scrollTop' : 'scrollLeft';
+        var result = !!el[eleScroll] // 判断 scrollTop 和 scrollLeft 是 0，还是其他数值
+        // 如果是其他数值则有滚动条
+        // 如果是0，设置为1，看看 scrollTop 和 scrollLeft 效果，如果恢复成0，则没有滚动条
+        if (!result) {
+            el[eleScroll] = 1;
+            result = !!el[eleScroll];
+            el[eleScroll] = 0;
+        }
+        return result;
+    }
+
     import Vue from 'vue'
+
     let isFirst = true
+
     // import * as common from '../common'
     import clone from 'clone'
     import columnLayer from '../columnSetting'
+
     export default {
         name: 'xtable',
         data() {
             return {
-                isOnce:true,
+                tableHeight: null,
+                isOnce: true,
                 isRefresh: false, // 用于 表格自动补充列 需要影藏的按钮
                 tableIndex: null, // 用于 表格自动补充列 需要影藏的按钮
                 loading: false, // 表格是否加载OK
@@ -225,13 +250,25 @@
             }
         },
         components: {
-            'column-layer':columnLayer,
+            'column-layer': columnLayer,
         },
         props: {
             // api接口
-            tableHeight: {
-                type: String,
-                default: 'auto',
+            // tableHeight: {
+            //     type: String,
+            //     default: 'auto',
+            // },
+            tableWrap: {
+                type: Object,
+                default: function () {
+                    return {dom: document.getElementsByTagName('body')[0]}
+                }
+            },
+            appDom: {
+                type: Object,
+                default: function () {
+                    return {dom: document.getElementById('app')}
+                }
             },
             isUnregisterModule: {
                 type: Boolean,
@@ -240,12 +277,12 @@
             tableFn: Function,
             options: Object
         },
+        updated() {
+        },
         beforeMount() {
             this.$xvuex.registerModule(this, this.options, this.options.gridKey)
         },
         mounted() {
-            // let appDom = document.getElementById('app')
-            // console.log(appDom.clientHeight)
             try {
                 let arrFn = this.tableFn()
                 this.$common.bindFn(this, arrFn)
@@ -281,21 +318,24 @@
              *  获取tableData 后处完相关数据塞进tableData，
              *  前台展示结果
              */
-//      'getState.tableData': {
-//        handler: function (val, oldVal) {
-//          if (oldVal !== undefined) {
-//              this.$refs.xtable.toggleRowSelection([val[0]]);
-//          }
-//        },
-//        deep: true
-//      },
+            'getState.tableData': {
+                handler: function (val, oldVal) {
+                    if (oldVal !== undefined) {
+                        let _this = this
+                        window.setTimeout(function () {
+                            _this.setTableHeight()
+                        }, 300)
+                    }
+                },
+                deep: true
+            },
             /**
              *  搜索筛选排序
              */
             'getState.searchBtn': {
                 handler: function (val, oldVal) {
                     if (oldVal !== val) {
-                        this.isOnce?this.searchFn():null
+                        this.isOnce ? this.searchFn() : null
                     }
                     let isResetCurrentPage = this.getState.isResetCurrentPage
                     if (isResetCurrentPage === true) {
@@ -338,9 +378,9 @@
                     this.$store.dispatch(this.options.gridKey + 'setData', {pager_CurrentPage: val})
                     if (oldVal !== undefined && oldVal !== val) {
                         let isRun = this.getState.isRun
-                        if(isRun === true){
+                        if (isRun === true) {
                             this.getList()
-                        }else {
+                        } else {
                             // 每次都必须回位
                             this.$store.dispatch(this.options.gridKey + 'setData', {isRun: true})
                         }
@@ -367,28 +407,55 @@
                 let dataLength = data.length
 
                 this.tableIndex = dataLength
-                if(dataLength === 0){
+                if (dataLength === 0) {
                     return []
                 }
-                // 最小显示条数，撑开高度
-                let length = 10
-                let value = length -dataLength
-                let arr = []
-                if(value > 0) {
-                    let i = 0
-                    for (; i < value; i++) {
-                        arr.push({show:true})
-                    }
-                }
-                return [...data,...arr]
+                return data
+
+                // // 最小显示条数，撑开高度
+                // let length = 10
+                // let value = length - dataLength
+                // let arr = []
+                // if (value > 0) {
+                //     let i = 0
+                //     for (; i < value; i++) {
+                //         arr.push({show: true})
+                //     }
+                // }
+                // return [...data, ...arr]
             }
         },
         updated() {
 
         },
         methods: {
+            setTableHeight() {
+                let body = this.tableWrap.dom
+                if(!hasScroll(body)){
+                    return
+                }
+                body.style.overflowY = 'hidden'
+                let _this = this
+                let appDomHeight = this.appDom.dom.clientHeight
+                function getHeight(appDomHeight) {
+                    appDomHeight = appDomHeight - 10
+                    _this.tableHeight = appDomHeight
+                    window.setTimeout(function () {
+                        if (hasScroll(body)) {
+                            getHeight(appDomHeight)
+                        } else {
+                            body.style.overflowY = 'auto'
+                            _this.tableHeight = appDomHeight
+                        }
+                    }, 1)
+                }
+                getHeight(appDomHeight)
+
+                // window.setTimeout(function () {
+                // }, 200)
+            },
             tableRowClassName({row, rowIndex}) {
-                if (rowIndex> this.tableIndex-1) {
+                if (rowIndex > this.tableIndex - 1) {
                     return 'hide-row';
                 }
                 return '';
@@ -421,8 +488,8 @@
                 let select = clone(selection)
                 let data = []
                 // 当对象有Id 属性时才添加到批量删除对象里
-                select.forEach(item=>{
-                    if(item.Id){
+                select.forEach(item => {
+                    if (item.Id) {
                         data.push(item)
                     }
                 })
@@ -610,14 +677,14 @@
                         let end = seniorObj[item].end
                         // 只有开始值
                         let url = ''
-                        if(typeof start === 'number' && typeof end !== 'number'){
+                        if (typeof start === 'number' && typeof end !== 'number') {
                             url = `${item} ge ${parseFloat(start)}`
-                        } else if(typeof start === 'number' && typeof end === 'number'){
+                        } else if (typeof start === 'number' && typeof end === 'number') {
                             url = `${item} ge ${parseFloat(start)} and ${item} le ${parseFloat(end)}`
-                        } else if(typeof start !== 'number' && typeof end === 'number'){
+                        } else if (typeof start !== 'number' && typeof end === 'number') {
                             url = `${item} le ${parseFloat(end)}`
                         }
-                        if(url!==''){
+                        if (url !== '') {
                             valUrl += `(${url})${typeKey}`
                         }
                     } else if (typeof seniorObj[item] === 'string') {
@@ -722,7 +789,7 @@
                 }
                 return string
             },
-            headerDragendFn (newWidth, oldWidth, column, event) {
+            headerDragendFn(newWidth, oldWidth, column, event) {
                 /**
                  * 每个表格自己特有的gridKey 作为存储表格宽度
                  *  {gridKey:[{name:名称;width:123;}]}
@@ -731,27 +798,27 @@
                 let saveKey = this.options.gridKey
                 let saveObj = JSON.parse(localStorage.getItem('TABLES_WIDTH')) || {}
                 let isHas = false
-                if(saveObj[saveKey] === undefined ){
+                if (saveObj[saveKey] === undefined) {
                     saveObj[saveKey] = []
-                    let columnObj= {}
+                    let columnObj = {}
                     columnObj.name = column.label
                     columnObj.width = newWidth
                     saveObj[saveKey].push(columnObj)
-                }else {
+                } else {
                     saveObj[saveKey].forEach(function (value) {
-                        if(value.name === column.label){
+                        if (value.name === column.label) {
                             value.width = newWidth
                             isHas = true
                         }
                     })
-                    if(isHas === false){
-                        let columnObj= {}
+                    if (isHas === false) {
+                        let columnObj = {}
                         columnObj.name = column.label
                         columnObj.width = newWidth
                         saveObj[saveKey].push(columnObj)
                     }
                 }
-                localStorage.setItem('TABLES_WIDTH',JSON.stringify(saveObj))
+                localStorage.setItem('TABLES_WIDTH', JSON.stringify(saveObj))
             },
             sortChangeFn(column, prop, order) {
                 let orderKey = column.order === 'descending' ? 'desc' : 'asc'
@@ -878,7 +945,7 @@
                         })
                         return false
                     }
-                    if(typeof JSON.parse(count) == 'object'){
+                    if (typeof JSON.parse(count) == 'object') {
                         length = JSON.parse(count)[dataVal]
                     }
                     if (Number(length) === 0) {
@@ -1002,7 +1069,7 @@
                     let filters = []
                     let selects = []
                     let dicData = _this.$api.getItem(item.filterItem)
-                    if(dicData.length>0){
+                    if (dicData.length > 0) {
                         dicData[0].DataDictionary.forEach(function (dicItem) {
                             //筛选
                             let filterItem = {}
