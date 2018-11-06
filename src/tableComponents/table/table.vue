@@ -153,33 +153,37 @@
                                     :label="item.title"
                                     :width="item.width">
                                     <template slot-scope="scope">
-                                        <template v-for="(renderItem,index) in item.render"
-                                                  v-if="item.displayType ===1">
+                                        <template v-if="item.displayType ===1">
                                             <template
+                                                v-for="(renderItem,index) in item.render"
                                                 v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[item.key] ?JSON.parse(scope.row.btnShow)[item.key].indexOf(index)>-1:true">
-                                                <el-switch
-                                                    v-if="renderItem.tag==='switch'"
-                                                    v-model="item.key"
-                                                    active-color="#13ce66"
-                                                    @change="renderItem.fn?renderItem.fn(scope):null"
+                                                <template
+                                                    v-if="renderItem.hasRole !== undefined?renderItem.hasRole:true"
                                                 >
-                                                </el-switch>
-                                                <el-button
-                                                    class="render-toggle"
-                                                    v-else-if="renderItem.tag==='button'"
-                                                    @click.native.prevent="renderItem.fn(scope)"
-                                                    :type="renderItem.type"
-                                                    plain>
-                                                    {{renderItem.text}}
-                                                </el-button>
-                                                <a
-                                                    v-else-if="renderItem.tag==='a'"
-                                                    :href="renderItem.href"
-                                                >{{getKey(scope, item.key)}}</a>
-                                                <template v-else>
+                                                    <el-switch
+                                                        v-if="renderItem.tag==='switch'"
+                                                        v-model="item.key"
+                                                        active-color="#13ce66"
+                                                        @change="renderItem.fn?renderItem.fn(scope):null"
+                                                    >
+                                                    </el-switch>
+                                                    <el-button
+                                                        class="render-toggle"
+                                                        v-else-if="renderItem.tag==='button'"
+                                                        @click.native.prevent="renderItem.fn(scope)"
+                                                        :type="renderItem.type"
+                                                        plain>
+                                                        {{renderItem.text}}
+                                                    </el-button>
+                                                    <a
+                                                        v-else-if="renderItem.tag==='a'"
+                                                        :href="renderItem.href"
+                                                    >{{getKey(scope, item.key)}}</a>
+                                                    <template v-else>
                                                     <span :title="renderItem.title"
                                                           :class="renderItem.class?renderItem.class:'cell-cursor'"
                                                           @click="renderItem.fn(scope)">{{getKey(scope, item.key)}}</span>
+                                                    </template>
                                                 </template>
                                             </template>
                                         </template>
@@ -189,12 +193,16 @@
                                                 placement="left"
                                                 trigger="hover">
                                                 <ul class="table-btn-ul">
-                                                    <li
+                                                    <template
                                                         v-for="(renderItem,index1) in item.render"
-                                                        v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[item.key] ?JSON.parse(scope.row.btnShow)[item.key].indexOf(index1)>-1:true"
-                                                        @click="renderItem.fn(scope)"
-                                                    >{{renderItem.text}}
-                                                    </li>
+                                                        v-if="renderItem.hasRole !== undefined?renderItem.hasRole:true"
+                                                    >
+                                                        <li
+                                                            v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[item.key] ?JSON.parse(scope.row.btnShow)[item.key].indexOf(index1)>-1:true"
+                                                            @click="renderItem.fn(scope)"
+                                                        >{{renderItem.text}}
+                                                        </li>
+                                                    </template>
                                                 </ul>
                                                 <svg-icon slot="reference" icon-class="more" class="icon icon-org"/>
                                             </el-popover>
