@@ -443,8 +443,9 @@
                     return
                 }
                 body.style.overflowY = 'hidden'
+                let params = 290 // 距离顶端间隔doms距离
                 let _this = this
-                let appDomHeight = this.appDom.dom.clientHeight
+                let appDomHeight = body.clientHeight > this.appDom.dom.clientHeight ? this.appDom.dom.clientHeight : body.clientHeight - params
                 function getHeight(appDomHeight) {
                     appDomHeight = appDomHeight - 10
                     _this.tableHeight = appDomHeight
