@@ -11,6 +11,8 @@
                     :border="getState.border"
                     :stripe="true"
                     ref="xtable"
+                    :summary-method="getSummaries"
+                    :show-summary="showSummary"
                     :row-class-name="tableRowClassName"
                     @cell-dblclick="showDetails"
                     @selection-change="selectCheckbox"
@@ -266,6 +268,12 @@
             //     type: String,
             //     default: 'auto',
             // },
+            showSummary:{
+                type: Boolean,
+                default: function () {
+                    return false
+                }
+            },
             tableWrap: {
                 type: Object,
                 default: function () {
@@ -503,6 +511,31 @@
                     }
                 })
                 this.$store.dispatch(this.options.gridKey + 'setData', {selection: data})
+            },
+            getSummaries(param) {
+                const { columns, data } = param;
+                const sums = [];
+                columns.forEach((column, index) => {
+                    if (index === 0) {
+                        sums[index] = '总价';
+                        return;
+                    }
+                    const values = data.map(item => Number(item[column.property]));
+                    if (!values.every(value => isNaN(value))) {
+                        sums[index] = values.reduce((prev, curr) => {
+                            const value = Number(curr);
+                            if (!isNaN(value)) {
+                                return prev + curr;
+                            } else {
+                                return prev;
+                            }
+                        }, 0);
+                        sums[index] += ' 元';
+                    } else {
+                        sums[index] = 'N/A';
+                    }
+                });
+                return sums;
             },
             filterChangeFn(filters) {
                 let keys = Object.keys(filters)

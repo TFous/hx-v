@@ -101,7 +101,6 @@
                                     <el-form-item :label="seniorItem.title" v-if="seniorItem.type==='date'">
                                         <el-date-picker
                                                 v-model="formItem[seniorItem.key]"
-                                                @blur="seniorSearchFn"
                                                 type="daterange"
                                                 range-separator="至"
                                                 start-placeholder="开始日期"
@@ -111,25 +110,16 @@
                                     <el-form-item :label="seniorItem.title" v-else-if="seniorItem.type==='number'">
                                         <el-col :span="24" class=" seniorSearch-num-range">
                                             <el-input class="seniorSearch-num-range-start"
-                                                      @blur="seniorSearchFn"
                                                       @change="setNumber(seniorItem.key,'start',seniorItem.title)"
                                                       v-model="formItem[seniorItem.key].start"></el-input>
                                             <span class="seniorSearch-num-icon"> - </span>
                                             <el-input  class="seniorSearch-num-range-end"
                                                        @change="setNumber(seniorItem.key,'end',seniorItem.title)"
-                                                       @blur="seniorSearchFn"
                                                        v-model="formItem[seniorItem.key].end"></el-input>
                                         </el-col>
-                                        <!---->
-                                        <!--<el-input v-model="formItem[seniorItem.key]"-->
-                                                  <!--:clearable="true"-->
-                                                  <!--@keyup.enter.native="seniorSearchFn"-->
-                                                  <!--@blur="seniorSearchFn"-->
-                                                  <!--@change="setNumber(seniorItem.key,seniorItem.title)"></el-input>-->
                                     </el-form-item>
                                     <el-form-item :label="seniorItem.title" v-else>
                                         <el-input @change="isEmptyKey(seniorItem.key)"
-                                                  @blur="seniorSearchFn"
                                                   @keyup.enter.native="seniorSearchFn"
                                                   v-model="formItem[seniorItem.key]"
                                                   :clearable="true"></el-input>
@@ -138,6 +128,9 @@
                             </template>
                         </template>
                         <slot name="seniorSearch"></slot>
+                        <div style="text-align: right;clear: both">
+                            <el-button type="success" @click="seniorSearchFn">搜 索</el-button>
+                        </div>
                     </el-form>
                 </el-row>
             </div>
