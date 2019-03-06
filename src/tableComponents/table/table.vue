@@ -241,7 +241,7 @@
 
     let isFirst = true
 
-    // import * as common from '../common'
+    import * as common from '../common'
     import clone from 'clone'
     import columnLayer from '../columnSetting'
 
@@ -932,6 +932,7 @@
                         return false
                     }
                     fetch(requestDataHeader).then(resp => {
+                        common.set601(resp.status)
                         isRequestOk = resp.ok
                         return resp.json()
                     }).then(data => {
@@ -971,6 +972,7 @@
                  */
                 let requestCountHeader = await Vue.prototype.$api.request($countUrl)
                 fetch(requestCountHeader).then(resp => {
+                    common.set601(resp.status)
                     isRequestOk = resp.ok
                     if (isRequestOk === false) {
                         return resp.json()
@@ -1006,6 +1008,7 @@
                     // requestDataHeader 获取分页 的data
                     let requestDataHeader = await Vue.prototype.$api.request($requestUrl)
                     fetch(requestDataHeader).then(resp => {
+                        common.set601(resp.status)
                         isRequestOk = resp.ok
                         return resp.json()
                     }).then(data => {
@@ -1062,6 +1065,7 @@
                 })
                 Promise.all(myRequests.map(myRequest =>
                     fetch(myRequest).then(resp => {
+                        common.set601(resp.status)
                         if (resp.ok === false) {
                             _this.$notify.error({
                                 title: '错误消息',

@@ -198,6 +198,7 @@
                         })
                         let isRequestOk
                         fetch(requestDataHeader).then(resp => {
+                            common.set601(resp.status)
                             isRequestOk = resp.ok
                             return resp.json()
                         }).then(data => {

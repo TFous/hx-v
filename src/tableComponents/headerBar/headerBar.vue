@@ -83,9 +83,9 @@
                     </div>
                     <div class="seniorSearchBtn" v-show="isShowSenior">
                         <el-switch
-                                v-model="isSeniorSearch"
-                                @change="switchChangeFn"
-                                :active-text="seniorText">
+                            v-model="isSeniorSearch"
+                            @change="switchChangeFn"
+                            :active-text="seniorText">
                         </el-switch>
                     </div>
                     <!--<el-button type="primary" icon="el-icon-search">高级</el-button>-->
@@ -100,11 +100,11 @@
                                 <el-col :span="6" v-if="tableItem.key===seniorItem.key">
                                     <el-form-item :label="seniorItem.title" v-if="seniorItem.type==='date'">
                                         <el-date-picker
-                                                v-model="formItem[seniorItem.key]"
-                                                type="daterange"
-                                                range-separator="至"
-                                                start-placeholder="开始日期"
-                                                end-placeholder="结束日期">
+                                            v-model="formItem[seniorItem.key]"
+                                            type="daterange"
+                                            range-separator="至"
+                                            start-placeholder="开始日期"
+                                            end-placeholder="结束日期">
                                         </el-date-picker>
                                     </el-form-item>
                                     <el-form-item :label="seniorItem.title" v-else-if="seniorItem.type==='number'">
@@ -392,6 +392,7 @@
                     })
                     Promise.all(myRequests.map(myRequest =>
                             fetch(myRequest).then(resp => {
+                                common.set601(resp.status)
                                 if (resp.ok === false) {
                                     _this.$notify.error({
                                         title: '错误消息',

@@ -48,6 +48,12 @@ export function trim(text) {
     }
 }
 
+export function set601(code) {
+    if(code === 601){
+        platHttp.isShowSecondPassword = true
+    }
+}
+
 export function setStarTime(date) {
     date = new Date(date.getTime() - 8*60*60*1000)
     var format = 'yyyy-MM-dd HH:mm:ss'

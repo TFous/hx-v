@@ -242,6 +242,7 @@
                         })
                         let isRequestOk
                         fetch(requestDataHeader).then(resp => {
+                            common.set601(resp.status)
                             if (resp.ok === true) {
                                 _this.$message({
                                     showClose: true,
