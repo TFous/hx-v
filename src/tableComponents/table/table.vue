@@ -933,8 +933,8 @@
                     }
                     fetch(requestDataHeader).then(resp => {
                         common.set601(resp.status)
-                        isRequestOk = resp.ok
-                        return resp.json()
+                        isRequestOk = resp.ok && resp.status===200
+                        return isRequestOk?resp.json():resp
                     }).then(data => {
                         if (isRequestOk === false) {
                             _this.$notify.error({
@@ -973,9 +973,9 @@
                 let requestCountHeader = await Vue.prototype.$api.request($countUrl)
                 fetch(requestCountHeader).then(resp => {
                     common.set601(resp.status)
-                    isRequestOk = resp.ok
+                    isRequestOk = resp.ok && resp.status===200
                     if (isRequestOk === false) {
-                        return resp.json()
+                        return resp
                     } else {
                         return resp.text()  // 没有问题
                     }
@@ -1009,7 +1009,7 @@
                     let requestDataHeader = await Vue.prototype.$api.request($requestUrl)
                     fetch(requestDataHeader).then(resp => {
                         common.set601(resp.status)
-                        isRequestOk = resp.ok
+                        isRequestOk = resp.ok && resp.status===200
                         return resp.json()
                     }).then(data => {
                         _this.isOnce = true
