@@ -350,12 +350,12 @@
              */
             'getState.searchBtn': {
                 handler: function (val, oldVal) {
+                    this.$store.dispatch(this.options.gridKey + 'setData', {pager_CurrentPage: 1})
                     if (oldVal !== val) {
                         this.isOnce ? this.searchFn() : null
                     }
                     let isResetCurrentPage = this.getState.isResetCurrentPage
                     if (isResetCurrentPage === true) {
-                        this.$store.dispatch(this.options.gridKey + 'setData', {pager_CurrentPage: 1})
                         this.$store.dispatch(this.options.gridKey + 'setData', {isRun: false})
                         // 执行后重置
                         this.$store.dispatch(this.getState.gridKey + 'setData', {isResetCurrentPage: false})

@@ -36,7 +36,7 @@ const install = function (Vue, options = {}) {
     Vue.prototype.$validate = validate.validate;  // 组建内公用验证方法，挂在后外部可用
 };
 module.exports = {
-    version: '1.4.1',
+    version: '1.5.0',
     xdetails,
     xedit,
     xpagers,
