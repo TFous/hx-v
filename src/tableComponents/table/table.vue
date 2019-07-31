@@ -72,7 +72,7 @@
                                                         v-if="scope.row.btnShow && JSON.parse(scope.row.btnShow)[value.key] ?JSON.parse(scope.row.btnShow)[value.key].indexOf(index)>-1:true">
                                                         <el-switch
                                                             v-if="renderItem.tag==='switch'"
-                                                            v-model="item.key"
+                                                            v-model="scope.row[renderItem.key]"
                                                             @change="renderItem.fn?renderItem.fn(scope):null"
                                                             active-color="#13ce66"
                                                         >
@@ -150,6 +150,11 @@
                             <template v-else-if="item.render">
                                 <el-table-column
                                     class="render-wrap"
+                                    :prop="item.key"
+                                    :column-key="item.key"
+                                    :filters="item.filters"
+                                    :filter-multiple="item.filterMultiple"
+                                    filter-placement="bottom-start"
                                     show-overflow-tooltip
                                     :fixed="item.fixed"
                                     :label="item.title"
@@ -164,7 +169,7 @@
                                                 >
                                                     <el-switch
                                                         v-if="renderItem.tag==='switch'"
-                                                        v-model="item.key"
+                                                        v-model="scope.row[renderItem.key]"
                                                         active-color="#13ce66"
                                                         @change="renderItem.fn?renderItem.fn(scope):null"
                                                     >
