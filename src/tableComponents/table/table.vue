@@ -34,6 +34,8 @@
                                     <template v-if="!value.render">
                                         <template v-if="value.filter === true">
                                             <el-table-column
+                                                :align="value.align"
+                                                :header-align="value.headerAlign"
                                                 show-overflow-tooltip
                                                 :fixed="value.fixed"
                                                 :prop="value.key"
@@ -48,6 +50,8 @@
                                         </template>
                                         <template v-else>
                                             <el-table-column
+                                                :align="value.align"
+                                                :header-align="value.headerAlign"
                                                 show-overflow-tooltip
                                                 :fixed="value.fixed"
                                                 :prop="value.key"
@@ -60,6 +64,8 @@
                                     </template>
                                     <template v-else-if="value.render">
                                         <el-table-column
+                                            :align="value.align"
+                                            :header-align="value.headerAlign"
                                             class="render-wrap"
                                             show-overflow-tooltip
                                             :fixed="value.fixed"
@@ -90,6 +96,10 @@
                                                             v-else-if="renderItem.tag==='a'"
                                                             :href="renderItem.href"
                                                         >{{getKey(scope, value.key)}}</a>
+                                                        <span
+                                                            v-else-if="renderItem.tag==='span'"
+                                                            @click.native.prevent="renderItem.fn(scope)"
+                                                        >{{getKey(scope, value.key)}}</span>
                                                         <template v-else>
                                         <span :title="renderItem.title"
                                               :class="renderItem.class?renderItem.class:'cell-cursor'"
@@ -123,6 +133,8 @@
                             <template v-if="!item.render">
                                 <template v-if="item.filter === true">
                                     <el-table-column
+                                        :align="item.align"
+                                        :header-align="item.headerAlign"
                                         show-overflow-tooltip
                                         :fixed="item.fixed"
                                         :prop="item.key"
@@ -137,6 +149,8 @@
                                 </template>
                                 <template v-else>
                                     <el-table-column
+                                        :align="item.align"
+                                        :header-align="item.headerAlign"
                                         show-overflow-tooltip
                                         :fixed="item.fixed"
                                         :prop="item.key"
@@ -149,6 +163,8 @@
                             </template>
                             <template v-else-if="item.render">
                                 <el-table-column
+                                    :align="item.align"
+                                    :header-align="item.headerAlign"
                                     class="render-wrap"
                                     :prop="item.key"
                                     :column-key="item.key"

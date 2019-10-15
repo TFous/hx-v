@@ -73,6 +73,8 @@ function initOpt(opt) {
     var table = opt.table
     var newTable = []
     let initObj = {
+        align: 'left',
+        headerAlign: 'left',
         addLayer: 'show',
         editLayer: 'show', // show hide
         filterMultiple: true, // 筛选默认可多选
