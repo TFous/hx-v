@@ -371,7 +371,9 @@
              */
             'getState.searchBtn': {
                 handler: function (val, oldVal) {
-                    this.$store.dispatch(this.options.gridKey + 'setData', {pager_CurrentPage: 1})
+                    if (this.getState.isChange_CurrentPage === false) {
+                        this.$store.dispatch(this.options.gridKey + 'setData', {pager_CurrentPage: 1})
+                    }
                     if (oldVal !== val) {
                         this.isOnce ? this.searchFn() : null
                     }

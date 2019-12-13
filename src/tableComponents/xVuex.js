@@ -205,6 +205,7 @@ export const options = {
     pager_size_opts: [15, 25, 50],  // 每页展示数量
     pager_Size: 15,   //  默认显示每页数量，和opts第一个一样
     pager_CurrentPage: 1, // 当前第几页
+    isChange_CurrentPage: false, // 是否保存当前页码
     pager_Total: 0,   // 总页数
     tableData: [],  // 所有的增删改拆后的数据覆盖存储
     initTableData: [],  // 没有经过数据字典转化的数据
