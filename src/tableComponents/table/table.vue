@@ -289,7 +289,7 @@
             //     type: String,
             //     default: 'auto',
             // },
-            showSummary:{
+            showSummary: {
                 type: Boolean,
                 default: function () {
                     return false
@@ -470,13 +470,14 @@
         methods: {
             setTableHeight() {
                 let body = this.tableWrap.dom
-                if(!hasScroll(body)){
+                if (!hasScroll(body)) {
                     return
                 }
                 body.style.overflowY = 'hidden'
                 let params = 290 // 距离顶端间隔doms距离
                 let _this = this
                 let appDomHeight = body.clientHeight > this.appDom.dom.clientHeight ? this.appDom.dom.clientHeight : body.clientHeight - params
+
                 function getHeight(appDomHeight) {
                     appDomHeight = appDomHeight - 10
                     _this.tableHeight = appDomHeight
@@ -489,6 +490,7 @@
                         }
                     }, 1)
                 }
+
                 getHeight(appDomHeight)
 
                 // window.setTimeout(function () {
@@ -536,7 +538,7 @@
                 this.$store.dispatch(this.options.gridKey + 'setData', {selection: data})
             },
             getSummaries(param) {
-                const { columns, data } = param;
+                const {columns, data} = param;
                 const sums = [];
                 columns.forEach((column, index) => {
                     if (index === 0) {
@@ -737,7 +739,8 @@
                 }
                 let valUrl = ``
                 for (let item in seniorObj) {
-                    if (seniorObj[item] && typeof seniorObj[item] === 'object') {
+
+                    if (seniorObj[item] && Array.isArray(seniorObj[item]) === false) {
                         let start = seniorObj[item].start
                         let end = seniorObj[item].end
                         // 只有开始值
@@ -754,7 +757,7 @@
                         }
                     } else if (typeof seniorObj[item] === 'string') {
                         valUrl += `(contains(${item},'${seniorObj[item]}'))${typeKey}`
-                    } else if (seniorObj[item] instanceof Array === true) {
+                    } else if (seniorObj[item] && Array.isArray(seniorObj[item]) === true && seniorObj[item].length > 0) {
 
                         let startTime = this.$common.setStarTime(seniorObj[item][0])
                         let endTime = this.$common.endTime(seniorObj[item][1])
@@ -956,8 +959,8 @@
                     }
                     fetch(requestDataHeader).then(resp => {
                         common.set601(resp.status)
-                        isRequestOk = resp.ok && resp.status===200
-                        return isRequestOk?resp.json():resp
+                        isRequestOk = resp.ok && resp.status === 200
+                        return isRequestOk ? resp.json() : resp
                     }).then(data => {
                         if (isRequestOk === false) {
                             _this.$notify.error({
@@ -996,7 +999,7 @@
                 let requestCountHeader = await Vue.prototype.$api.request($countUrl)
                 fetch(requestCountHeader).then(resp => {
                     common.set601(resp.status)
-                    isRequestOk = resp.ok && resp.status===200
+                    isRequestOk = resp.ok && resp.status === 200
                     if (isRequestOk === false) {
                         return resp
                     } else {
@@ -1032,7 +1035,7 @@
                     let requestDataHeader = await Vue.prototype.$api.request($requestUrl)
                     fetch(requestDataHeader).then(resp => {
                         common.set601(resp.status)
-                        isRequestOk = resp.ok && resp.status===200
+                        isRequestOk = resp.ok && resp.status === 200
                         return resp.json()
                     }).then(data => {
                         _this.isOnce = true
