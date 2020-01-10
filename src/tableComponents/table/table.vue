@@ -739,8 +739,7 @@
                 }
                 let valUrl = ``
                 for (let item in seniorObj) {
-
-                    if (seniorObj[item] && Array.isArray(seniorObj[item]) === false) {
+                    if (seniorObj[item] && Array.isArray(seniorObj[item]) === false && typeof seniorObj[item] !== 'string' ) {
                         let start = seniorObj[item].start
                         let end = seniorObj[item].end
                         // 只有开始值
